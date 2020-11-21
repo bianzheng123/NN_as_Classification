@@ -1,0 +1,38 @@
+{
+  "program_fname": "single_kmeans",
+  "n_classifier": 1,
+  "dataset_partition": [
+    {
+      "type": "kmeans",
+      "n_cluster": 2
+    }
+  ],
+  "prepare_train_sample": [
+    {
+      "output_config": {
+        "output": "knn",
+        "label_k": 50,
+        "batch_size": 64,
+        "shuffle": true,
+        "train_split": 0.99
+      }
+    }
+  ],
+  "train_model": [
+    {
+      "type": "neural_network",
+      "n_input": 128,
+      "n_hidden": [
+        512,
+        512
+      ],
+      "n_epochs": 10,
+      "lr": 0.008,
+      "p_dropout": 0.1,
+      "acc_threshold": 0.95
+    }
+  ],
+  "result_integration": {
+
+  }
+}

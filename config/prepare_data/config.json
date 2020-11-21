@@ -1,0 +1,16 @@
+{
+  "k": 10,
+  "data_fname": "siftsmall",
+  "source_data_dir": "/home/bz/SIFT/siftsmall",
+  "source_data_type": {
+    "base": "fvecs",
+    "query": "fvecs",
+    "learn": "fvecs"
+  },
+  "source_data_fname": {
+    "base": "siftsmall_base.fvecs",
+    "query": "siftsmall_query.fvecs",
+    "learn": "siftsmall_learn.fvecs"
+  },
+  "project_dir": "/home/bz/NN_as_Classification"
+}
