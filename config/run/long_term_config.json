@@ -1,7 +1,7 @@
 {
   "project_dir": "/home/bz/NN_as_Classification",
-  "data_fname": "test",
-  "k": 2,
+  "data_fname": "siftsmall",
+  "k": 10,
   "kahip_dir": "/home/bz/KaHIP",
   "efSearch": [10,100,1000]
 }

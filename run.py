@@ -8,6 +8,8 @@ import json
 import numpy as np
 import os
 
+from torch.utils.data import Dataset, DataLoader, TensorDataset
+
 
 def delete_dir_if_exist(dir):
     if os.path.isdir(dir):
@@ -47,9 +49,23 @@ if __name__ == '__main__':
         "program_train_para_dir": program_train_para_dir,
         "dataset_partition": short_term_config['dataset_partition']
     }
-    partition_info = dataset_partition.partition(base, dataset_partition_config)
+    partition_info_l, n_cluster_l = dataset_partition.partition(base, dataset_partition_config)
 
-    print(len(partition_info))
-    print(partition_info[0][0])
-    print(partition_info[0][1])
-    # prepare_train_sample.prepare_train(partition_info)
+    # print(len(partition_info))
+    # print(partition_info[0][0])
+    # print(partition_info[0][1])
+
+    prepare_train_config = {
+        'n_cluster_l': n_cluster_l,
+        "n_classifier": short_term_config['n_classifier'],
+        'program_train_para_dir': program_train_para_dir,
+        'prepare_train': short_term_config['prepare_train_sample']
+    }
+    trainset_l = prepare_train_sample.prepare_train(base, partition_info_l, prepare_train_config)
+
+    
+    trainloader, valloader = trainset_l[0]
+    print(trainloader.batch_size)
+    print(valloader.batch_size)
+    print(len(trainloader))
+    print(len(valloader))

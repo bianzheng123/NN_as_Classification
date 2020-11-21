@@ -4,18 +4,17 @@
   "dataset_partition": [
     {
       "type": "kmeans",
-      "n_cluster": 2
+      "n_cluster": 16
     }
   ],
   "prepare_train_sample": [
     {
-      "output_config": {
-        "output": "knn",
-        "label_k": 50,
-        "batch_size": 64,
-        "shuffle": true,
-        "train_split": 0.99
-      }
+      "type": "neighbor",
+      "output": "knn",
+      "label_k": 50,
+      "batch_size": 64,
+      "shuffle": true,
+      "train_split": 0.99
     }
   ],
   "train_model": [
@@ -33,6 +32,5 @@
     }
   ],
   "result_integration": {
-
   }
 }
