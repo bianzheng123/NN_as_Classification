@@ -56,6 +56,7 @@ if __name__ == '__main__':
 
     program_train_para_dir = '%s/train_para/%s' % (long_term_config['project_dir'], short_term_config['program_fname'])
     dataset_partition_config = {
+        'kahip_dir': long_term_config['kahip_dir'],
         "n_classifier": short_term_config['n_classifier'],
         "program_train_para_dir": program_train_para_dir,
         "dataset_partition": short_term_config['dataset_partition'],

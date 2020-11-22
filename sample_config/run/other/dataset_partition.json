@@ -1,0 +1,17 @@
+{
+  "dataset_partition": [
+    {
+      "type": "kmeans"
+    },
+    {
+      "type": "learn_on_graph",
+      "build_graph": {
+        "type": "knn",
+        "k_gnd": 10
+      },
+      "graph_partition": {
+        "type": "kahip"
+      }
+    }
+  ]
+}

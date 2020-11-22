@@ -1,5 +1,7 @@
 from procedure.dataset_partition_1 import kmeans
+from procedure.dataset_partition_1.learn_on_graph import learn_on_graph
 import os
+
 '''
 输入base, 输出partition的文本信息
 '''
@@ -15,6 +17,7 @@ def partition(base, config):
         os.system("mkdir %s" % save_dir)
         tmp_config = dataset_partition_config[i]
         tmp_config['n_cluster'] = mutual_attribute_config[i]['n_cluster']
+        tmp_config['kahip_dir'] = config['kahip_dir']
         tmp_config['save_dir'] = save_dir
         # 让partition_ins知道自己是几号
         tmp_config['classifier_number'] = i + 1
@@ -29,4 +32,6 @@ def partition_factory(config):
     _type = config['type']
     if _type == 'kmeans':
         return kmeans.KMeans(config)
+    elif _type == 'learn_on_graph':
+        return learn_on_graph.LearnOnGraph(config)
     raise Exception('partition类型不支持')
