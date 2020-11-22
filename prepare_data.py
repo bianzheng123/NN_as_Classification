@@ -52,6 +52,7 @@ def convert_data_type(config):
     # print(gnd_npy_dir)
     gnd = vecs_util.get_gnd_numpy(base, query, config['k'], gnd_npy_dir)
     print("提取gnd")
+    print(base.shape, query.shape, gnd.shape, learn.shape)
     return base, query, gnd, learn
 
 
