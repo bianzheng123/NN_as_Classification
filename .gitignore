@@ -5,4 +5,4 @@
 /data/
 /train_para/
 test.py
-*/__pycache__
+*/__pycache__/
