@@ -57,11 +57,11 @@ if __name__ == '__main__':
     program_train_para_dir = '%s/train_para/%s' % (long_term_config['project_dir'], short_term_config['program_fname'])
     dataset_partition_config = {
         'kahip_dir': long_term_config['kahip_dir'],
-        "n_classifier": short_term_config['n_classifier'],
+        "n_config_entity": short_term_config['n_config_entity'],
         "program_train_para_dir": program_train_para_dir,
         "dataset_partition": short_term_config['dataset_partition'],
         "mutual_attribute": short_term_config['mutual_attribute']
-    }
+    }  # 修改dataset_partition
     partition_info_l = dataset_partition.partition(base, dataset_partition_config)
 
     # print(len(partition_info))
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     # print(partition_info[0][1])
 
     prepare_train_config = {
-        "n_classifier": short_term_config['n_classifier'],
+        "n_config_entity": short_term_config['n_config_entity'],
         'program_train_para_dir': program_train_para_dir,
         'prepare_train': short_term_config['prepare_train_sample'],
         "mutual_attribute": short_term_config['mutual_attribute']
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     # print(len(valloader))
 
     train_model_config = {
-        "n_classifier": short_term_config['n_classifier'],
+        "n_config_entity": short_term_config['n_config_entity'],
         'program_train_para_dir': program_train_para_dir,
         'train_model': short_term_config['train_model'],
         'mutual_attribute': short_term_config['mutual_attribute']
@@ -93,7 +93,7 @@ if __name__ == '__main__':
     program_result_dir = '%s/result/%s' % (long_term_config['project_dir'], short_term_config['program_fname'])
     result_integrate_config = {
         'k': long_term_config['k'],
-        'n_classifier': short_term_config['n_classifier'],
+        "n_total_classifier": short_term_config['n_total_classifier'],
         'n_item': base.shape[0],
         'program_result_dir': program_result_dir,
         'mutual_attribute': short_term_config['mutual_attribute'],

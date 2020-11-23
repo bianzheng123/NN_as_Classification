@@ -27,7 +27,7 @@ class NeuralNetwork(classifier.Classifier):
     '''
 
     def train(self, base, trainset):
-        print('start prepare data %s_%d' % (self.type, self.classifier_number))
+        print('start prepare data %s' % self.obj_id)
         base = torch.from_numpy(base)
         trainloader, valloader = trainset
         self.model.train()
@@ -83,7 +83,7 @@ class NeuralNetwork(classifier.Classifier):
                 break
             self.scheduler.step()
         print('correct {} Final recall: {}'.format(correct, cur_recall))
-        print('finish prepare_data %s_%d' % (self.type, self.classifier_number))
+        print('finish prepare_data %s' % self.obj_id)
 
     '''
     query是二维数组, 批量处理

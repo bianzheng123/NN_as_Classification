@@ -9,6 +9,8 @@ class BasePartition:
         self.save_dir = '%s/dataset_partition' % config['save_dir']
         os.system('mkdir %s' % self.save_dir)
         self.classifier_number = config['classifier_number']
+        self.entity_number = config['entity_number']
+        self.obj_id = "%s_%d_%d" % (self.type, self.entity_number, self.classifier_number)
         # 类的数量
         self.n_cluster = config['n_cluster']
         # key是每一个类的编号, value是属于该类的点在base对应的索引
@@ -37,4 +39,4 @@ class BasePartition:
         np.savetxt(save_distribution_dir, self.n_point_label, fmt='%i')
 
     def __str__(self):
-        return '%s_%d, n_cluster: %d, save_dir: %s' % (self.type, self.classifier_number, self.n_cluster, self.save_dir)
+        return '%s, n_cluster: %d, save_dir: %s' % (self.obj_id, self.n_cluster, self.save_dir)

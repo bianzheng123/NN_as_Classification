@@ -10,7 +10,9 @@ class BaseDataNode:
         # 保存该模型参数的地址
         self.save_dir = '%s/prepare_train_sample' % config['save_dir']
         os.system('mkdir %s' % self.save_dir)
+        self.entity_number = config['entity_number']
         self.classifier_number = config['classifier_number']
+        self.obj_id = "%s_%d_%d" % (self.type, self.entity_number, self.classifier_number)
 
         self.n_cluster = config['n_cluster']
         self.label_k = config['label_k']
@@ -31,5 +33,5 @@ class BaseDataNode:
         torch.save(self.valloader, save_valloader_dir)
 
     def __str__(self):
-        return '%s_%d, output_type: %s, save_dir: %s' % (
-            self.type, self.classifier_number, self.output_type, self.save_dir)
+        return '%s, output_type: %s, save_dir: %s' % (
+            self.obj_id, self.output_type, self.save_dir)

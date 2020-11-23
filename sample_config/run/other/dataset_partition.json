@@ -1,16 +1,18 @@
 {
   "dataset_partition": [
     {
-      "type": "kmeans"
+      "type": "kmeans",
+      "max_iter": 30
     },
     {
       "type": "learn_on_graph",
       "build_graph": {
         "type": "knn",
-        "k_gnd": 10
+        "k_graph": 10
       },
       "graph_partition": {
-        "type": "kahip"
+        "type": "kahip",
+        "preconfiguration": "eco"
       }
     }
   ]

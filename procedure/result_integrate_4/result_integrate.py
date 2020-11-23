@@ -9,7 +9,7 @@ def integrate(query, gnd, train_model_ins_l, partition_info_l, config):
     result_integrate_config = config['result_integrate']
     mutual_attribute_config = config['mutual_attribute']
     score_table = np.zeros((query.shape[0], config['n_item']))
-    for i in range(config['n_classifier']):
+    for i in range(config['n_total_classifier']):
         label_map = partition_info_l[i][1]
         distribution = train_model_ins_l[i].eval(query)
         # 找到预测分布中最大的cluster
