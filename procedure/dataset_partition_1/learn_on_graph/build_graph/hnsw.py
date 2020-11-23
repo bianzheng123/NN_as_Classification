@@ -21,14 +21,32 @@ class HNSW(base_graph.BaseGraph):
         if vertices < self.k_graph + 1:
             raise Exception("建图错误, 输入数据量太少, 不能满足边的数量")
 
+        shuffle_base, permutation_reverse = self.shuffle_base(base, vertices)
+
         index = faiss.index_factory(int(base.shape[1]), "HNSW" + str(self.k_graph))
-        index.add(base)
-        result_graph = HNSW.get_graph(index.hnsw)
+        index.add(shuffle_base)
+        result_graph = HNSW.get_graph(index.hnsw, permutation_reverse)
 
         self.graph = result_graph
 
     @staticmethod
-    def get_graph(hnsw):
+    def shuffle_base(base, vertices):
+        # shuffle时应该i应该插入到permutation_insert[i]的位置
+        permutation_insert = np.random.permutation(vertices)
+        # shuffle后还原时现在的位置i应该插入到permutation_reverse[i]的位置
+        permutation_reverse = np.zeros(vertices).astype(np.int)
+        for i in range(vertices):
+            permutation_reverse[permutation_insert[i]] = i
+
+        res_base = np.zeros(base.shape).astype(np.float32)
+        for i in range(vertices):
+            vecs = base[i]
+            for j in range(base.shape[1]):
+                res_base[permutation_insert[i]][j] = vecs[j]
+        return res_base, permutation_reverse
+
+    @staticmethod
+    def get_graph(hnsw, permutation_reverse):
         level = 0
         graph = []
         for i in range(hnsw.levels.size()):
@@ -37,6 +55,8 @@ class HNSW(base_graph.BaseGraph):
             tmp_neighbors = [hnsw.neighbors.at(j) for j in range(be[0], be[1])]
             # print(type(tmp_neighbors))
             for j in range(len(tmp_neighbors)):
+                if tmp_neighbors[j] != 0:
+                    tmp_neighbors[j] = permutation_reverse[tmp_neighbors[j]]
                 tmp_neighbors[j] += 1
             tmp_neighbors = set(tmp_neighbors)
             if 0 in tmp_neighbors:
