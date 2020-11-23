@@ -1,5 +1,5 @@
 from procedure.dataset_partition_1 import base_partition
-from procedure.dataset_partition_1.learn_on_graph.build_graph import knn
+from procedure.dataset_partition_1.learn_on_graph.build_graph import knn, hnsw
 import numpy as np
 import os
 from util import read_data
@@ -43,4 +43,6 @@ def graph_factory(config):
     _type = config['type']
     if _type == 'knn':
         return knn.KNN(config)
+    elif _type == 'hnsw':
+        return hnsw.HNSW(config)
     raise Exception('建图类型不支持')

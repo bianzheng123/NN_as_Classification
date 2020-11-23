@@ -1,16 +1,15 @@
 import _init_paths
-from procedure.dataset_partition_1.learn_on_graph.build_graph import knn
+from procedure.dataset_partition_1.learn_on_graph.build_graph import knn, hnsw
 from util.vecs import vecs_io
 import numpy as np
 from time import time
 import os
+import faiss
 
-
-# 先建图, 然后kahip调优
 
 def build_graph():
     start_time = time()
-    base_dir = '/home/bz/SIFT/sift/sift_base.fvecs'
+    base_dir = '/home/bz/SIFT/siftsmall/siftsmall_base.fvecs'
     base = vecs_io.fvecs_read_mmap(base_dir)[0]
     base = base.astype(np.float32)
     config = {
@@ -20,7 +19,7 @@ def build_graph():
         "classifier_number": 1
     }
 
-    graph_ins = knn.KNN(config)
+    graph_ins = hnsw.HNSW(config)
     graph_ins.build_graph(base)
     graph_ins.save()
     end_time = time()
@@ -32,13 +31,13 @@ def graph_partition():
     save_dir = '/home/bz/NN_as_Classification/pytest'
     os.system(
         "/home/bz/KaHIP/deploy/kaffpa %s/graph.graph --output_filename=%s/partition.txt --preconfiguration=%s --k=%d" % (
-            save_dir, save_dir, 'eco', 256))
+            save_dir, save_dir, 'eco', 16))
     # '%s/deploy/kaffpa %s/graph.graph --preconfiguration=%s --output_filename=%s/partition.txt --k=%d'
     end_time = time()
     print("time to partition", (end_time - start_time))
 
 
-# build_graph()
+build_graph()
 graph_partition()
 
 
