@@ -13,7 +13,8 @@ class Classifier:
         self.classifier_number = config['classifier_number']
         self.obj_id = "%s_%d_%d" % (self.type, self.entity_number, self.classifier_number)
         self.n_cluster = config['n_cluster']
-
+        # 就是score_table, query.shape[0] * base.shape[0]
+        self.result = None
         self.train_para = None
 
     def train(self, base, trainset):
@@ -25,6 +26,8 @@ class Classifier:
     def save(self):
         train_para_dir = '%s/train_para.pth' % self.save_dir
         torch.save(self.train_para, train_para_dir)
+        eval_res_dir = '%s/eval_res.txt' % self.save_dir
+        np.savetxt(eval_res_dir, self.result, fmt='%.3f')
 
     def __str__(self):
         return '%s, save_dir: %s' % (

@@ -15,7 +15,7 @@ def build_graph():
     config = {
         "type": "knn",
         "k_graph": 10,
-        "save_dir": "/home/bz/NN_as_Classification/pytest",
+        "save_dir": "/home/bz/NN_as_Classification/pytest/graph_data",
         "classifier_number": 1
     }
 
@@ -28,7 +28,7 @@ def build_graph():
 
 def graph_partition():
     start_time = time()
-    save_dir = '/home/bz/NN_as_Classification/pytest'
+    save_dir = '/home/bz/NN_as_Classification/pytest/graph_data'
     os.system(
         "/home/bz/KaHIP/deploy/kaffpa %s/graph.graph --output_filename=%s/partition.txt --preconfiguration=%s --k=%d" % (
             save_dir, save_dir, 'eco', 16))

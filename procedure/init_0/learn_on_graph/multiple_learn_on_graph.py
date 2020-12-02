@@ -1,5 +1,5 @@
 from procedure.dataset_partition_1.learn_on_graph import learn_on_graph
-from procedure.dataset_partition_1 import multiple_base_partition
+from procedure.init_0 import multiple_base_partition
 import os
 import copy
 

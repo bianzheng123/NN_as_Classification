@@ -1,4 +1,4 @@
-from procedure.train_model_3 import classifier
+from procedure.train_eval_model_3 import classifier
 import torch.nn as nn
 import torch
 import numpy as np
@@ -19,6 +19,8 @@ class NeuralNetwork(classifier.Classifier):
         weight_decay = 10 ** (-4)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
         self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=milestones, gamma=0.21)
+        # 用于记录base的形状, eval时生成score table会用到
+        self.base_shape = None
 
     '''
     训练, 训练后的参数放到train_para中
@@ -28,6 +30,7 @@ class NeuralNetwork(classifier.Classifier):
 
     def train(self, base, trainset):
         print('start prepare data %s' % self.obj_id)
+        self.base_shape = base.shape
         base = torch.from_numpy(base)
         trainloader, valloader = trainset
         self.model.train()
@@ -89,10 +92,20 @@ class NeuralNetwork(classifier.Classifier):
     query是二维数组, 批量处理
     '''
 
-    def eval(self, query):
+    def eval(self, query, label_map):
         query = torch.tensor(query)
+        eval_res = None
         with torch.no_grad():
-            return self.model(query)
+            eval_res = self.model(query)
+
+        score_table = np.zeros((query.numpy().shape[0], self.base_shape[0]))
+        # 对每一个query加分
+        for j in range(query.shape[0]):
+            # 对每一个cluster加分
+            for k in range(eval_res.size(1)):
+                score_item_idx_l = label_map[k]
+                score_table[j][score_item_idx_l] = eval_res[j][k].item()
+        self.result = score_table
 
 
 class NNModel(nn.Module):

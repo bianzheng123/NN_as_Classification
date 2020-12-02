@@ -13,6 +13,7 @@ class BasePartition:
         self.obj_id = "%s_%d_%d" % (self.type, self.entity_number, self.classifier_number)
         # 类的数量
         self.n_cluster = config['n_cluster']
+        self.model_info = None
         # key是每一个类的编号, value是属于该类的点在base对应的索引
         self.label_map = {}
         # 计数不同桶中点的数量
@@ -22,6 +23,12 @@ class BasePartition:
 
     def partition(self, base):
         pass
+
+    def get_model_info(self):
+        self.model_info = {
+            "classifier_number": self.classifier_number,
+            "entity_number": self.entity_number,
+        }
 
     # 填充self.label, 就是根据cluster编号将base分成一类
     # 输入时需要转换成numpy格式

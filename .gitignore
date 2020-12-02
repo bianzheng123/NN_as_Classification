@@ -3,7 +3,9 @@
 !/config/short_term_config.json
 /result/
 /data/
+/pytest/data/
 /train_para/
+/config/run/specific_config/
 test.py
 graph.graph
 partition.txt

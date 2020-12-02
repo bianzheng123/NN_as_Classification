@@ -24,7 +24,8 @@ class LearnOnGraph(base_partition.BasePartition):
         self.graph_partition()
         self.get_labels(self.labels)
         print('finish training %s_%d' % (self.type, self.classifier_number))
-        return self.labels, self.label_map
+        super(LearnOnGraph, self).get_model_info()
+        return (self.labels, self.label_map), self.model_info
 
     def graph_partition(self):
         # 调用kahip, 然后读取partition.txt
