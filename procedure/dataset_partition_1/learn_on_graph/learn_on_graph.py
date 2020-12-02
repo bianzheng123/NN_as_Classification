@@ -16,16 +16,11 @@ class LearnOnGraph(base_partition.BasePartition):
         self.graph_partition_config = config['graph_partition']
         self.kahip_dir = config['kahip_dir']
 
-    def partition(self, base):
-        print('start training %s_%d' % (self.type, self.classifier_number))
+    def _partition(self, base):
         graph_ins = graph_factory(self.build_graph_config)
         graph_ins.build_graph(base)
         graph_ins.save()
         self.graph_partition()
-        self.get_labels(self.labels)
-        print('finish training %s_%d' % (self.type, self.classifier_number))
-        super(LearnOnGraph, self).get_model_info()
-        return (self.labels, self.label_map), self.model_info
 
     def graph_partition(self):
         # 调用kahip, 然后读取partition.txt

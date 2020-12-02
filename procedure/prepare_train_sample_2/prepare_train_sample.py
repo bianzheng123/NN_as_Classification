@@ -8,7 +8,7 @@ def prepare_train(base, partition_info, config):
     trainset_ins = data_node_factory(config)
     # 将来如果需要使用learn数据, 这个方法就多加一个learn变量
     trainset_info = trainset_ins.prepare(base, partition_info)
-    trainset_ins.save()
+    # trainset_ins.save()
     return trainset_info
 
 

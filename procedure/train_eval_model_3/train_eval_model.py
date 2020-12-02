@@ -8,9 +8,9 @@ def train_eval_model(base, query, label_map, trainset, config):
     train_model_ins = train_model_factory(config)
     # 将来如果需要使用learn数据, 这个方法就多加一个learn变量
     train_model_ins.train(base, trainset)
-    train_model_ins.eval(query, label_map)
+    eval_result, intermediate_config = train_model_ins.eval(query, label_map)
     train_model_ins.save()
-    return train_model_ins.result
+    return eval_result, intermediate_config
 
 
 def train_model_factory(config):

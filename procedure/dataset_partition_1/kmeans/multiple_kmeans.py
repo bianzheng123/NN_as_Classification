@@ -13,7 +13,7 @@ class KMeans(base_partition.BasePartition):
         # k * d
         self.centroid_l = centroid_l
 
-    def partition(self, base):
+    def _partition(self, base):
         # 对每一个item计算与质心的距离, 得到distance_table
         distance_table = None
         for i, vecs in enumerate(base, 0):
@@ -26,8 +26,3 @@ class KMeans(base_partition.BasePartition):
             distance_table = np.append(distance_table, tmp_dis, axis=0)
         # 得到最近的那个质心作为标签
         self.labels = np.argmax(distance_table, axis=1)
-
-        # 确定一个self.labels即可
-        self.get_labels(self.labels)
-        super(KMeans, self).get_model_info()
-        return (self.labels, self.label_map), self.model_info

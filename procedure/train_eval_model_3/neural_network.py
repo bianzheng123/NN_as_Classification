@@ -9,7 +9,7 @@ class NeuralNetwork(classifier.Classifier):
 
     def __init__(self, config):
         super(NeuralNetwork, self).__init__(config)
-        # self.type, self.save_dir, self.classifier_number, self.n_cluster, self.train_para
+        # self.type, self.save_dir, self.classifier_number, self.n_cluster
         config['network']['n_output'] = self.n_cluster
         self.model = NNModel(config['network'])
         self.n_epochs = config['n_epochs']
@@ -21,15 +21,9 @@ class NeuralNetwork(classifier.Classifier):
         self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=milestones, gamma=0.21)
         # 用于记录base的形状, eval时生成score table会用到
         self.base_shape = None
+        self.intermediate_config['train_intermediate'] = []
 
-    '''
-    训练, 训练后的参数放到train_para中
-    -base 数据集
-    -trainset 包括了trainloader, valloader, 是trainset的一个实例
-    '''
-
-    def train(self, base, trainset):
-        print('start prepare data %s' % self.obj_id)
+    def _train(self, base, trainset):
         self.base_shape = base.shape
         base = torch.from_numpy(base)
         trainloader, valloader = trainset
@@ -75,24 +69,30 @@ class NeuralNetwork(classifier.Classifier):
                     val_cor += (predicted.argmax(dim=1) == partition).sum().item()
                 val_recall = val_cor / len(valloader.dataset)
 
-            print(
-                'epoch {} loss: {} train recall: {}    val recall: {} lr: {}'.format(epoch, np.mean(loss_l), cur_recall,
-                                                                                     val_recall,
-                                                                                     self.optimizer.param_groups[0][
-                                                                                         'lr']))
+            # print(
+            #     'epoch {} loss: {} train recall: {}    val recall: {} lr: {}'.format(epoch, np.mean(loss_l), cur_recall,
+            #                                                                          val_recall,
+            #                                                                          self.optimizer.param_groups[0][
+            #                                                                              'lr']))
+            self.intermediate_config['train_intermediate'].append({
+                'epoch': epoch,
+                'loss': np.mean(loss_l),
+                'train_recall': cur_recall,
+                'val_recall': val_recall,
+                'lr': self.optimizer.param_groups[0]['lr']
+            })
             self.model.train()
             if cur_recall > self.acc_threshold:
                 print('Stopping training as acc is now {}'.format(cur_recall))
                 break
             self.scheduler.step()
-        print('correct {} Final recall: {}'.format(correct, cur_recall))
-        print('finish prepare_data %s' % self.obj_id)
+        # print('correct {} Final recall: {}'.format(correct, cur_recall))
+        self.intermediate_config['train_total'] = {
+            'correct': correct,
+            'final_recall': cur_recall
+        }
 
-    '''
-    query是二维数组, 批量处理
-    '''
-
-    def eval(self, query, label_map):
+    def _eval(self, query, label_map):
         query = torch.tensor(query)
         eval_res = None
         with torch.no_grad():

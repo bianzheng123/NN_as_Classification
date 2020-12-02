@@ -32,10 +32,12 @@ def save_result_config(config):
     long_config = config['long_term_config']
     short_config = config['short_term_config']
     short_config_before_run = config['short_term_config_before_run']
+    intermediate_result = config['intermediate_result']
 
     result_integrate.save_json(save_dir, 'long_term_config.json', long_config)
     result_integrate.save_json(save_dir, 'short_term_config.json', short_config)
     result_integrate.save_json(save_dir, 'short_term_config_before_run.json', short_config_before_run)
+    result_integrate.save_json(config['program_result_dir'], 'intermediate_result.json', intermediate_result)
     print('save program: %s' % config['program_fname'])
 
 
@@ -69,26 +71,38 @@ def train_eval(long_term_config_dir, short_term_config_dir):
     model_l = partition_preprocess.preprocess(base, partition_preprocess_config)
 
     result_l = []
+    intermediate_para_l = []
     # for 里面的东西并行
     for model in model_l:
         partition_info, model_info = dataset_partition.partition(base, model)
+        partition_intermediate = model_info[1]
 
         prepare_train_config = short_term_config['prepare_train_sample']
         prepare_train_config['n_cluster'] = short_term_config['n_cluster']
         prepare_train_config['program_train_para_dir'] = program_train_para_dir
-        prepare_train_config['classifier_number'] = model_info["classifier_number"]
-        prepare_train_config['entity_number'] = model_info["entity_number"]
+        prepare_train_config['classifier_number'] = model_info[0]["classifier_number"]
+        prepare_train_config['entity_number'] = model_info[0]["entity_number"]
         # 准备训练的代码将要完成
-        trainset = prepare_train_sample.prepare_train(base, partition_info, prepare_train_config)
+        trainset, prepare_train_intermediate = prepare_train_sample.prepare_train(base, partition_info,
+                                                                                  prepare_train_config)
 
         train_model_config = short_term_config['train_model']
         train_model_config['n_cluster'] = short_term_config['n_cluster']
-        train_model_config['classifier_number'] = model_info['classifier_number']
-        train_model_config['entity_number'] = model_info['entity_number']
+        train_model_config['classifier_number'] = model_info[0]['classifier_number']
+        train_model_config['entity_number'] = model_info[0]['entity_number']
         train_model_config['program_train_para_dir'] = program_train_para_dir
 
         label_map = partition_info[1]
-        tmp_result = train_eval_model.train_eval_model(base, query, label_map, trainset, train_model_config)
+        tmp_result, train_eval_intermediate = train_eval_model.train_eval_model(base, query, label_map, trainset,
+                                                                                train_model_config)
+
+        intermediate = {
+            "ins_id": '%d_%d' % (model_info[0]["entity_number"], model_info[0]["classifier_number"]),
+            'dataset_partition': partition_intermediate,
+            'prepare_train_sample': prepare_train_intermediate,
+            'train_eval_model': train_eval_intermediate
+        }
+        intermediate_para_l.append(intermediate)
         result_l.append(tmp_result)
 
     program_result_dir = '%s/result/%s' % (long_term_config['project_dir'], short_term_config['program_fname'])
@@ -101,23 +115,13 @@ def train_eval(long_term_config_dir, short_term_config_dir):
     # 结果整合与中间结果分开
     result_integrate.integrate(result_l, gnd, result_integrate_config)
 
-    # result_integrate_config = {
-    #     'k': long_term_config['k'],
-    #     "n_total_classifier": short_term_config['n_total_classifier'],
-    #     'n_item': base.shape[0],
-    #     'program_result_dir': program_result_dir,
-    #     'mutual_attribute': short_term_config['mutual_attribute'],
-    #     'result_integrate': short_term_config['result_integrate'],
-    #     'efSearch_l': long_term_config['efSearch']
-    # }
-    # result_integrate.integrate(query, gnd, train_model_ins_l, partition_info_l, result_integrate_config)
-    #
     save_config_config = {
         'program_fname': short_term_config['program_fname'],
         'program_result_dir': program_result_dir,
         'long_term_config': long_term_config,
         'short_term_config': short_term_config,
-        'short_term_config_before_run': short_term_config_before_run
+        'short_term_config_before_run': short_term_config_before_run,
+        'intermediate_result': intermediate_para_l
     }
     save_result_config(save_config_config)
 

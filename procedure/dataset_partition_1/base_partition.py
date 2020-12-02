@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import time
 
 
 class BasePartition:
@@ -22,13 +23,28 @@ class BasePartition:
         self.labels = None
 
     def partition(self, base):
-        pass
-
-    def get_model_info(self):
-        self.model_info = {
+        start_time = time.time()
+        print('start training %s_%d' % (self.type, self.classifier_number))
+        self._partition(base)
+        self.get_labels(self.labels)
+        print('finish training %s_%d' % (self.type, self.classifier_number))
+        end_time = time.time()
+        intermediate_config = {
+            'time': end_time - start_time,
+            'cluster_number_distribution': self.n_point_label
+        }
+        model_info = {
             "classifier_number": self.classifier_number,
             "entity_number": self.entity_number,
         }
+        return (self.labels, self.label_map), (model_info, intermediate_config)
+
+    '''
+    生成self.labels, 就是对每一个item赋值label
+    '''
+
+    def _partition(self, base):
+        pass
 
     # 填充self.label, 就是根据cluster编号将base分成一类
     # 输入时需要转换成numpy格式
@@ -42,8 +58,8 @@ class BasePartition:
     def save(self):
         save_label_dir = '%s/partition.txt' % self.save_dir
         np.savetxt(save_label_dir, self.labels, fmt='%i')
-        save_distribution_dir = '%s/distribution_partition.txt' % self.save_dir
-        np.savetxt(save_distribution_dir, self.n_point_label, fmt='%i')
+        # save_distribution_dir = '%s/distribution_partition.txt' % self.save_dir
+        # np.savetxt(save_distribution_dir, self.n_point_label, fmt='%i')
 
     def __str__(self):
         return '%s, n_cluster: %d, save_dir: %s' % (self.obj_id, self.n_cluster, self.save_dir)

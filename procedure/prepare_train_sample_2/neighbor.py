@@ -11,17 +11,7 @@ class NeighborDataNode(base_data_node.BaseDataNode):
         super(NeighborDataNode, self).__init__(config)
         # self.type, self.save_dir, self.entity_number, self.classifier_number, self.output_type
 
-    '''
-    Input:
-    -base
-    -partition_info
-    Output:
-    -已经打包好的训练集以及测试集
-    '''
-
-    def prepare(self, base, partition_info):
-        print('start prepare data %s %s' % (
-            self.obj_id, self.output_type))
+    def _prepare(self, base, partition_info):
         # self.datanode
         partition = partition_info[0]
         # 取前label_k个gnd作为训练集的标签
@@ -58,6 +48,3 @@ class NeighborDataNode(base_data_node.BaseDataNode):
         # validation set
         valset = TensorDataset(base_idx[cur_split:], partition[cur_split:])
         self.valloader = DataLoader(dataset=valset, batch_size=self.batch_size, shuffle=False)
-        print('finish prepare_data %s %s' % (
-            self.obj_id, self.output_type))
-        return self.trainloader, self.valloader
