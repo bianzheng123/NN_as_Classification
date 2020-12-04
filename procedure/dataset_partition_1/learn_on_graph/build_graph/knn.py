@@ -27,7 +27,7 @@ class KNN(base_graph.BaseGraph):
         distance, index_arr = index.search(base, self.k_graph + 1)  # 第一个索引一定是自己, 所以+1
         index_arr = index_arr[:, :] + 1  # kahip要求序号从1开始, 就集体加1
         result_graph = index_arr.tolist()
-        print("得到最近的k个结果")
+        # print("得到最近的k个结果")
         for i in range(len(result_graph)):
             result_graph[i] = set(result_graph[i])
 
@@ -37,6 +37,6 @@ class KNN(base_graph.BaseGraph):
             for vertices_index in result_graph[i]:
                 if (i + 1) not in result_graph[vertices_index - 1]:
                     result_graph[vertices_index - 1].add(i + 1)
-        print("将rank转换成图")
+        # print("将rank转换成图")
 
         self.graph = result_graph

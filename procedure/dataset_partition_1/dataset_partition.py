@@ -5,5 +5,5 @@
 
 def partition(base, model):
     partition_info, model_info = model.partition(base)
-    model.save()
+    # model.save()
     return partition_info, model_info

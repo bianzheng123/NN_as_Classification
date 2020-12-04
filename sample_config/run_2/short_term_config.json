@@ -1,0 +1,76 @@
+{
+  "program_fname": "Test",
+  "n_cluster": 16,
+  "independent_config": [
+    {
+      "n_instance": 2,
+      "type": "learn_on_graph",
+      "specific_type": "knn",
+      "dataset_partition": {
+        "build_graph": {
+          "type": "knn",
+          "k_graph": 10
+        },
+        "graph_partition": {
+          "type": "kahip",
+          "preconfiguration": "eco",
+          "time_limit": 180
+        }
+      }
+    },
+    {
+      "n_instance": 2,
+      "type": "learn_on_graph",
+      "specific_type": "hnsw",
+      "dataset_partition": {
+        "build_graph": {
+          "type": "hnsw",
+          "k_graph": 10
+        },
+        "graph_partition": {
+          "type": "kahip",
+          "preconfiguration": "eco",
+          "time_limit": 180
+        }
+      }
+    },
+    {
+      "n_instance": 2,
+      "type": "kmeans",
+      "specific_type": "independent",
+      "dataset_partition": {
+        "max_iter": 40
+      }
+    },
+    {
+      "n_instance": 2,
+      "type": "kmeans",
+      "specific_type": "multiple_batch",
+      "dataset_partition": {
+        "max_iter": 40
+      }
+    }
+  ],
+  "prepare_train_sample": {
+    "type": "neighbor",
+    "output": "knn",
+    "label_k": 50,
+    "batch_size": 64,
+    "shuffle": true,
+    "train_split": 0.99
+  },
+  "train_model": {
+    "type": "neural_network",
+    "network": {
+      "n_input": 128,
+      "n_hidden": [
+        512,
+        512
+      ],
+      "p_dropout": 0.1
+    },
+    "n_epochs": 5,
+    "lr": 0.008,
+    "acc_threshold": 0.95
+  }
+}

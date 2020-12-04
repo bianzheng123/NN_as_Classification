@@ -2,6 +2,7 @@
   {
     "n_instance": 2,
     "type": "learn_on_graph",
+    "specific_type": "knn",
     "dataset_partition": {
       "build_graph": {
         "type": "knn",
@@ -9,13 +10,15 @@
       },
       "graph_partition": {
         "type": "kahip",
-        "preconfiguration": "eco"
+        "preconfiguration": "eco",
+        "time_limit": 180
       }
     }
   },
   {
     "n_instance": 2,
     "type": "learn_on_graph",
+    "specific_type": "hnsw",
     "dataset_partition": {
       "build_graph": {
         "type": "hnsw",
@@ -23,7 +26,8 @@
       },
       "graph_partition": {
         "type": "kahip",
-        "preconfiguration": "eco"
+        "preconfiguration": "eco",
+        "time_limit": 180
       }
     }
   },
@@ -39,14 +43,6 @@
     "n_instance": 2,
     "type": "kmeans",
     "specific_type": "multiple_batch",
-    "dataset_partition": {
-      "max_iter": 40
-    }
-  },
-  {
-    "n_instance": 2,
-    "type": "kmeans",
-    "specific_type": "multiple_self_impl",
     "dataset_partition": {
       "max_iter": 40
     }

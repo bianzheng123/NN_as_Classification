@@ -8,6 +8,10 @@ class MultipleLearnOnGraph(multiple_base_partition.MultipleBasePartition):
 
     def __init__(self, config):
         super(MultipleLearnOnGraph, self).__init__(config)
+        self.obj_id = 'learn_on_graph'
 
     def get_model(self, config):
         return learn_on_graph.LearnOnGraph(config)
+
+    def _preprocess(self, base):
+        pass

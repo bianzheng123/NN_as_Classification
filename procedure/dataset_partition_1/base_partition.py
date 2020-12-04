@@ -24,10 +24,10 @@ class BasePartition:
 
     def partition(self, base):
         start_time = time.time()
-        print('start training %s_%d' % (self.type, self.classifier_number))
+        print('start dataset partitioning %s' % self.obj_id)
         self._partition(base)
         self.get_labels(self.labels)
-        print('finish training %s_%d' % (self.type, self.classifier_number))
+        print('finish dataset partitioning %s' % self.obj_id)
         end_time = time.time()
         intermediate_config = {
             'time': end_time - start_time,

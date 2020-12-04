@@ -23,10 +23,10 @@ class BaseDataNode:
         self.trainloader = None
         self.valloader = None
 
-    def prepare(self, base, partition_info):
+    def prepare(self, base, base_base_gnd, partition_info):
         start_time = time.time()
         print('start prepare data %s %s' % (self.obj_id, self.output_type))
-        self._prepare(base, partition_info)
+        self._prepare(base, base_base_gnd, partition_info)
         print('finish prepare_data %s %s' % (self.obj_id, self.output_type))
         end_time = time.time()
         intermediate_config = {

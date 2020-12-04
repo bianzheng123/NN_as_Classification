@@ -1,8 +1,8 @@
 from procedure.prepare_train_sample_2 import base_data_node
-from util.vecs import vecs_util
 import torch
 import numpy as np
 from torch.utils.data import Dataset, DataLoader, TensorDataset
+from util.vecs import vecs_util
 
 
 class NeighborDataNode(base_data_node.BaseDataNode):
@@ -11,11 +11,13 @@ class NeighborDataNode(base_data_node.BaseDataNode):
         super(NeighborDataNode, self).__init__(config)
         # self.type, self.save_dir, self.entity_number, self.classifier_number, self.output_type
 
-    def _prepare(self, base, partition_info):
+    def _prepare(self, base, base_base_gnd, partition_info):
         # self.datanode
         partition = partition_info[0]
         # 取前label_k个gnd作为训练集的标签
-        ranks = vecs_util.get_gnd_numpy(base, base, self.label_k)
+        ranks = base_base_gnd[:, :self.label_k]
+        # ranks = vecs_util.get_gnd_numpy(base, base, self.label_k)
+
         base_idx = torch.arange(0, base.shape[0])
         partition = torch.LongTensor(partition)
         datalen = len(partition)

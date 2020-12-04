@@ -53,7 +53,6 @@ class HNSW(base_graph.BaseGraph):
             be = np.empty(2, 'uint64')
             hnsw.neighbor_range(i, level, faiss.swig_ptr(be), faiss.swig_ptr(be[1:]))
             tmp_neighbors = [hnsw.neighbors.at(j) for j in range(be[0], be[1])]
-            # print(type(tmp_neighbors))
             for j in range(len(tmp_neighbors)):
                 if tmp_neighbors[j] != 0:
                     tmp_neighbors[j] = permutation_reverse[tmp_neighbors[j]]

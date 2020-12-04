@@ -25,10 +25,10 @@ class LearnOnGraph(base_partition.BasePartition):
     def graph_partition(self):
         # 调用kahip, 然后读取partition.txt
         kahip_command = '%s/deploy/kaffpa %s/graph.graph --preconfiguration=%s --output_filename=%s/partition.txt ' \
-                        '--k=%d' % (
+                        '--k=%d --time_limit=%d' % (
                             self.kahip_dir, self.save_dir, self.graph_partition_config['preconfiguration'],
                             self.save_dir,
-                            self.n_cluster)
+                            self.n_cluster, self.graph_partition_config['time_limit'])
         os.system(kahip_command)
         partition_dir = '%s/partition.txt' % self.save_dir
         labels = read_data.read_partition(partition_dir)

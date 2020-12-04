@@ -18,7 +18,6 @@ def preprocess(base, config):
         tmp_model_l = multiple_model.preprocess(base)
         for model in tmp_model_l:
             partition_model_l.append(model)
-    print("finish preprocess")
 
     return partition_model_l
 

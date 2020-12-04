@@ -16,6 +16,7 @@ class BaseMultipleKMeans(multiple_base_partition.MultipleBasePartition):
         # 用于构建m个kmeans的质心们, m * k * d
         self.specific_type = config['specific_type']
         self.centroid_l_l = None
+        self.obj_id = '%s_%s' % (self.type, self.specific_type)
         self.max_iter = config['dataset_partition']['max_iter']
         self.model = None
         self.signature = None
@@ -23,8 +24,7 @@ class BaseMultipleKMeans(multiple_base_partition.MultipleBasePartition):
     def get_model(self, config):
         return multiple_kmeans.KMeans(config)
 
-    def preprocess(self, base):
-        print('start preprocessing %s_%s_%d' % (self.type, self.specific_type, self.entity_number))
+    def _preprocess(self, base):
         # 得到m个kmeans的质心
         self.model.fit(base)
         # mk * d
@@ -49,7 +49,6 @@ class BaseMultipleKMeans(multiple_base_partition.MultipleBasePartition):
         for i in range(self.n_instance):
             # print("actual centroids", self.centroid_l_l[i][:, :2])
             self.model_l[i].get_centroid(self.centroid_l_l[i])
-        print('finish preprocessing %s_%s_%d' % (self.type, self.specific_type, self.entity_number))
         return self.model_l
 
     def random_projection(self, centroid_l):

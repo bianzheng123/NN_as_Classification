@@ -15,4 +15,12 @@ def load_data_npy(config):
     learn_dir = '%s/learn.npy' % data_dir
     learn = np.load(learn_dir)
 
-    return base, query, learn, gnd
+    base_base_gnd_dir = '%s/base_base_gnd.npy' % data_dir
+    base_base_gnd = np.load(base_base_gnd_dir)
+
+    return base, query, learn, gnd, base_base_gnd
+
+
+def load_single_data_npy(dire):
+    data = np.load(dire)
+    return data

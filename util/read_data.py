@@ -1,4 +1,5 @@
 import numpy as np
+import json
 
 
 def read_knn_graph(graph_dir):
@@ -38,16 +39,21 @@ def read_label(label_dir):
 
     return labels
 
-# data_config = read_config('../config/data_config')
-# print(data_config)
-# task_config = read_config('../config/task_config')
-# print(task_config)
-# graph, vertics, edges = read_knn_graph('../data/knn.graph')
-# print(graph)
-# print(vertics)
-# print(edges)
-# partition = read_partition('../data/partition.txt')
-# print(partition)
-# label = read_label(data_config['label_dir'])
-# print(label)
-# print(type(label[0][0]))
+
+# dire指的是当前分类器的train_para路径
+def get_score_table_intermediate_config(dire):
+    long_term_config_dir = '%s/config/long_term_config.json' % dire
+    short_term_config_dir = '%s/config/short_term_config.json' % dire
+    short_term_config_before_run_dir = '%s/config/short_term_config_before_run.json' % dire
+    intermediate_result_dir = '%s/intermediate_result.json' % dire
+    total_score_table_dir = '%s/total_score_table.txt' % dire
+    with open(long_term_config_dir, 'r') as f:
+        long_term_config = json.load(f)
+    with open(short_term_config_dir, 'r') as f:
+        short_term_config = json.load(f)
+    with open(short_term_config_before_run_dir, 'r') as f:
+        short_term_config_before_run = json.load(f)
+    with open(intermediate_result_dir, 'r') as f:
+        intermediate_result = json.load(f)
+    total_score_table = np.loadtxt(total_score_table_dir)
+    return long_term_config, short_term_config, short_term_config_before_run, intermediate_result, total_score_table

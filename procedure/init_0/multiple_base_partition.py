@@ -17,6 +17,8 @@ class MultipleBasePartition:
         self.kahip_dir = config['kahip_dir']
         self.entity_number = config['entity_number']
         self.model_l = []
+        # 用于识别的标识
+        self.obj_id = None
         for i in range(self.n_instance):
             tmp_config = copy.deepcopy(config['dataset_partition'])
             tmp_config['type'] = self.type
@@ -32,6 +34,7 @@ class MultipleBasePartition:
 
     # 直接返回模型的实例
     def preprocess(self, base):
-        print('start preprocessing %s_%d' % (self.type, self.entity_number))
-        print('finish preprocessing %s_%d' % (self.type, self.entity_number))
+        print('start preprocessing %s_%d' % (self.obj_id, self.entity_number))
+        self._preprocess(base)
+        print('finish preprocessing %s_%d' % (self.obj_id, self.entity_number))
         return self.model_l

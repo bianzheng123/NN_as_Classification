@@ -69,11 +69,11 @@ class NeuralNetwork(classifier.Classifier):
                     val_cor += (predicted.argmax(dim=1) == partition).sum().item()
                 val_recall = val_cor / len(valloader.dataset)
 
-            # print(
-            #     'epoch {} loss: {} train recall: {}    val recall: {} lr: {}'.format(epoch, np.mean(loss_l), cur_recall,
-            #                                                                          val_recall,
-            #                                                                          self.optimizer.param_groups[0][
-            #                                                                              'lr']))
+            print(
+                'epoch {} loss: {} train recall: {}    val recall: {} lr: {}'.format(epoch, np.mean(loss_l), cur_recall,
+                                                                                     val_recall,
+                                                                                     self.optimizer.param_groups[0][
+                                                                                         'lr']))
             self.intermediate_config['train_intermediate'].append({
                 'epoch': epoch,
                 'loss': np.mean(loss_l),
@@ -86,7 +86,7 @@ class NeuralNetwork(classifier.Classifier):
                 print('Stopping training as acc is now {}'.format(cur_recall))
                 break
             self.scheduler.step()
-        # print('correct {} Final recall: {}'.format(correct, cur_recall))
+        print('correct {} Final recall: {}'.format(correct, cur_recall))
         self.intermediate_config['train_total'] = {
             'correct': correct,
             'final_recall': cur_recall

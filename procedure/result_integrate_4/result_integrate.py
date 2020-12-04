@@ -4,14 +4,16 @@ import json
 import os
 
 
-def integrate(result_l, gnd, config):
+def integrate(score_table_l, gnd, config):
+    # long_term_config, short_term_config, short_term_config_before_run, intermediate_result, total_score_table
     os.system('mkdir %s' % config['program_result_dir'])
-    score_table = np.zeros((result_l[0].shape))
-    for result_table in result_l:
-        for i in range(len(result_table)):
-            for j in range(len(result_table[i])):
-                score_table[i][j] += result_table[i][j]
-    evaluate(score_table, config['efSearch_l'], gnd, config['program_result_dir'], config['k'])
+    total_score_table = np.zeros(score_table_l[0].shape)
+    for tmp_score_table in score_table_l:
+        for i in range(len(tmp_score_table)):
+            for j in range(len(tmp_score_table[i])):
+                total_score_table[i][j] += tmp_score_table[i][j]
+    print('add total score complete')
+    evaluate(total_score_table, config['efSearch_l'], gnd, config['program_result_dir'], config['k'])
 
 
 def evaluate(score_table, efSearch_l, gnd, save_json_dir, k):
@@ -57,3 +59,19 @@ def count_recall_multiple(predict_idx_l, gnd_l, k):
 def save_json(save_dir, result_fname, json_file):
     with open('%s/%s' % (save_dir, result_fname), 'w') as f:
         json.dump(json_file, f)
+
+
+def save_config(config):
+    save_dir = '%s/config' % config['save_dir']
+    os.system('mkdir %s' % save_dir)
+
+    long_config = config['long_term_config']
+    short_config = config['short_term_config']
+    short_config_before_run = config['short_term_config_before_run']
+    intermediate_result = config['intermediate_result']
+
+    save_json(save_dir, 'long_term_config.json', long_config)
+    save_json(save_dir, 'short_term_config.json', short_config)
+    save_json(save_dir, 'short_term_config_before_run.json', short_config_before_run)
+    save_json(config['save_dir'], 'intermediate_result.json', intermediate_result)
+    print('save program: %s' % config['program_fname'])

@@ -1,5 +1,6 @@
 import faiss
 import numpy as np
+import copy
 
 """
 通过相似性搜索得到gnd文件
@@ -13,6 +14,7 @@ def get_gnd_numpy(base, query, k, save_dir=None):
     index = faiss.IndexFlatL2(base_dim)
     index.add(base)
     gnd_distance, gnd_idx = index.search(query, k)
+    print("search")
     if save_dir is not None:
         np.save(save_dir, gnd_idx)
     return gnd_idx
