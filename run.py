@@ -1,9 +1,9 @@
 from procedure import run
-
+import os
+from util import parse_args
 
 if __name__ == '__main__':
-    config_dir = '/home/bz/NN_as_Classification/config/run_2/'
-    long_config_dir = config_dir + 'long_term_config.json'
-
-    short_config_dir = config_dir + 'short_term_config.json'
-    run.train_eval(long_config_dir, short_config_dir)
+    args = parse_args.parse_args()
+    long_term_config_dir = args.long_term_config_dir
+    short_term_config_dir = args.short_term_config_dir
+    run.train_eval(long_term_config_dir, short_term_config_dir)

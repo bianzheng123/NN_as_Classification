@@ -10,3 +10,4 @@ test.py
 graph.graph
 partition.txt
 *.pyc
+*.log
