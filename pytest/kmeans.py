@@ -1,5 +1,5 @@
 import _init_paths
-from procedure.dataset_partition_1.kmeans import multiple_kmeans, independent_kmeans
+from procedure.init_0.kmeans import multiple_kmeans_batch
 import numpy as np
 from time import time
 import os
@@ -12,44 +12,34 @@ max_iter = 300
 
 def train_kmeans():
     start_time = time()
-    base_dir = '/home/bz/NN_as_Classification/data/siftsmall_10/base.npy'
-    base = np.load(base_dir)
+    # base_dir = '/home/bz/NN_as_Classification/data/siftsmall_10/base.npy'
+    # base = np.load(base_dir)
+    base = np.random.normal(size=(1000, 2), loc=100, scale=100)
 
-    program_train_para_dir = '/home/bz/NN_as_Classification/pytest/kmeans_data'
+    program_train_para_dir = '/home/bz/NN_as_Classification/pytest/data/kmeans_data'
 
     util4test.delete_dir_if_exist(program_train_para_dir + '/Classifier_1_1')
 
     config = {
+        "n_instance": 2,
+        "n_cluster": 16,
         "type": "kmeans",
-        "max_iter": max_iter,
-        'n_cluster': n_cluster,
-        'n_instance': 1,
+        "specific_type": "multiple_batch",
+        "dataset_partition": {
+            "max_iter": 40
+        },
         'entity_number': 1,
+        'kahip_dir': '/home/bz/',
         'program_train_para_dir': program_train_para_dir
     }
 
-    model = independent_kmeans.IndependentKMeans(config)
-    model.partition(base)
-    model.save()
-    for m in model.models:
-        print(m.n_point_label)
-
-    util4test.delete_dir_if_exist(program_train_para_dir + '/Classifier_2_1')
-
-    config = {
-        "type": "kmeans",
-        "max_iter": max_iter,
-        'n_cluster': n_cluster,
-        'n_instance': 1,
-        'entity_number': 2,
-        'program_train_para_dir': program_train_para_dir
-    }
-
-    model = independent_kmeans.IndependentKMeans(config)
-    model.partition(base)
-    model.save()
-    for m in model.models:
-        print(m.n_point_label)
+    multiple_model = multiple_kmeans_batch.MultipleKMeansBatch(config)
+    model_l = multiple_model.preprocess(base)
+    print(multiple_model.n_point_label)
+    for model in model_l:
+        model.partition(base)
+        print(model.n_point_label)
+        # model.save()
 
     end_time = time()
     print("time to train kmeans", (end_time - start_time))

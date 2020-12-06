@@ -11,3 +11,4 @@ graph.graph
 partition.txt
 *.pyc
 *.log
+/pytest/figure/

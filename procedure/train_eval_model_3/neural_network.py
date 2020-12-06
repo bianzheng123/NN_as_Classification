@@ -92,20 +92,12 @@ class NeuralNetwork(classifier.Classifier):
             'final_recall': cur_recall
         }
 
-    def _eval(self, query, label_map):
+    def _eval(self, query):
         query = torch.tensor(query)
         eval_res = None
         with torch.no_grad():
             eval_res = self.model(query)
-
-        score_table = np.zeros((query.numpy().shape[0], self.base_shape[0]))
-        # 对每一个query加分
-        for j in range(query.shape[0]):
-            # 对每一个cluster加分
-            for k in range(eval_res.size(1)):
-                score_item_idx_l = label_map[k]
-                score_table[j][score_item_idx_l] = eval_res[j][k].item()
-        self.result = score_table
+            self.result = eval_res
 
 
 class NNModel(nn.Module):

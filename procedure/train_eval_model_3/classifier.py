@@ -35,10 +35,10 @@ class Classifier:
     def _train(self, base, trainset):
         pass
 
-    def eval(self, query, label_map):
+    def eval(self, query):
         start_time = time.time()
         print('start evaluate %s' % self.obj_id)
-        self._eval(query, label_map)
+        self._eval(query)
         print('finish evaluate %s' % self.obj_id)
         end_time = time.time()
         self.intermediate_config['eval_time'] = end_time - start_time
@@ -48,7 +48,7 @@ class Classifier:
     query是二维数组, 批量处理
     '''
 
-    def _eval(self, query, label_map):
+    def _eval(self, query):
         pass
 
     def save(self):

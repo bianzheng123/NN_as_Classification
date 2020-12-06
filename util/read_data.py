@@ -55,5 +55,5 @@ def get_score_table_intermediate_config(dire):
         short_term_config_before_run = json.load(f)
     with open(intermediate_result_dir, 'r') as f:
         intermediate_result = json.load(f)
-    total_score_table = np.loadtxt(total_score_table_dir)
-    return long_term_config, short_term_config, short_term_config_before_run, intermediate_result, total_score_table
+    f_total_score_table = open(total_score_table_dir, 'r')
+    return long_term_config, short_term_config, short_term_config_before_run, intermediate_result, f_total_score_table

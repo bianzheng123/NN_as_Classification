@@ -16,7 +16,7 @@ def integrate_result(config_dir):
     short_term_config_m = {}
     short_term_config_before_run_m = {}
     intermediate_result_m = {}
-    total_score_table_l = []
+    score_table_ptr_l = []
 
     classifier_fname_l = config['classifier_fname_l']
     for classifier_fname in classifier_fname_l:
@@ -28,7 +28,7 @@ def integrate_result(config_dir):
         short_term_config_m[classifier_fname] = tmp_intermediate_result[1]
         short_term_config_before_run_m[classifier_fname] = tmp_intermediate_result[2]
         intermediate_result_m[classifier_fname] = tmp_intermediate_result[3]
-        total_score_table_l.append(tmp_intermediate_result[4])
+        score_table_ptr_l.append(tmp_intermediate_result[4])
         # long_term_config, short_term_config, short_term_config_before_run, intermediate_result, total_score_table
 
     print('integrate config complete')
@@ -47,8 +47,7 @@ def integrate_result(config_dir):
         'program_result_dir': program_result_dir,
         'efSearch_l': config['efSearch_l'],
     }
-    # 结果整合与中间结果分开
-    result_integrate.integrate(total_score_table_l, gnd, result_integrate_config)
+    result_integrate.integrate(score_table_ptr_l, gnd, result_integrate_config)
 
     save_config_config = {
         'long_term_config': long_term_config_m,

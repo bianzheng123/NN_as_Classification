@@ -42,8 +42,9 @@ def train_eval(long_term_config_dir, short_term_config_dir):
     }
     model_l = partition_preprocess.preprocess(base, partition_preprocess_config)
 
-    score_table_l = []
+    cluster_score_l = []
     intermediate_result_l = []
+    label_map_l = []
     for model in model_l:
         partition_info, model_info = dataset_partition.partition(base, model)
         partition_intermediate = model_info[1]
@@ -63,10 +64,8 @@ def train_eval(long_term_config_dir, short_term_config_dir):
         train_model_config['entity_number'] = model_info[0]['entity_number']
         train_model_config['program_train_para_dir'] = program_train_para_dir
 
-        label_map = partition_info[1]
-        score_table, train_eval_intermediate = train_eval_model.train_eval_model(base, query, label_map, trainset,
+        cluster_score, train_eval_intermediate = train_eval_model.train_eval_model(base, query, trainset,
                                                                                  train_model_config)
-
         intermediate = {
             "ins_id": '%d_%d' % (model_info[0]["entity_number"], model_info[0]["classifier_number"]),
             'dataset_partition': partition_intermediate,
@@ -74,14 +73,16 @@ def train_eval(long_term_config_dir, short_term_config_dir):
             'train_eval_model': train_eval_intermediate
         }
         intermediate_result_l.append(intermediate)
-        score_table_l.append(score_table)
+        cluster_score_l.append(cluster_score)
+        label_map = partition_info[1]
+        label_map_l.append(label_map)
 
-    # 保存score_table
-    score_table_l = np.array(score_table_l)
     save_classifier_config = {
-        'program_train_para_dir': program_train_para_dir
+        'program_train_para_dir': program_train_para_dir,
+        'n_item': base.shape[0]
     }
-    train_eval_model.save_score_table(score_table_l, save_classifier_config)
+    # cluster_score_l和label_map_l整合成score_table并保存
+    train_eval_model.integrate_save_score_table(cluster_score_l, label_map_l, save_classifier_config)
 
     # 保存中间结果以及配置文件
     save_config_config = {

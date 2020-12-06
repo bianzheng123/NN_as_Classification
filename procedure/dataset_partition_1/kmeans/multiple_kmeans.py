@@ -24,5 +24,6 @@ class KMeans(base_partition.BasePartition):
             tmp_dis = [np.linalg.norm(vecs - centroid) for centroid in self.centroid_l]
             tmp_dis = np.array([tmp_dis])
             distance_table = np.append(distance_table, tmp_dis, axis=0)
+        # print(distance_table.shape)
         # 得到最近的那个质心作为标签
-        self.labels = np.argmax(distance_table, axis=1)
+        self.labels = np.argmin(distance_table, axis=1)
