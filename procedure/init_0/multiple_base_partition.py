@@ -3,8 +3,9 @@ import os
 import copy
 
 '''
-子类需要重写get_model方法, 返回模型
-还需要重写preprocess方法
+the son class should rewrite the funciton of get_model() and preprocess()
+get_model() is to return the model of classifier
+preprocess is to return the array of the model
 '''
 
 
@@ -17,7 +18,7 @@ class MultipleBasePartition:
         self.kahip_dir = config['kahip_dir']
         self.entity_number = config['entity_number']
         self.model_l = []
-        # 用于识别的标识
+        # for identification
         self.obj_id = None
         for i in range(self.n_instance):
             tmp_config = copy.deepcopy(config['dataset_partition'])
@@ -32,7 +33,7 @@ class MultipleBasePartition:
             tmp_model = self.get_model(tmp_config)
             self.model_l.append(tmp_model)
 
-    # 直接返回模型的实例
+    # the son class should set the list of model to self.model_l
     def preprocess(self, base):
         print('start preprocessing %s_%d' % (self.obj_id, self.entity_number))
         self._preprocess(base)

@@ -6,7 +6,7 @@ def prepare_train(base, base_base_gnd, partition_info, config):
         config['program_train_para_dir'], config['entity_number'], config['classifier_number'])
     config['save_dir'] = save_dir
     trainset_ins = data_node_factory(config)
-    # 将来如果需要使用learn数据, 这个方法就多加一个learn变量
+    # if need the learn data, add a new learn variable here in this function
     trainset_info = trainset_ins.prepare(base, base_base_gnd, partition_info)
     # trainset_ins.save()
     return trainset_info
@@ -16,4 +16,4 @@ def data_node_factory(config):
     _type = config['type']
     if _type == 'neighbor':
         return neighbor.NeighborDataNode(config)
-    raise Exception('准备训练数据类型不支持')
+    raise Exception('do not support the type of training data preparation')

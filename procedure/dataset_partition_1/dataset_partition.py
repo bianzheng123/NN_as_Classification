@@ -1,5 +1,5 @@
 '''
-输入base, 输出partition的文本信息
+input base and output the text information of partition
 '''
 
 

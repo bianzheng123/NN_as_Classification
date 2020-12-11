@@ -14,7 +14,7 @@ class KMeans(base_partition.BasePartition):
         self.centroid_l = centroid_l
 
     def _partition(self, base):
-        # 对每一个item计算与质心的距离, 得到distance_table
+        # count the distance for each item and centroid to get the distance_table
         distance_table = None
         for i, vecs in enumerate(base, 0):
             if i == 0:
@@ -25,5 +25,5 @@ class KMeans(base_partition.BasePartition):
             tmp_dis = np.array([tmp_dis])
             distance_table = np.append(distance_table, tmp_dis, axis=0)
         # print(distance_table.shape)
-        # 得到最近的那个质心作为标签
+        # get the nearest centroid and use it as the label
         self.labels = np.argmin(distance_table, axis=1)

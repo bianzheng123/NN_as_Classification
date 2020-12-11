@@ -6,7 +6,6 @@ from util import dir_io
 class BaseGraph:
     def __init__(self, config):
         self.type = config['type']
-        # 保存该模型参数的地址
         self.save_dir = config['save_dir']
         self.classifier_number = config['classifier_number']
         self.graph = None
@@ -15,7 +14,7 @@ class BaseGraph:
         pass
 
     def save(self):
-        # self.graph是数组包着数组
+        # self.graph is the 2d array
         vertices = len(self.graph)
         edges = 0
         for vecs in self.graph:

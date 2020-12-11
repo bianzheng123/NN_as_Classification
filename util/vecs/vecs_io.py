@@ -2,8 +2,8 @@ import numpy as np
 import struct
 
 
-# 用于解析vecs后缀的文件
-# np.set_printoptions(threshold=np.inf)  # 打印numpy数组时显示全部的内容
+# to get the .vecs
+# np.set_printoptions(threshold=np.inf)  # display all the content when print the numpy array
 
 
 def ivecs_read(fname):
@@ -23,7 +23,7 @@ def bvecs_read(fname):
     return a.reshape(-1, d + 4)[:, 4:].copy(), d
 
 
-# 将文件的一部分加入缓存, 防止文件过大导致加载很慢
+# put the part of file into cache, prevent the slow load that file is too big
 def fvecs_read_mmap(fname):
     x = np.memmap(fname, dtype='int32', mode='r', order='C')
     # x = np.memmap(fname, dtype='int32')
@@ -45,7 +45,7 @@ def ivecs_read_mmap(fname):
     return x.reshape(-1, d + 1)[:, 1:], d
 
 
-# 将文件以vecs的形式保存
+# store in format of vecs
 def fvecs_write(filename, vecs):
     f = open(filename, "wb")
     dimension = [len(vecs[0])]

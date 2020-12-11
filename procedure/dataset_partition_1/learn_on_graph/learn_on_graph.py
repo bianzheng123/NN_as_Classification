@@ -23,7 +23,7 @@ class LearnOnGraph(base_partition.BasePartition):
         self.graph_partition()
 
     def graph_partition(self):
-        # 调用kahip, 然后读取partition.txt
+        # this function is to invoke kahip and read partition.txt
         dir_io.save_file('%s/partition.txt' % self.save_dir)
         kahip_command = '%s/deploy/kaffpa %s/graph.graph --preconfiguration=%s --output_filename=%s/partition.txt ' \
                         '--k=%d --time_limit=%d' % (
@@ -42,4 +42,4 @@ def graph_factory(config):
         return knn.KNN(config)
     elif _type == 'hnsw':
         return hnsw.HNSW(config)
-    raise Exception('建图类型不支持')
+    raise Exception('do not support the type of buildin a graph')

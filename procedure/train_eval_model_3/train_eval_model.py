@@ -9,7 +9,7 @@ def train_eval_model(base, query, trainset, config):
         config['program_train_para_dir'], config['entity_number'], config['classifier_number'])
     config['save_dir'] = save_dir
     train_model_ins = train_model_factory(config)
-    # 将来如果需要使用learn数据, 这个方法就多加一个learn变量
+    # if use the learn dataset, add the learn variable in here
     train_model_ins.train(base, trainset)
     eval_result, intermediate_config = train_model_ins.eval(query)
     # train_model_ins.save()
@@ -17,7 +17,7 @@ def train_eval_model(base, query, trainset, config):
 
 
 '''
-统计出总的score_table
+count the total score_table from all the score table in each classifier
 '''
 
 
@@ -47,4 +47,4 @@ def train_model_factory(config):
     _type = config['type']
     if _type == 'neural_network':
         return neural_network.NeuralNetwork(config)
-    raise Exception('准备训练数据类型不支持')
+    raise Exception('do not support the type of training data')

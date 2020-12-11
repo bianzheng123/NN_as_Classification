@@ -7,18 +7,17 @@ from util import dir_io
 class BasePartition:
     def __init__(self, config):
         self.type = config['type']
-        # 保存该模型参数的地址
         self.save_dir = '%s/dataset_partition' % config['save_dir']
         os.system('sudo mkdir %s' % self.save_dir)
         self.classifier_number = config['classifier_number']
         self.entity_number = config['entity_number']
         self.obj_id = "%s_%d_%d" % (self.type, self.entity_number, self.classifier_number)
-        # 类的数量
+        # number of cluster
         self.n_cluster = config['n_cluster']
         self.model_info = None
-        # key是每一个类的编号, value是属于该类的点在base对应的索引
+        # the key of map is the number of every class, its value is the index that belongs to the cluster in base
         self.label_map = {}
-        # 计数不同桶中点的数量
+        # to count the number of points in different bucket
         self.n_point_label = None
 
         self.labels = None
@@ -41,14 +40,14 @@ class BasePartition:
         return (self.labels, self.label_map), (model_info, intermediate_config)
 
     '''
-    生成self.labels, 就是对每一个item赋值label
+    son class should get the self.labels, which is a list, the label for each item
     '''
 
     def _partition(self, base):
         pass
 
-    # 填充self.label, 就是根据cluster编号将base分成一类
-    # 输入时需要转换成numpy格式
+    # the function partition the base according to the number of cluster
+    # the labels should be the array of numpy
     def get_labels(self, labels):
         self.n_point_label = []
         for cluster_i in range(self.n_cluster):

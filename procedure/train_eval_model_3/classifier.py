@@ -8,15 +8,14 @@ from util import dir_io
 class Classifier:
     def __init__(self, config):
         self.type = config['type']
-        # 保存该模型参数的地址
         self.save_dir = '%s/train_model' % config['save_dir']
         self.entity_number = config['entity_number']
         self.classifier_number = config['classifier_number']
         self.obj_id = "%s_%d_%d" % (self.type, self.entity_number, self.classifier_number)
         self.n_cluster = config['n_cluster']
-        # 就是score_table, query.shape[0] * base.shape[0]
+        # this is the score_table, it stores the score of each classifier for each query, its shape is query.shape[0] * base.shape[0]
         self.result = None
-        # 存放中间结果参数
+        # store the intermediate parameter such as loss and time consumed
         self.intermediate_config = {}
 
     def train(self, base, trainset):
@@ -28,9 +27,8 @@ class Classifier:
         self.intermediate_config['training_time'] = end_time - start_time
 
     '''
-    训练, 训练后的参数放到train_para中
-    -base 数据集
-    -trainset 包括了trainloader, valloader, 是trainset的一个实例
+    -base dataset
+    -trainset include trainloader, valloader, which is a instance of trainset
     '''
 
     def _train(self, base, trainset):
@@ -46,7 +44,7 @@ class Classifier:
         return self.result, self.intermediate_config
 
     '''
-    query是二维数组, 批量处理
+    query is a 2d array, this function enable batch process
     '''
 
     def _eval(self, query):

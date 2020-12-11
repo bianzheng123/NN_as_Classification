@@ -11,15 +11,14 @@ class HNSW(base_graph.BaseGraph):
         self.k_graph = config['k_graph']
 
     '''
-    输入base文件
-    输出点，边的数量以及加权图
-    读取bvecs文件, 使用暴力算出每一个点的最邻近距离, 转换成图, 输出为文本
+    input the base file
+    output the point, edge
     '''
 
     def build_graph(self, base):
         vertices = len(base)
         if vertices < self.k_graph + 1:
-            raise Exception("建图错误, 输入数据量太少, 不能满足边的数量")
+            raise Exception("build graph error, input dataset is too samll, do not meet the demand of number of edge")
 
         shuffle_base, permutation_reverse = self.shuffle_base(base, vertices)
 
@@ -31,9 +30,9 @@ class HNSW(base_graph.BaseGraph):
 
     @staticmethod
     def shuffle_base(base, vertices):
-        # shuffle时应该i应该插入到permutation_insert[i]的位置
+        # this variable means i should insert into permutation_insert[i] during shuffle
         permutation_insert = np.random.permutation(vertices)
-        # shuffle后还原时现在的位置i应该插入到permutation_reverse[i]的位置
+        # after shuffle, to restore, current i should insert into permutation_reverse[i]
         permutation_reverse = np.zeros(vertices).astype(np.int)
         for i in range(vertices):
             permutation_reverse[permutation_insert[i]] = i

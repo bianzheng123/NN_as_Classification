@@ -14,7 +14,7 @@ class NeighborDataNode(base_data_node.BaseDataNode):
     def _prepare(self, base, base_base_gnd, partition_info):
         # self.datanode
         partition = partition_info[0]
-        # 取前label_k个gnd作为训练集的标签
+        # extract the top label_k of gnd as the label of training set
         ranks = base_base_gnd[:, :self.label_k]
         # ranks = vecs_util.get_gnd_numpy(base, base, self.label_k)
 
@@ -28,17 +28,14 @@ class NeighborDataNode(base_data_node.BaseDataNode):
         # datalen x opt.k (or the number of nearest neighbors to take for computing acc)
         neigh_cls = torch.gather(partition_exp, 1, ranks)
         '''
-        neigh_cls是一个二维数组
-        存放的是每一个节点中相邻节点的partition信息
-        每一行的最后一个再加上自己的partition信息
-        5000 * 51
+        neigh_cls is a 2d array, stores the partition label of every neighbor node for a single node
+        for each row, the last position is added by the self partition label
         '''
         neigh_cls = torch.cat((neigh_cls, partition.unsqueeze(-1)), dim=1)
         cls_ones = torch.ones(datalen, neigh_cls.size(-1))
         cls_distr = torch.zeros(datalen, self.n_cluster)
         '''
-        每一个节点的相邻节点在每一个partition的分布, 包括自己
-        每一行相加为51
+        cls_distr means the distribution for neighboring point in each node, including itself
         '''
         cls_distr.scatter_add_(1, neigh_cls, cls_ones)
         cls_distr /= neigh_cls.size(-1)

@@ -4,9 +4,9 @@ import copy
 from util import dir_io
 
 """
-通过相似性搜索得到gnd文件
-输入: base数组, query数组, k(多少个临近的结果)
-输出: numpy文件
+get the gnd according to faiss
+input:base, query, k
+output: numpy file
 """
 
 

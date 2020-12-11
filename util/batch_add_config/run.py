@@ -58,6 +58,6 @@ if __name__ == '__main__':
     for fname in save_fname_content_m:
         config['independent_config'] = [save_fname_content_m[fname]]
         config['program_fname'] = fname
-        config['n_cluster'] = 16
+        config['n_cluster'] = 256
         with open('%s/%s.json' % (save_base_dir, fname), 'w') as f:
             json.dump(config, f)

@@ -19,7 +19,7 @@ class NeuralNetwork(classifier.Classifier):
         weight_decay = 10 ** (-4)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
         self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=milestones, gamma=0.21)
-        # 用于记录base的形状, eval时生成score table会用到
+        # the shape of base, which is used in the function eval() to create the score_table
         self.base_shape = None
         self.intermediate_config['train_intermediate'] = []
 
@@ -30,7 +30,7 @@ class NeuralNetwork(classifier.Classifier):
         self.model.train()
 
         y = trainloader.dataset.tensors[1]
-        # 计数每一个标签不同桶中点的数量
+        # count the number of neighbor point for each label in different bucket
         self.candidate_count_l = [(y == i).sum() for i in range(self.n_cluster)]
 
         X = []
@@ -49,7 +49,7 @@ class NeuralNetwork(classifier.Classifier):
                 ds = base[ds_idx]
                 predicted = self.model(ds)
 
-                # 计算交叉熵
+                # count cross entropy
                 pred = torch.log(predicted).unsqueeze(-1)
                 loss = -torch.bmm(neighbor_distribution.unsqueeze(1), pred).sum()
                 loss_l.append(loss.item())
@@ -59,7 +59,7 @@ class NeuralNetwork(classifier.Classifier):
                 correct += (predicted.argmax(dim=1) == partition).sum().item()
             cur_recall = correct / len(trainloader.dataset)
 
-            # 从抽出的数据集计算recall
+            # count recall from the extracted dataset in base
             val_cor = 0
             self.model.eval()
             with torch.no_grad():

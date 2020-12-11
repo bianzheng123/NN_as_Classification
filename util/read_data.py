@@ -40,7 +40,7 @@ def read_label(label_dir):
     return labels
 
 
-# dire指的是当前分类器的train_para路径
+# dire means the train_para directory of current classifier
 def get_score_table_intermediate_config(dire):
     long_term_config_dir = '%s/config/long_term_config.json' % dire
     short_term_config_dir = '%s/config/short_term_config.json' % dire

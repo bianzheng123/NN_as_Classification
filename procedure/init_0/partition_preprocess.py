@@ -38,4 +38,4 @@ def factory(config):
             return independent_kmeans.IndependentKMeans(config)
     elif _type == 'learn_on_graph':
         return multiple_learn_on_graph.MultipleLearnOnGraph(config)
-    raise Exception('partition类型不支持')
+    raise Exception('do not support the type of partition')

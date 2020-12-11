@@ -4,8 +4,7 @@ import numpy as np
 import sklearn.cluster as cls
 
 '''
-子类需要
-1. 确定用于mk聚类的kmeans模型即self.model
+the son class need to get the object of m-kmeans, that is self.model
 '''
 
 
@@ -13,8 +12,8 @@ class BaseMultipleKMeans(multiple_base_partition.MultipleBasePartition):
 
     def __init__(self, config):
         super(BaseMultipleKMeans, self).__init__(config)
-        # 用于构建m个kmeans的质心们, m * k * d
         self.specific_type = config['specific_type']
+        # to construct the centroid of m-kmeans, the shape is m * k * d
         self.centroid_l_l = None
         self.obj_id = '%s_%s' % (self.type, self.specific_type)
         self.max_iter = config['dataset_partition']['max_iter']
@@ -25,25 +24,25 @@ class BaseMultipleKMeans(multiple_base_partition.MultipleBasePartition):
         return multiple_kmeans.KMeans(config)
 
     def _preprocess(self, base):
-        # 得到m个kmeans的质心
+        # return the centroid of m-kmeans
         self.model.fit(base)
         # mk * d
         centroids = self.model.cluster_centers_
 
-        # 用于测试查看初始状态label的分布
+        # to see the initial distribution of label
         # self.centroids = centroids
         # self.get_label(self.model.labels_)
         # print("centroids", centroids[:, :2])
 
         centroid_sort_idx = self.random_projection(centroids)
-        # random_projection将数组进行排序, 使其符合k组, 每组m个的形式
+        # use random_projection() to sort the array, to fit the shape k * m. k groups with m points in each group
         # centroid_sort_idx = centroid_sort_idx.reshape(self.n_instance, -1)
         centroid_sort_idx = centroid_sort_idx.reshape(self.n_cluster, -1)
 
-        # 这里处于计算考虑, 不再搞随机抽取
+        # for the consideration of complexity, do not use the random extract.
         # total_permutation = self.get_total_permutation()
 
-        # 在这k组中每组各提取一个向量, 一个模型的质心
+        # here extract a vector for each group and we get the k vectors. Use the k vectors as the centroid of the model
         centroid_l_l = []
         for i in range(self.n_instance):
             model_centroid_l = []
@@ -54,15 +53,15 @@ class BaseMultipleKMeans(multiple_base_partition.MultipleBasePartition):
             centroid_l_l.append(model_centroid_l)
         self.centroid_l_l = np.array(centroid_l_l)
 
-        # 将这些质心分配给各个模型实例
+        # assign the centroid to each model instance
         for i in range(self.n_instance):
             # print("actual centroids", self.centroid_l_l[i][:, :2])
             self.model_l[i].get_centroid(self.centroid_l_l[i])
         return self.model_l
 
-    # 得到group后生成随机抽取顺序
+    # generate random permutation after got the group
     def get_total_permutation(self):
-        # 随机抽取
+        # random select
         total_permutation = None  # n_cluster * n_instance
         for i in range(self.n_cluster):
             arr = np.random.permutation(self.n_instance)
@@ -93,7 +92,7 @@ class BaseMultipleKMeans(multiple_base_partition.MultipleBasePartition):
             random_num = np.dot(random_vector, centroid_l[i])
             to_append = np.array([random_num])
             random_l = np.append(random_l, to_append)
-        # random_l是质心和高斯分布点乘后的结果
+        # random_l is the result of dot product of centroid and random vector(follow Gauss distribution)
         depth += 1
         sort_indices = np.argsort(random_l[start:end]) + start
         mid = int((start + end - 1) / 2)
@@ -101,7 +100,7 @@ class BaseMultipleKMeans(multiple_base_partition.MultipleBasePartition):
         BaseMultipleKMeans.divide_and_conquer(depth, k, centroid_l, start, mid, res_idx)
         BaseMultipleKMeans.divide_and_conquer(depth, k, centroid_l, mid, end, res_idx)
 
-    # 用于测试查看不同点的分布情况
+    # to see the distribution of different centroids
     def get_label(self, labels):
         self.n_point_label = []
         self.label_map = {}

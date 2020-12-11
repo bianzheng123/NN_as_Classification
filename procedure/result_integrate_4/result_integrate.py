@@ -48,7 +48,10 @@ def integrate(score_table_ptr_l, gnd, config):
         print('recall: {}, n_candidates: {}'.format(recall_avg, efSearch))
 
     save_json(config['program_result_dir'], 'result.json', result_n_candidate_recall)
-    save_json(config['program_result_dir'], 'recall_l.json', recall_l)
+
+    recall_l_save_dir = '%s/recall_l.txt' % config['program_result_dir']
+    dir_io.save_file(recall_l_save_dir)
+    np.savetxt(recall_l_save_dir, recall_l, fmt='%.3f')
 
 
 '''

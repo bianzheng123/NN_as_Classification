@@ -31,8 +31,6 @@ def train_eval(long_term_config_dir, short_term_config_dir):
     }
     base, query, learn, gnd, base_base_gnd = load_data.load_data_npy(load_data_config)
 
-    # 将代码变成每一个分类器都单独运行，而不是批量执行某一个步骤
-    # 执行切分的不可并行化结果
     program_train_para_dir = '%s/train_para/%s' % (long_term_config['project_dir'], short_term_config['program_fname'])
 
     dir_io.delete_dir_if_exist(program_train_para_dir)
@@ -43,7 +41,8 @@ def train_eval(long_term_config_dir, short_term_config_dir):
         'kahip_dir': long_term_config['kahip_dir'],
         "program_train_para_dir": program_train_para_dir,
     }
-    # init model object for each method
+    # get the initial classifier object for each method
+    # preprocess to get enable parallelization, however, when use the Multiprocessor, some bug happen
     model_l, preprocess_intermediate = partition_preprocess.preprocess(base, partition_preprocess_config)
 
     cluster_score_l = []
@@ -58,7 +57,7 @@ def train_eval(long_term_config_dir, short_term_config_dir):
         prepare_train_config['program_train_para_dir'] = program_train_para_dir
         prepare_train_config['classifier_number'] = model_info[0]["classifier_number"]
         prepare_train_config['entity_number'] = model_info[0]["entity_number"]
-        # 准备训练的代码将要完成
+        # to prepare for the training set and evaluating set
         trainset, prepare_train_intermediate = prepare_train_sample.prepare_train(base, base_base_gnd, partition_info,
                                                                                   prepare_train_config)
 
@@ -85,7 +84,7 @@ def train_eval(long_term_config_dir, short_term_config_dir):
         'program_train_para_dir': program_train_para_dir,
         'n_item': base.shape[0]
     }
-    # cluster_score_l和label_map_l整合成score_table并保存
+    # integrate the cluster_score_l and label_map_l to get the score_table and store the score_table in /train_para
     train_eval_model.integrate_save_score_table(cluster_score_l, label_map_l, save_classifier_config)
 
     total_end_time = time.time()
@@ -95,7 +94,7 @@ def train_eval(long_term_config_dir, short_term_config_dir):
         'classifier': intermediate_result_l
     }
 
-    # 保存中间结果以及配置文件
+    # save intermediate and configure file
     save_config_config = {
         'long_term_config': long_term_config,
         'short_term_config': short_term_config,

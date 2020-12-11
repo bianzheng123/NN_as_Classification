@@ -9,7 +9,6 @@ class BaseDataNode:
     def __init__(self, config):
         self.type = config['type']
         self.output_type = config['output']
-        # 保存该模型参数的地址
         self.save_dir = '%s/prepare_train_sample' % config['save_dir']
         self.entity_number = config['entity_number']
         self.classifier_number = config['classifier_number']
@@ -40,8 +39,8 @@ class BaseDataNode:
     -base
     -partition_info
     Output:
-    -已经打包好的训练集以及测试集
-    将打包好的数据集放到self.trainloader和self.valloader中
+    the training set and testing set that have already packed
+    put the packed dataset into self.trainload and self.valloader
     '''
 
     def _prepare(self, base, partition_info):
