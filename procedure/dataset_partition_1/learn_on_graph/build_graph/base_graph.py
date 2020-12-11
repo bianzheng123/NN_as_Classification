@@ -1,5 +1,6 @@
 import numpy as np
 import os
+from util import dir_io
 
 
 class BaseGraph:
@@ -23,6 +24,7 @@ class BaseGraph:
         edges = edges / 2
 
         save_dir = '%s/graph.graph' % self.save_dir
+        dir_io.save_file(save_dir)
         with open(save_dir, 'w') as f:
             f.write("%d %d\n" % (vertices, edges))
             for nearest_index in self.graph:

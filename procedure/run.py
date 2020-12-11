@@ -6,6 +6,7 @@ from procedure.train_eval_model_3 import train_eval_model
 from procedure.result_integrate_4 import result_integrate
 import json
 import numpy as np
+import time
 import os
 from util import dir_io
 
@@ -20,7 +21,9 @@ def train_eval(long_term_config_dir, short_term_config_dir):
     with open(short_term_config_dir, 'r') as f:
         short_term_config_before_run = json.load(f)
 
-    # 加载数据
+    total_start_time = time.time()
+
+    # load data
     data_dir = '%s/data/%s_%d' % (
         long_term_config['project_dir'], long_term_config['data_fname'], long_term_config['k'])
     load_data_config = {
@@ -40,7 +43,8 @@ def train_eval(long_term_config_dir, short_term_config_dir):
         'kahip_dir': long_term_config['kahip_dir'],
         "program_train_para_dir": program_train_para_dir,
     }
-    model_l = partition_preprocess.preprocess(base, partition_preprocess_config)
+    # init model object for each method
+    model_l, preprocess_intermediate = partition_preprocess.preprocess(base, partition_preprocess_config)
 
     cluster_score_l = []
     intermediate_result_l = []
@@ -84,12 +88,19 @@ def train_eval(long_term_config_dir, short_term_config_dir):
     # cluster_score_l和label_map_l整合成score_table并保存
     train_eval_model.integrate_save_score_table(cluster_score_l, label_map_l, save_classifier_config)
 
+    total_end_time = time.time()
+    intermediate_result_final = {
+        'total_time_consume': total_end_time - total_start_time,
+        'preprocess': preprocess_intermediate,
+        'classifier': intermediate_result_l
+    }
+
     # 保存中间结果以及配置文件
     save_config_config = {
         'long_term_config': long_term_config,
         'short_term_config': short_term_config,
         'short_term_config_before_run': short_term_config_before_run,
-        'intermediate_result': intermediate_result_l,
+        'intermediate_result': intermediate_result_final,
         'save_dir': program_train_para_dir,
         'program_fname': short_term_config['program_fname']
     }

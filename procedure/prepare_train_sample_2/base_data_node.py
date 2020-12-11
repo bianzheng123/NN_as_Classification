@@ -2,6 +2,7 @@ import numpy as np
 import os
 import torch
 import time
+from util import dir_io
 
 
 class BaseDataNode:
@@ -47,10 +48,13 @@ class BaseDataNode:
         pass
 
     def save(self):
-        os.system('mkdir %s' % self.save_dir)
+        os.system('sudo mkdir %s' % self.save_dir)
         save_trainloader_dir = '%s/trainloader.pth' % self.save_dir
+        dir_io.save_file(save_trainloader_dir)
         torch.save(self.trainloader, save_trainloader_dir)
+        
         save_valloader_dir = '%s/valloader.pth' % self.save_dir
+        dir_io.save_file(save_valloader_dir)
         torch.save(self.valloader, save_valloader_dir)
 
     def __str__(self):

@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import time
+from util import dir_io
 
 
 class BasePartition:
@@ -8,7 +9,7 @@ class BasePartition:
         self.type = config['type']
         # 保存该模型参数的地址
         self.save_dir = '%s/dataset_partition' % config['save_dir']
-        os.system('mkdir %s' % self.save_dir)
+        os.system('sudo mkdir %s' % self.save_dir)
         self.classifier_number = config['classifier_number']
         self.entity_number = config['entity_number']
         self.obj_id = "%s_%d_%d" % (self.type, self.entity_number, self.classifier_number)
@@ -57,6 +58,7 @@ class BasePartition:
 
     def save(self):
         save_label_dir = '%s/partition.txt' % self.save_dir
+        dir_io.save_file(save_label_dir)
         np.savetxt(save_label_dir, self.labels, fmt='%i')
         # save_distribution_dir = '%s/distribution_partition.txt' % self.save_dir
         # np.savetxt(save_distribution_dir, self.n_point_label, fmt='%i')

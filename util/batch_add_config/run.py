@@ -6,8 +6,8 @@ if __name__ == '__main__':
         config = json.load(f)
     save_base_dir = '/home/bz/NN_as_Classification/config/run_2/specific_config/sift'
     save_fname_content_m = {
-        'sift_2_knn': {
-            "n_instance": 2,
+        'sift_4_knn': {
+            "n_instance": 4,
             "type": "learn_on_graph",
             "specific_type": "knn",
             "dataset_partition": {
@@ -18,12 +18,12 @@ if __name__ == '__main__':
                 "graph_partition": {
                     "type": "kahip",
                     "preconfiguration": "eco",
-                    "time_limit": 180
+                    "time_limit": 300
                 }
             }
         },
-        'sift_2_hnsw': {
-            "n_instance": 2,
+        'sift_4_hnsw': {
+            "n_instance": 4,
             "type": "learn_on_graph",
             "specific_type": "hnsw",
             "dataset_partition": {
@@ -34,22 +34,22 @@ if __name__ == '__main__':
                 "graph_partition": {
                     "type": "kahip",
                     "preconfiguration": "eco",
-                    "time_limit": 180
+                    "time_limit": 300
                 }
             }
         },
-        'sift_2_kmeans_independent': {
-            "n_instance": 2,
+        'sift_4_kmeans_independent': {
+            "n_instance": 4,
             "type": "kmeans",
             "specific_type": "independent",
             "dataset_partition": {
                 "max_iter": 40
             }
         },
-        'sift_2_kmeans_multiple_batch': {
-            "n_instance": 2,
+        'sift_4_kmeans_multiple': {
+            "n_instance": 4,
             "type": "kmeans",
-            "specific_type": "multiple_batch",
+            "specific_type": "multiple",
             "dataset_partition": {
                 "max_iter": 40
             }
@@ -58,5 +58,6 @@ if __name__ == '__main__':
     for fname in save_fname_content_m:
         config['independent_config'] = [save_fname_content_m[fname]]
         config['program_fname'] = fname
+        config['n_cluster'] = 16
         with open('%s/%s.json' % (save_base_dir, fname), 'w') as f:
             json.dump(config, f)

@@ -2,6 +2,7 @@ import numpy as np
 import os
 import time
 import torch
+from util import dir_io
 
 
 class Classifier:
@@ -52,8 +53,9 @@ class Classifier:
         pass
 
     def save(self):
-        os.system('mkdir %s' % self.save_dir)
+        os.system('sudo mkdir %s' % self.save_dir)
         eval_res_dir = '%s/eval_res.txt' % self.save_dir
+        dir_io.save_file(eval_res_dir)
         np.savetxt(eval_res_dir, self.result, fmt='%.3f')
 
     def __str__(self):

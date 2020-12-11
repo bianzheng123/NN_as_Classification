@@ -1,7 +1,7 @@
 from procedure import integrate_result
-
+from util import parse_args_integrate_result
 
 if __name__ == '__main__':
-    config_sub_dir = '/home/bz/NN_as_Classification/config/integrate_result_3/'
-    config_fname = 'config.json'
-    integrate_result.integrate_result(config_sub_dir + config_fname)
+    args = parse_args_integrate_result.parse_args()
+    integrate_result_config_dir = args.integrate_result_config_dir
+    integrate_result.integrate_result(integrate_result_config_dir)

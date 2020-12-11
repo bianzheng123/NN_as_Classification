@@ -11,7 +11,7 @@ def integrate_result(config_dir):
 
     project_train_para_dir = '%s/train_para' % config['project_dir']
 
-    # 获得每一个分类器的结果以及配置文件
+    # get the result for every classifier and its config file
     long_term_config_m = {}
     short_term_config_m = {}
     short_term_config_before_run_m = {}
@@ -33,7 +33,7 @@ def integrate_result(config_dir):
 
     print('integrate config complete')
 
-    # 加载gnd
+    # load gnd
     data_dir = '%s/data/%s_%d/gnd.npy' % (
         config['project_dir'], config['data_fname'], config['k'])
     gnd = load_data.load_single_data_npy(data_dir)

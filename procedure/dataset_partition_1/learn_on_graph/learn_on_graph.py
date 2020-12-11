@@ -2,7 +2,7 @@ from procedure.dataset_partition_1 import base_partition
 from procedure.dataset_partition_1.learn_on_graph.build_graph import knn, hnsw
 import numpy as np
 import os
-from util import read_data
+from util import read_data, dir_io
 
 
 class LearnOnGraph(base_partition.BasePartition):
@@ -24,6 +24,7 @@ class LearnOnGraph(base_partition.BasePartition):
 
     def graph_partition(self):
         # 调用kahip, 然后读取partition.txt
+        dir_io.save_file('%s/partition.txt' % self.save_dir)
         kahip_command = '%s/deploy/kaffpa %s/graph.graph --preconfiguration=%s --output_filename=%s/partition.txt ' \
                         '--k=%d --time_limit=%d' % (
                             self.kahip_dir, self.save_dir, self.graph_partition_config['preconfiguration'],

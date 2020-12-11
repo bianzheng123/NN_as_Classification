@@ -1,6 +1,7 @@
 from procedure.train_eval_model_3 import neural_network
 from procedure.result_integrate_4 import result_integrate
 import numpy as np
+from util import dir_io
 
 
 def train_eval_model(base, query, trainset, config):
@@ -24,7 +25,7 @@ def integrate_save_score_table(cluster_score_l, label_map_l, config):
     shape = cluster_score_l[0].shape
 
     total_score_table_dir = '%s/total_score_table.txt' % config['program_train_para_dir']
-
+    dir_io.save_file(total_score_table_dir)
     f_ptr = open(total_score_table_dir, "w")
 
     for i in range(shape[0]):

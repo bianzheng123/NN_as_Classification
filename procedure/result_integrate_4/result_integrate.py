@@ -2,17 +2,20 @@ import torch
 import numpy as np
 import json
 import os
+from util import dir_io
 
 
 def integrate(score_table_ptr_l, gnd, config):
     # long_term_config, short_term_config, short_term_config_before_run, intermediate_result, total_score_table
-    os.system('mkdir %s' % config['program_result_dir'])
+    os.system('sudo mkdir %s' % config['program_result_dir'])
     recall_l = []
     iter_idx = 0
     while True:
         end_of_file = False
-        # 得到总的recall
+        # get the total recall for each query
         total_score_arr = None
+        if iter_idx == 1000:
+            break
         for score_table_ptr in score_table_ptr_l:
             line = score_table_ptr.readline()
             if not line or line == '':
@@ -31,7 +34,7 @@ def integrate(score_table_ptr_l, gnd, config):
 
         iter_idx += 1
     print('get all the recall')
-    # 转置变成了每一行都是相同efsearch下的recall数据
+    # transpose makes the same efsearch in every row of recall
     recall_l = np.array(recall_l).transpose()
 
     result_n_candidate_recall = []
@@ -45,22 +48,23 @@ def integrate(score_table_ptr_l, gnd, config):
         print('recall: {}, n_candidates: {}'.format(recall_avg, efSearch))
 
     save_json(config['program_result_dir'], 'result.json', result_n_candidate_recall)
+    save_json(config['program_result_dir'], 'recall_l.json', recall_l)
 
 
 '''
-score_table: 单个query的score_table
+score_table: the score_table for a single query
 '''
 
 
 def evaluate(score_table, efSearch_l, gnd, k):
-    # 不同efSearch的recall
+    # get recall in different efSearch
     recall_l = []
     score_table = torch.from_numpy(score_table)
 
     total_candidate_index = torch.topk(score_table, dim=0, largest=True, k=efSearch_l[-1])[1]
     for efSearch in efSearch_l:
         candidate_index = total_candidate_index[:efSearch]
-        # 计算每一个query的recall
+        # count recall for every single query
         efsearch_recall = count_recall_single(candidate_index, gnd, k)
         recall_l.append(efsearch_recall)
 
@@ -76,13 +80,14 @@ def count_recall_single(predict_idx, gnd, k):
 
 
 def save_json(save_dir, result_fname, json_file):
+    dir_io.save_file('%s/%s' % (save_dir, result_fname))
     with open('%s/%s' % (save_dir, result_fname), 'w') as f:
         json.dump(json_file, f)
 
 
 def save_config(config):
     save_dir = '%s/config' % config['save_dir']
-    os.system('mkdir %s' % save_dir)
+    os.system('sudo mkdir %s' % save_dir)
 
     long_config = config['long_term_config']
     short_config = config['short_term_config']

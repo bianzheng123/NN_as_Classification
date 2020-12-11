@@ -28,7 +28,7 @@ class MultipleBasePartition:
             tmp_config['kahip_dir'] = self.kahip_dir
             tmp_config['save_dir'] = '%s/Classifier_%d_%d' % (
                 self.program_train_para_dir, self.entity_number, tmp_config['classifier_number'])
-            os.system('mkdir %s' % tmp_config['save_dir'])
+            os.system('sudo mkdir %s' % tmp_config['save_dir'])
             tmp_model = self.get_model(tmp_config)
             self.model_l.append(tmp_model)
 
