@@ -45,25 +45,6 @@ class BasePartition:
     def _partition(self, base):
         pass
 
-    def predict(self, query):
-        start_time = time.time()
-        print('start predict %s' % self.obj_id)
-        pred_cluster = self._predict(query)
-        print('finish predict %s' % self.obj_id)
-        end_time = time.time()
-        intermediate = {
-            'time': end_time - start_time,
-        }
-        return pred_cluster, intermediate
-
-    '''
-    in the son class, it should predict the cluster that query belongs to
-    query is a 2d array with multiple single query
-    '''
-
-    def _predict(self, query):
-        pass
-
     # the function partition the base according to the number of cluster
     # the labels should be the array of numpy
     def get_labels(self, labels):
@@ -76,6 +57,7 @@ class BasePartition:
     def save(self):
         save_label_dir = '%s/partition.txt' % self.save_dir
         dir_io.save_array_txt(save_label_dir, self.labels, '%i')
+
         # save_distribution_dir = '%s/distribution_partition.txt' % self.save_dir
         # dir_io.save_array_txt(save_distribution_dir, self.n_point_label, '%i')
 

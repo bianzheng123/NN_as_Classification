@@ -9,12 +9,13 @@ preprocess is to return the array of the model
 '''
 
 
-class PreprocessBasePartition:
+class MultipleBasePartition:
     def __init__(self, config):
         self.program_train_para_dir = config['program_train_para_dir']
         self.type = config['type']
         self.n_instance = config['n_instance']
         self.n_cluster = config['n_cluster']
+        self.kahip_dir = config['kahip_dir']
         self.entity_number = config['entity_number']
         self.model_l = []
         # for identification
@@ -25,6 +26,7 @@ class PreprocessBasePartition:
             tmp_config['classifier_number'] = i + 1
             tmp_config['entity_number'] = self.entity_number
             tmp_config['n_cluster'] = self.n_cluster
+            tmp_config['kahip_dir'] = self.kahip_dir
             tmp_config['save_dir'] = '%s/Classifier_%d_%d' % (
                 self.program_train_para_dir, self.entity_number, tmp_config['classifier_number'])
             dir_io.mkdir(tmp_config['save_dir'])

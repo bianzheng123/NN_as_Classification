@@ -1,9 +1,7 @@
 import numpy as np
 from util.numpy import load_data
-from procedure_counting_index.util import io
 from procedure_counting_index.dataset_partition_1 import partition_data
 from procedure_counting_index.init_0 import partition_preprocess
-from procedure_counting_index.model_integrate_2 import integrate_model
 import time
 import json
 from util import dir_io
@@ -30,7 +28,8 @@ def run(long_term_config_dir, short_term_config_dir):
     query = data[1]
 
     # classification
-    program_train_para_dir = '%s/train_para/%s_counting_index' % (long_term_config['project_dir'], short_term_config['program_fname'])
+    program_train_para_dir = '%s/train_para/%s' % (
+    long_term_config['project_dir'], short_term_config['program_fname'])
 
     dir_io.delete_dir_if_exist(program_train_para_dir)
 
@@ -67,7 +66,7 @@ def run(long_term_config_dir, short_term_config_dir):
         'n_item': base.shape[0]
     }
     # integrate the cluster_score_l and label_map_l to get the score_table and store the score_table in /train_para
-    integrate_model.integrate_save_score_table(predict_cluster_l, label_map_l, save_classifier_config)
+    partition_data.integrate_save_score_table(predict_cluster_l, label_map_l, save_classifier_config)
 
     total_end_time = time.time()
     intermediate_result_final = {
@@ -85,4 +84,4 @@ def run(long_term_config_dir, short_term_config_dir):
         'save_dir': program_train_para_dir,
         'program_fname': short_term_config['program_fname']
     }
-    io.save_config(save_config_config)
+    dir_io.save_config(save_config_config)

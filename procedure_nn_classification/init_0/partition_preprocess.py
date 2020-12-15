@@ -1,4 +1,5 @@
-from procedure_counting_index.init_0 import preprocess_lsh, preprocess_kmeans, preprocess_kmeans_multiple
+from procedure_nn_classification.init_0.kmeans import multiple_kmeans, independent_kmeans
+from procedure_nn_classification.init_0.learn_on_graph import multiple_learn_on_graph
 from util import dir_io
 import time
 
@@ -7,11 +8,13 @@ def preprocess(base, config):
     program_train_para_dir = config['program_train_para_dir']
     dir_io.mkdir(program_train_para_dir)
     n_cluster = config['n_cluster']
+    kahip_dir = config['kahip_dir']
     partition_model_l = []
     start_time = time.time()
     for entity_number, tmp_config in enumerate(config['independent_config'], 1):
         tmp_config['program_train_para_dir'] = program_train_para_dir
         tmp_config['n_cluster'] = n_cluster
+        tmp_config['kahip_dir'] = kahip_dir
         tmp_config['entity_number'] = entity_number
         multiple_model = factory(tmp_config)
         tmp_model_l = multiple_model.preprocess(base)
@@ -27,9 +30,12 @@ def preprocess(base, config):
 def factory(config):
     _type = config['type']
     if _type == 'kmeans':
-        return preprocess_kmeans.PreprocessKMeans(config)
-    elif _type == 'kmeans_multiple':
-        return preprocess_kmeans_multiple.PreprocessKMeansMultiple(config)
-    elif _type == 'e2lsh':
-        return preprocess_lsh.PreprocessLSH(config)
+        _specific_type = config['specific_type']
+        # multiple_kmeans_batch, independent_kmeans, multiple_kmeans_self_impl
+        if _specific_type == 'multiple':
+            return multiple_kmeans.MultipleKMeans(config)
+        elif _specific_type == 'independent':
+            return independent_kmeans.IndependentKMeans(config)
+    elif _type == 'learn_on_graph':
+        return multiple_learn_on_graph.MultipleLearnOnGraph(config)
     raise Exception('do not support the type of partition')
