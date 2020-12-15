@@ -45,5 +45,5 @@ class NeighborDataNode(base_data_node.BaseDataNode):
                                       shuffle=self.shuffle)
 
         # validation set
-        valset = TensorDataset(base_idx[cur_split:], partition[cur_split:])
+        valset = TensorDataset(base_idx[cur_split:], partition[cur_split:], cls_distr[cur_split:])
         self.valloader = DataLoader(dataset=valset, batch_size=self.batch_size, shuffle=False)

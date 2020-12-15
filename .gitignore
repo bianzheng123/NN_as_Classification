@@ -12,3 +12,6 @@ partition.txt
 *.pyc
 *.log
 /pytest/figure/
+data
+result
+train_para

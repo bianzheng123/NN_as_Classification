@@ -1,0 +1,5 @@
+{
+  "project_dir": "/home/bz/NN_as_Classification",
+  "data_fname": "kmeans_counting",
+  "k": 10
+}

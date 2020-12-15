@@ -1,0 +1,13 @@
+{
+  "program_fname": "Test",
+  "n_cluster": 4,
+  "classifier_config": [
+    {
+      "type": "kmeans",
+      "n_instance": 4,
+      "dataset_partition": {
+        "max_iter": 40
+      }
+    }
+  ]
+}

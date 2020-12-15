@@ -61,31 +61,22 @@ class NeuralNetwork(classifier.Classifier):
 
             # count recall from the extracted dataset in base
             val_cor = 0
-            eval_loss_l = []
             self.model.eval()
             with torch.no_grad():
-                for i, (ds_idx, partition, neighbor_distribution) in enumerate(valloader):
+                for i, (ds_idx, partition) in enumerate(valloader):
                     cur_data = base[ds_idx]
                     predicted = self.model(cur_data)
-                    pred = torch.log(predicted).unsqueeze(-1)
-                    loss = -torch.bmm(neighbor_distribution.unsqueeze(1), pred).sum()
-                    eval_loss_l.append(loss.item())
                     val_cor += (predicted.argmax(dim=1) == partition).sum().item()
                 val_recall = val_cor / len(valloader.dataset)
 
             print(
-                'epoch {} loss: {} eval_loss: {} train recall: {}    val recall: {} lr: {}'.format(epoch,
-                                                                                                   np.mean(loss_l),
-                                                                                                   np.mean(eval_loss_l),
-                                                                                                   cur_recall,
-                                                                                                   val_recall,
-                                                                                                   self.optimizer.param_groups[
-                                                                                                       0][
-                                                                                                       'lr']))
+                'epoch {} loss: {} train recall: {}    val recall: {} lr: {}'.format(epoch, np.mean(loss_l), cur_recall,
+                                                                                     val_recall,
+                                                                                     self.optimizer.param_groups[0][
+                                                                                         'lr']))
             self.intermediate_config['train_intermediate'].append({
                 'epoch': epoch,
                 'loss': np.mean(loss_l),
-                'eval_loss': np.mean(eval_loss_l),
                 'train_recall': cur_recall,
                 'val_recall': val_recall,
                 'lr': self.optimizer.param_groups[0]['lr']

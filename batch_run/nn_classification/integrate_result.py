@@ -6,6 +6,10 @@ def run_nohup(config_dir, fname):
         config_dir, fname))
 
 
+def run_frontend(config_dir):
+    os.system('python3 integrate_result.py --integrate_result_config_dir %s' % config_dir)
+
+
 if __name__ == '__main__':
     config_sub_dir = '/home/bz/NN_as_Classification/config/integrate_result_3/specific_config/siftsmall/'
     # config_sub_dir = '/home/bz/NN_as_Classification/config/integrate_result_3/specific_config/sift/'

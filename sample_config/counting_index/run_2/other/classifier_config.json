@@ -1,0 +1,26 @@
+[
+  {
+    "type": "kmeans",
+    "n_instance": 4,
+    "dataset_partition": {
+      "max_iter": 40
+    }
+  },
+  {
+    "n_instance": 1,
+    "type": "e2lsh",
+    "dataset_partition": {
+      "r": 1,
+      "a_sigma": 1,
+      "a_miu": 0,
+      "n_mod": 4
+    }
+  },
+  {
+    "type": "kmeans_multiple",
+    "n_instance": 4,
+    "dataset_partition": {
+      "max_iter": 40
+    }
+  }
+]
