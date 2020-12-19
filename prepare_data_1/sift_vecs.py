@@ -1,5 +1,5 @@
-import json
 import numpy as np
+import _init_paths
 import os
 from util.vecs import vecs_io, vecs_util
 from util import dir_io
@@ -20,8 +20,7 @@ def vecs2numpy(fname, new_file_name, file_type, file_len=None):
     if file_len is not None and file_len != -1:
         vectors = vectors[:file_len]
     vectors = vectors.astype(np.float32)
-    dir_io.save_file(new_file_name)
-    np.save(new_file_name, vectors)
+    dir_io.save_numpy(new_file_name, vectors)
     return vectors
 
 
@@ -67,10 +66,7 @@ def convert_data_type(config):
     return base, query, gnd, learn, base_base_gnd
 
 
-def prepare_data(config_dir):
-    with open(config_dir, 'r') as f:
-        config = json.load(f)
-
+def prepare_data(config):
     data_dir = '%s/data/%s_%d' % (
         config['project_dir'], config['data_fname'], config['k'])
     print("data_dir", data_dir)
@@ -85,6 +81,22 @@ def prepare_data(config_dir):
 
 
 if __name__ == '__main__':
-    prepare_data_config_dir = 'config/prepare_data_1/siftsmall_config.json'
-    # prepare_data_config_dir = 'config/prepare_data_1/sift_config.json'
-    prepare_data(prepare_data_config_dir)
+    data_config = {
+        "k": 10,
+        "base_base_gnd_k": 150,
+        "data_fname": "sift",
+        "source_data_dir": "/home/bianzheng/Dataset/sift",
+        "source_data_type": {
+            "base": "fvecs",
+            "query": "fvecs",
+            "learn": "fvecs"
+        },
+        "source_data_fname": {
+            "base": "sift_base.fvecs",
+            "query": "sift_query.fvecs",
+            "learn": "sift_learn.fvecs"
+        },
+        "project_dir": "/home/bianzheng/NN_as_Classification",
+        "query_len": -1
+    }
+    prepare_data(data_config)

@@ -17,6 +17,5 @@ def get_gnd_numpy(base, query, k, save_dir=None):
     gnd_distance, gnd_idx = index.search(query, k)
     print("search")
     if save_dir is not None:
-        dir_io.save_file(save_dir)
-        np.save(save_dir, gnd_idx)
+        dir_io.save_numpy(save_dir, gnd_idx)
     return gnd_idx

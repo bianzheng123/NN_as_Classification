@@ -14,11 +14,13 @@ def run_frontend(long_config_dir, short_config_dir):
 
 
 if __name__ == '__main__':
-    # base_config_dir = '/home/bz/NN_as_Classification/config/run_2/specific_config/siftsmall/'
-    base_config_dir = '/home/bz/NN_as_Classification/config/counting_index/siftsmall/'
+    # base_config_dir = '/home/bianzheng/NN_as_Classification/config/run_2/specific_config/siftsmall/'
+    # base_config_dir = '/home/bianzheng/NN_as_Classification/config/counting_index/siftsmall/'
+    base_config_dir = '/home/bianzheng/NN_as_Classification/config/counting_index/'
     long_config_dir = base_config_dir + 'long_term_config.json'
 
-    short_config_fname_arr = ['siftsmall_1_kmeans_16', 'siftsmall_1_kmeans_multiple_16', 'siftsmall_1_lsh_16']
+    # short_config_fname_arr = ['siftsmall_1_kmeans_16', 'siftsmall_1_kmeans_multiple_16', 'siftsmall_1_lsh_16']
+    short_config_fname_arr = ['short_term_config']
     # short_config_fname_arr = ['siftsmall_1_kmeans']
     # short_config_fname_arr = ['siftsmall_1_kmeans', 'siftsmall_1_kmeans_multiple', 'siftsmall_1_lsh',
     #                           'siftsmall_8_kmeans', 'siftsmall_8_kmeans_multiple', 'siftsmall_8_lsh']

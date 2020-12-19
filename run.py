@@ -13,7 +13,6 @@ if __name__ == '__main__':
     _type = args.type
     if _type == 'nn_classification':
         from procedure_nn_classification import run
-
         run.run(long_term_config_dir, short_term_config_dir)
     elif _type == 'counting_index':
         from procedure_counting_index import run

@@ -19,14 +19,16 @@ def run(sub_dir, fname_l, _type):
 
 
 if __name__ == '__main__':
-    config_sub_dir = '/home/bz/NN_as_Classification/config/integrate_result/counting_index/siftsmall/'
-    config_fname_l = ['siftsmall_1_kmeans_16', 'siftsmall_1_kmeans_multiple_16', 'siftsmall_1_lsh_16']
+    # config_sub_dir = '/home/bianzheng/NN_as_Classification/config/integrate_result/counting_index/siftsmall/'
+    # config_fname_l = ['siftsmall_1_kmeans_16', 'siftsmall_1_kmeans_multiple_16', 'siftsmall_1_lsh_16']
 
-    run(config_sub_dir, config_fname_l, 'counting_index')
+    # run(config_sub_dir, config_fname_l, 'counting_index')
 
-    config_sub_dir = '/home/bz/NN_as_Classification/config/integrate_result/nn_classification/siftsmall/'
-    config_fname_l = ['siftsmall_1_kmeans_multiple_16', 'siftsmall_1_knn_16'
-                      # , 'siftsmall_1_hnsw_16','siftsmall_1_kmeans_independent_16'
-                      ]
+    # config_sub_dir = '/home/bianzheng/NN_as_Classification/config/integrate_result/nn_classification/siftsmall/'
+    config_sub_dir = '/home/bianzheng/NN_as_Classification/config/integrate_result/'
+    # config_fname_l = ['siftsmall_1_kmeans_multiple_16', 'siftsmall_1_knn_16'
+    #                    , 'siftsmall_1_hnsw_16','siftsmall_1_kmeans_independent_16'
+    #                   ]
+    config_fname_l = ['config']
 
     run(config_sub_dir, config_fname_l, 'nn_classification')

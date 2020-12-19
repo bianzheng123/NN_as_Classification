@@ -33,6 +33,11 @@ def save_array_txt(save_dir, arr, fmt):
     np.savetxt(save_dir, arr, fmt=fmt)
 
 
+def save_numpy(save_dir, data):
+    _save_file(save_dir)
+    np.save(save_dir, data)
+
+
 def save_json(save_dir, result_fname, json_file):
     file_dire = '%s/%s' % (save_dir, result_fname)
     _save_file(file_dire)
