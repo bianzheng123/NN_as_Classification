@@ -62,6 +62,18 @@ def save_graph(save_dir, graph, vertices, edges):
             f.write(row_index + '\n')
 
 
+def save_graph_edge_weight(save_dir, graph, vertices, edges):
+    _save_file(save_dir)
+    with open(save_dir, 'w') as f:
+        f.write("%d %d 1\n" % (vertices, edges))
+        for nearest_index in graph:
+            row_index = ""
+            for item in nearest_index:
+                row_index += str(item) + " " + str(nearest_index[item]) + " "
+            # print(row_index)
+            f.write(row_index + '\n')
+
+
 def save_config(config):
     save_dir = '%s/config' % config['save_dir']
     os.system('sudo mkdir %s' % save_dir)

@@ -13,4 +13,4 @@ class MultipleLearnOnGraph(multiple_base_partition.MultipleBasePartition):
         return learn_on_graph.LearnOnGraph(config)
 
     def _preprocess(self, base):
-        pass
+        return {}

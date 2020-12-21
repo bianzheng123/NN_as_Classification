@@ -16,4 +16,4 @@ class IndependentKMeans(multiple_base_partition.MultipleBasePartition):
         return independent_kmeans.KMeans(config)
 
     def _preprocess(self, base):
-        pass
+        return {}

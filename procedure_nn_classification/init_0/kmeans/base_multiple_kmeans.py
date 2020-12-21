@@ -2,6 +2,7 @@ from procedure_nn_classification.init_0 import multiple_base_partition
 from procedure_nn_classification.dataset_partition_1.kmeans import multiple_kmeans
 import numpy as np
 import sklearn.cluster as cls
+import time
 
 '''
 the son class need to get the object of m-kmeans, that is self.model
@@ -25,7 +26,9 @@ class BaseMultipleKMeans(multiple_base_partition.MultipleBasePartition):
 
     def _preprocess(self, base):
         # return the centroid of m-kmeans
+        kmeans_start_time = time.time()
         self.model.fit(base)
+        kmeans_end_time = time.time()
         # mk * d
         centroids = self.model.cluster_centers_
 
@@ -33,8 +36,9 @@ class BaseMultipleKMeans(multiple_base_partition.MultipleBasePartition):
         # self.centroids = centroids
         # self.get_label(self.model.labels_)
         # print("centroids", centroids[:, :2])
-
+        rp_start_time = time.time()
         centroid_sort_idx = self.random_projection(centroids)
+        rp_end_time = time.time()
         # use random_projection() to sort the array, to fit the shape k * m. k groups with m points in each group
         # centroid_sort_idx = centroid_sort_idx.reshape(self.n_instance, -1)
         centroid_sort_idx = centroid_sort_idx.reshape(self.n_cluster, -1)
@@ -57,7 +61,11 @@ class BaseMultipleKMeans(multiple_base_partition.MultipleBasePartition):
         for i in range(self.n_instance):
             # print("actual centroids", self.centroid_l_l[i][:, :2])
             self.model_l[i].get_centroid(self.centroid_l_l[i])
-        return self.model_l
+        intermediate = {
+            'kmeans_time': kmeans_end_time - kmeans_start_time,
+            'random_projection_time': rp_end_time - rp_start_time
+        }
+        return intermediate
 
     # generate random permutation after got the group
     def get_total_permutation(self):

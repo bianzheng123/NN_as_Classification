@@ -3,12 +3,12 @@ from procedure_nn_classification.init_0 import partition_preprocess
 from procedure_nn_classification.dataset_partition_1 import dataset_partition
 from procedure_nn_classification.prepare_train_sample_2 import prepare_train_sample
 from procedure_nn_classification.train_eval_model_3 import train_eval_model
+from procedure_common import result_integrate
 import json
 import numpy as np
 import time
 from util import dir_io
-
-from torch.utils.data import Dataset, DataLoader, TensorDataset
+import math
 
 
 def run(long_term_config_dir, short_term_config_dir):
@@ -19,6 +19,7 @@ def run(long_term_config_dir, short_term_config_dir):
     with open(short_term_config_dir, 'r') as f:
         short_term_config_before_run = json.load(f)
 
+    save_train_para = False
     total_start_time = time.time()
 
     # load data
@@ -30,8 +31,10 @@ def run(long_term_config_dir, short_term_config_dir):
     base, query, learn, gnd, base_base_gnd = load_data.load_data_npy(load_data_config)
 
     program_train_para_dir = '%s/train_para/%s' % (long_term_config['project_dir'], short_term_config['program_fname'])
+    program_result_dir = '%s/result/%s' % (long_term_config['project_dir'], short_term_config['program_fname'])
 
     dir_io.delete_dir_if_exist(program_train_para_dir)
+    dir_io.delete_dir_if_exist(program_result_dir)
 
     partition_preprocess_config = {
         "independent_config": short_term_config['independent_config'],
@@ -46,8 +49,10 @@ def run(long_term_config_dir, short_term_config_dir):
     cluster_score_l = []
     intermediate_result_l = []
     label_map_l = []
+    dataset_partition_para = None
     for model in model_l:
-        partition_info, model_info = dataset_partition.partition(base, model)
+        partition_info, model_info, dataset_partition_para = dataset_partition.partition(base, model,
+                                                                                         dataset_partition_para)
         partition_intermediate = model_info[1]
 
         prepare_train_config = short_term_config['prepare_train_sample']
@@ -66,7 +71,7 @@ def run(long_term_config_dir, short_term_config_dir):
         train_model_config['program_train_para_dir'] = program_train_para_dir
 
         cluster_score, train_eval_intermediate = train_eval_model.train_eval_model(base, query, trainset,
-                                                                                 train_model_config)
+                                                                                   train_model_config)
         intermediate = {
             "ins_id": '%d_%d' % (model_info[0]["entity_number"], model_info[0]["classifier_number"]),
             'dataset_partition': partition_intermediate,
@@ -83,22 +88,46 @@ def run(long_term_config_dir, short_term_config_dir):
         'n_item': base.shape[0]
     }
     # integrate the cluster_score_l and label_map_l to get the score_table and store the score_table in /train_para
-    train_eval_model.integrate_save_score_table(cluster_score_l, label_map_l, save_classifier_config)
+    score_table, integrate_intermediate = train_eval_model.integrate_save_score_table_total(cluster_score_l,
+                                                                                            label_map_l,
+                                                                                            save_classifier_config,
+                                                                                            save=save_train_para)
+    # if the memory exceed, can change the method to integrate_save_score_table_single
 
+    result_integrate_config = {
+        'k': long_term_config['k'],
+        'program_result_dir': program_result_dir,
+        'efSearch_l': [2 ** i for i in range(1 + int(math.log2(len(base))))],
+    }
+    count_recall_intermediate = result_integrate.integrate_single(score_table, gnd, result_integrate_config)
     total_end_time = time.time()
+
     intermediate_result_final = {
         'total_time_consume': total_end_time - total_start_time,
         'preprocess': preprocess_intermediate,
-        'classifier': intermediate_result_l
+        'classifier': intermediate_result_l,
+        'integrate': integrate_intermediate,
+        'count_recall': count_recall_intermediate
     }
 
     # save intermediate and configure file
+    if save_train_para:
+        save_config_config = {
+            'long_term_config': long_term_config,
+            'short_term_config': short_term_config,
+            'short_term_config_before_run': short_term_config_before_run,
+            'intermediate_result': intermediate_result_final,
+            'save_dir': program_train_para_dir,
+            'program_fname': short_term_config['program_fname']
+        }
+        dir_io.save_config(save_config_config)
+
     save_config_config = {
         'long_term_config': long_term_config,
         'short_term_config': short_term_config,
         'short_term_config_before_run': short_term_config_before_run,
         'intermediate_result': intermediate_result_final,
-        'save_dir': program_train_para_dir,
+        'save_dir': program_result_dir,
         'program_fname': short_term_config['program_fname']
     }
     dir_io.save_config(save_config_config)

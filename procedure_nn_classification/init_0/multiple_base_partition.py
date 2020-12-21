@@ -35,7 +35,12 @@ class MultipleBasePartition:
 
     # the son class should set the list of model to self.model_l
     def preprocess(self, base):
-        print('start preprocessing %s_%d' % (self.obj_id, self.entity_number))
-        self._preprocess(base)
-        print('finish preprocessing %s_%d' % (self.obj_id, self.entity_number))
-        return self.model_l
+        signature = '%s_%d' % (self.obj_id, self.entity_number)
+        print('start preprocessing %s' % signature)
+        intermediate = self._preprocess(base)
+        print('finish preprocessing %s' % signature)
+        intermediate_result = {
+            'intermediate': intermediate,
+            "signature": signature
+        }
+        return self.model_l, intermediate_result

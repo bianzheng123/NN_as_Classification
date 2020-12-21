@@ -10,6 +10,7 @@ def preprocess(base, config):
     n_cluster = config['n_cluster']
     kahip_dir = config['kahip_dir']
     partition_model_l = []
+    model_intermediate_m = {}
     start_time = time.time()
     for entity_number, tmp_config in enumerate(config['independent_config'], 1):
         tmp_config['program_train_para_dir'] = program_train_para_dir
@@ -17,14 +18,13 @@ def preprocess(base, config):
         tmp_config['kahip_dir'] = kahip_dir
         tmp_config['entity_number'] = entity_number
         multiple_model = factory(tmp_config)
-        tmp_model_l = multiple_model.preprocess(base)
+        tmp_model_l, model_intermediate = multiple_model.preprocess(base)
+        model_intermediate_m[model_intermediate['signature']] = model_intermediate['intermediate']
         for model in tmp_model_l:
             partition_model_l.append(model)
     end_time = time.time()
-    intermediate_result = {
-        'time': end_time - start_time
-    }
-    return partition_model_l, intermediate_result
+    model_intermediate_m['total_time'] = end_time - start_time
+    return partition_model_l, model_intermediate_m
 
 
 def factory(config):

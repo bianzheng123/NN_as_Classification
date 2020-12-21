@@ -17,6 +17,7 @@ class PreprocessBasePartition:
         self.n_cluster = config['n_cluster']
         self.entity_number = config['entity_number']
         self.model_l = []
+        self.intermediate = {}
         # for identification
         self.obj_id = None
         for i in range(self.n_instance):
@@ -33,7 +34,12 @@ class PreprocessBasePartition:
 
     # the son class should set the list of model to self.model_l
     def preprocess(self, base):
-        print('start preprocessing %s_%d' % (self.obj_id, self.entity_number))
+        signature = '%s_%d' % (self.obj_id, self.entity_number)
+        print('start preprocessing %s' % signature)
         self._preprocess(base)
-        print('finish preprocessing %s_%d' % (self.obj_id, self.entity_number))
-        return self.model_l
+        print('finish preprocessing %s' % signature)
+        intermediate_result = {
+            'intermediate': self.intermediate,
+            "signature": signature
+        }
+        return self.model_l, intermediate_result

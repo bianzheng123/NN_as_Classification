@@ -6,7 +6,8 @@
     "dataset_partition": {
       "build_graph": {
         "type": "knn",
-        "k_graph": 10
+        "k_graph": 10,
+        "increase_weight": 2
       },
       "graph_partition": {
         "type": "kahip",

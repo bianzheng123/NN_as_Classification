@@ -30,7 +30,7 @@ make directory, extract base, query and gnd
 
 
 def convert_data_type(config):
-    os.system("sudo mkdir %s" % (config['data_dir']))
+    dir_io.mkdir(config['data_dir'])
     print("create directory")
 
     base_dir = '%s/%s' % (config['source_data_dir'], config['source_data_fname']['base'])
@@ -49,9 +49,6 @@ def convert_data_type(config):
     print("extract learn")
 
     gnd_npy_dir = '%s/%s' % (config['data_dir'], 'gnd.npy')
-    # print(base_npy_dir)
-    # print(query_npy_dir)
-    # print(gnd_npy_dir)
     gnd = vecs_util.get_gnd_numpy(base, query, config['k'], gnd_npy_dir)
     print("extract gnd")
 

@@ -9,7 +9,7 @@ class BaseGraph:
         self.classifier_number = config['classifier_number']
         self.graph = None
 
-    def build_graph(self, base):
+    def build_graph(self, base, obj):
         pass
 
     def save(self):

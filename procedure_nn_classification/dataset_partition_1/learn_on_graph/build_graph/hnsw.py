@@ -15,7 +15,7 @@ class HNSW(base_graph.BaseGraph):
     output the point, edge
     '''
 
-    def build_graph(self, base):
+    def build_graph(self, base, obj):
         vertices = len(base)
         if vertices < self.k_graph + 1:
             raise Exception("build graph error, input dataset is too samll, do not meet the demand of number of edge")

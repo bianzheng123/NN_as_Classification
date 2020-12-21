@@ -1,5 +1,6 @@
 from procedure_nn_classification.dataset_partition_1 import base_partition
 import numpy as np
+import time
 
 
 class KMeans(base_partition.BasePartition):
@@ -13,8 +14,9 @@ class KMeans(base_partition.BasePartition):
         # k * d
         self.centroid_l = centroid_l
 
-    def _partition(self, base):
+    def _partition(self, base, obj):
         # count the distance for each item and centroid to get the distance_table
+        count_label_start_time = time.time()
         distance_table = None
         for i, vecs in enumerate(base, 0):
             if i == 0:
@@ -27,3 +29,5 @@ class KMeans(base_partition.BasePartition):
         # print(distance_table.shape)
         # get the nearest centroid and use it as the label
         self.labels = np.argmin(distance_table, axis=1)
+        count_label_end_time = time.time()
+        self.intermediate['count_label_time'] = count_label_end_time - count_label_start_time

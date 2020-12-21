@@ -18,31 +18,30 @@ class BasePartition:
         self.label_map = {}
         # to count the number of points in different bucket
         self.n_point_label = None
+        self.intermediate = {}
 
         self.labels = None
 
-    def partition(self, base):
+    def partition(self, base, obj):
         start_time = time.time()
         print('start dataset partitioning %s' % self.obj_id)
-        self._partition(base)
+        para = self._partition(base, obj)
         self.get_labels(self.labels)
         print('finish dataset partitioning %s' % self.obj_id)
         end_time = time.time()
-        intermediate_config = {
-            'time': end_time - start_time,
-            'cluster_number_distribution': self.n_point_label
-        }
+        self.intermediate['total_time'] = end_time - start_time
+        self.intermediate['cluster_number_distribution'] = self.n_point_label
         model_info = {
             "classifier_number": self.classifier_number,
             "entity_number": self.entity_number,
         }
-        return (self.labels, self.label_map), (model_info, intermediate_config)
+        return (self.labels, self.label_map), (model_info, self.intermediate), para
 
     '''
     son class should get the self.labels, which is a list, the label for each item
     '''
 
-    def _partition(self, base):
+    def _partition(self, base, obj):
         pass
 
     # the function partition the base according to the number of cluster

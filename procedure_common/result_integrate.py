@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import json
 from util import dir_io
+import time
 
 
 def integrate(score_table_ptr_l, gnd, config):
@@ -48,6 +49,39 @@ def integrate(score_table_ptr_l, gnd, config):
 
     recall_l_save_dir = '%s/recall_l.txt' % config['program_result_dir']
     dir_io.save_array_txt(recall_l_save_dir, recall_l, '%.3f')
+
+
+def integrate_single(score_table, gnd, config):
+    start_time = time.time()
+    # long_term_config, short_term_config, short_term_config_before_run, intermediate_result, total_score_table
+    dir_io.mkdir(config['program_result_dir'])
+    recall_l = []
+    for i, score_arr in enumerate(score_table, 0):
+        efsearch_recall_l = evaluate(score_arr, config['efSearch_l'], gnd[i], config['k'])
+        recall_l.append(efsearch_recall_l)
+    print('get all the recall')
+    # transpose makes the same efsearch in every row of recall
+    recall_l = np.array(recall_l).transpose()
+
+    result_n_candidate_recall = []
+    for i, efSearch in enumerate(config['efSearch_l'], 0):
+        recall_avg = np.mean(recall_l[i])
+        result_item = {
+            'n_candidate': efSearch,
+            "recall": recall_avg
+        }
+        result_n_candidate_recall.append(result_item)
+        print('recall: {}, n_candidates: {}'.format(recall_avg, efSearch))
+
+    dir_io.save_json(config['program_result_dir'], 'result.json', result_n_candidate_recall)
+
+    recall_l_save_dir = '%s/recall_l.txt' % config['program_result_dir']
+    dir_io.save_array_txt(recall_l_save_dir, recall_l, '%.3f')
+    end_time = time.time()
+    intermediate = {
+        'time': end_time - start_time
+    }
+    return intermediate
 
 
 '''

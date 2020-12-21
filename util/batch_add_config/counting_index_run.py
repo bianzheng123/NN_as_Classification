@@ -1,39 +1,66 @@
 import json
 
 if __name__ == '__main__':
-    config_dir = '/home/bz/NN_as_Classification/config/counting_index/short_term_config.json'
+    config_dir = '/home/bianzheng/NN_as_Classification/config/counting_index/short_term_config.json'
     with open(config_dir, 'r') as f:
         config = json.load(f)
-    save_base_dir = '/home/bz/NN_as_Classification/config/counting_index/siftsmall'
+    save_base_dir = '/home/bianzheng/NN_as_Classification/config/counting_index/siftsmall'
+    dataset_name = 'siftsmall'
     save_fname_content_m = {
-        'siftsmall_1_kmeans_multiple': {
+        '1_kmeans_multiple': {
             "n_instance": 1,
             "type": "kmeans_multiple",
             "dataset_partition": {
                 "max_iter": 40
             }
         },
-        'siftsmall_1_kmeans': {
+        '1_kmeans': {
             "n_instance": 1,
             "type": "kmeans",
             "dataset_partition": {
                 "max_iter": 40
             }
         },
-        'siftsmall_1_lsh': {
-            "n_instance": 1,
+        '1_lsh': {
+            "n_instance": 2,
             "type": "e2lsh",
             "dataset_partition": {
                 "r": 1,
                 "a_sigma": 1,
-                "a_miu": 0,
-                "n_mod": 4
+                "a_miu": 0
+            }
+        },
+
+        '8_kmeans_multiple': {
+            "n_instance": 8,
+            "type": "kmeans_multiple",
+            "dataset_partition": {
+                "max_iter": 40
+            }
+        },
+        '8_kmeans': {
+            "n_instance": 8,
+            "type": "kmeans",
+            "dataset_partition": {
+                "max_iter": 40
+            }
+        },
+        '8_lsh': {
+            "n_instance": 16,
+            "type": "e2lsh",
+            "dataset_partition": {
+                "r": 1,
+                "a_sigma": 1,
+                "a_miu": 0
             }
         }
     }
     for fname in save_fname_content_m:
         config['independent_config'] = [save_fname_content_m[fname]]
-        config['n_cluster'] = 16
-        config['program_fname'] = fname + '_' + str(config['n_cluster']) + '_counting_index'
-        with open('%s/%s_%d.json' % (save_base_dir, fname, config['n_cluster']), 'w') as f:
+        n_cluster = 16
+        config['n_cluster'] = n_cluster
+        if fname.split('_')[-1] == 'lsh':
+            config['n_cluster'] = 4
+        config['program_fname'] = '%s_%d_count_%s' % (dataset_name, n_cluster, fname)
+        with open('%s/%s_%d.json' % (save_base_dir, fname, n_cluster), 'w') as f:
             json.dump(config, f)
