@@ -4,6 +4,8 @@ import torch
 import numpy as np
 from torch.utils.data import Dataset, DataLoader, TensorDataset
 
+torch.set_num_threads(12)
+
 
 class NeuralNetwork(classifier.Classifier):
 
@@ -106,7 +108,7 @@ class NeuralNetwork(classifier.Classifier):
         eval_res = None
         with torch.no_grad():
             eval_res = self.model(query)
-            self.result = eval_res
+            self.result = eval_res.numpy()
 
 
 class NNModel(nn.Module):

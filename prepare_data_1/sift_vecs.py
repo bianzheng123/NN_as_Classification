@@ -94,6 +94,6 @@ if __name__ == '__main__':
             "learn": "sift_learn.fvecs"
         },
         "project_dir": "/home/bianzheng/NN_as_Classification",
-        "query_len": -1
+        "query_len": 1000
     }
     prepare_data(data_config)

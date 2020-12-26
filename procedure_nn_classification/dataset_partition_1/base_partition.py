@@ -15,7 +15,7 @@ class BasePartition:
         self.n_cluster = config['n_cluster']
         self.model_info = None
         # the key of map is the number of every class, its value is the index that belongs to the cluster in base
-        self.label_map = {}
+        self.label_map = []
         # to count the number of points in different bucket
         self.n_point_label = None
         self.intermediate = {}
@@ -50,7 +50,7 @@ class BasePartition:
         self.n_point_label = []
         for cluster_i in range(self.n_cluster):
             base_idx_i = np.argwhere(labels == cluster_i).reshape(-1)
-            self.label_map[cluster_i] = base_idx_i
+            self.label_map.append(base_idx_i)
             self.n_point_label.append(len(base_idx_i))
 
     def save(self):

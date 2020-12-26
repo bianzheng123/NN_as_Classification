@@ -4,6 +4,8 @@ import json
 from util import dir_io
 import time
 import numba as nb
+import multiprocessing
+from multiprocessing.managers import BaseManager
 
 
 def integrate(score_table_ptr_l, gnd, config):
@@ -52,23 +54,66 @@ def integrate(score_table_ptr_l, gnd, config):
     dir_io.save_array_txt(recall_l_save_dir, recall_l, '%.3f')
 
 
+class IntegrateResult:
+    def __init__(self, efSearch_l, gnd, k, n_process):
+        self.efSearch_l = efSearch_l
+        self.gnd = gnd
+        self.k = k
+        self.n_process = n_process
+        print("success")
+        self.recall_l = np.empty(shape=(score_table.shape[0], len(efSearch_l)), dtype=np.float32)
+
+    def evaluate(self, start_idx):
+        n_query = self.score_table.shape[0]
+        for i in range(start_idx, n_query, self.n_process):
+            efsearch_recall_l = evaluate(self.score_table[i], self.efSearch_l, self.gnd[i], self.k)
+            self.recall_l[i, :] = np.array(efsearch_recall_l)
+
+    def get_recall_l(self):
+        return self.recall_l
+
+
+def evaluate_parallel(score_table, parallel_obj, start_idx):
+    parallel_obj.evaluate(start_idx)
+    print("end parallel evaluate")
+
+
 def integrate_single(score_table, gnd, config):
     start_time = time.time()
     # long_term_config, short_term_config, short_term_config_before_run, intermediate_result, total_score_table
     dir_io.mkdir(config['program_result_dir'])
-    recall_l = []
-    print("start evaluate")
-    for i, score_arr in enumerate(score_table, 0):
-        if i % 50 == 0: print("evaluate " + str(i))
-        efsearch_recall_l = evaluate(score_arr, config['efSearch_l'], gnd[i], config['k'])
-        recall_l.append(efsearch_recall_l)
-    print('get all the recall')
+    print("start recall evaluate")
+    n_process = 4
+    n_pool_process = 4
+
+    manager = BaseManager()
+    manager.register('IntegrateResult', IntegrateResult)
+    manager.start()
+    print(config['efSearch_l'])
+    print(score_table.dtype)
+    '''
+    解决方案: 对score_table分成几份, 然后进行并行
+    '''
+    score_table = score_table.reshape(-1)
+    score_table = multiprocessing.Array('f', score_table)
+    print("share arr")
+    parallel_obj = manager.IntegrateResult(config['efSearch_l'], gnd, config['k'], n_process)
+    pool = multiprocessing.Pool(n_pool_process)
+    for i in range(n_process):
+        pool.apply_async(evaluate_parallel, args=(score_table, parallel_obj, i))
+    pool.close()
+    pool.join()
+
+    recall_l = parallel_obj.get_recall_l()
+
+    print('finish recall evaluate')
     # transpose makes the same efsearch in every row of recall
     recall_l = np.array(recall_l).transpose()
 
     result_n_candidate_recall = []
     for i, efSearch in enumerate(config['efSearch_l'], 0):
         recall_avg = np.mean(recall_l[i])
+        recall_avg = '{:.3f}'.format(recall_avg)
         result_item = {
             'n_candidate': efSearch,
             "recall": recall_avg
@@ -127,18 +172,18 @@ score_table: the score_table for a single query
 
 def evaluate(score_table, efSearch_l, gnd, k):
     # get recall in different efSearch
-    recall_l = []
+    recall_l = np.empty(shape=(len(efSearch_l)), dtype=np.float32)
+    # recall_l = []
     val, total_candidate_index = torch.topk(torch.from_numpy(score_table), dim=0, largest=True, k=efSearch_l[-1])
 
     total_candidate_index = resort_indices(val.numpy(), total_candidate_index.numpy(), score_table)
-
     # print(val, total_candidate_index)
-    for efSearch in efSearch_l:
+    for i, efSearch in enumerate(efSearch_l, 0):
         candidate_index = total_candidate_index[:efSearch]
         # count recall for every single query
         efsearch_recall = count_recall_single(candidate_index, gnd, k)
-        recall_l.append(efsearch_recall)
-
+        recall_l[i] = efsearch_recall
+        # recall_l.append(efsearch_recall)
     return recall_l
 
 

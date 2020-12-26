@@ -38,7 +38,7 @@ class KMeans(base_partition.BasePartition):
             tmp_labels = res.get()
             for j in range(len(tmp_labels)):
                 res_labels[i + j * self.n_process] = tmp_labels[j]
-        np.savetxt('label_parallel.txt', res_labels, fmt='%d')
+        # np.savetxt('label_parallel.txt', res_labels, fmt='%d')
         end_time = time.time()
         time_consumed = end_time - start_time
         return res_labels, time_consumed

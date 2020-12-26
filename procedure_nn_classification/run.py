@@ -19,7 +19,7 @@ def run(long_term_config_dir, short_term_config_dir):
     with open(short_term_config_dir, 'r') as f:
         short_term_config_before_run = json.load(f)
 
-    save_train_para = False
+    save_train_para = True
     total_start_time = time.time()
 
     # load data
@@ -29,6 +29,7 @@ def run(long_term_config_dir, short_term_config_dir):
         'data_dir': data_dir
     }
     base, query, learn, gnd, base_base_gnd = load_data.load_data_npy(load_data_config)
+    del load_data_config
 
     program_train_para_dir = '%s/train_para/%s' % (long_term_config['project_dir'], short_term_config['program_fname'])
     program_result_dir = '%s/result/%s' % (long_term_config['project_dir'], short_term_config['program_fname'])
@@ -45,10 +46,11 @@ def run(long_term_config_dir, short_term_config_dir):
     # get the initial classifier object for each method
     # preprocess to get enable parallelization, however, when use the Multiprocessor, some bug happen
     model_l, preprocess_intermediate = partition_preprocess.preprocess(base, partition_preprocess_config)
+    del partition_preprocess_config
 
     cluster_score_l = []
     intermediate_result_l = []
-    label_map_l = []
+    label_l = []
     dataset_partition_para = None
     for model in model_l:
         partition_info, model_info, dataset_partition_para = dataset_partition.partition(base, model,
@@ -72,6 +74,7 @@ def run(long_term_config_dir, short_term_config_dir):
 
         cluster_score, train_eval_intermediate = train_eval_model.train_eval_model(base, query, trainset,
                                                                                    train_model_config)
+        del trainset
         intermediate = {
             "ins_id": '%d_%d' % (model_info[0]["entity_number"], model_info[0]["classifier_number"]),
             'dataset_partition': partition_intermediate,
@@ -80,26 +83,33 @@ def run(long_term_config_dir, short_term_config_dir):
         }
         intermediate_result_l.append(intermediate)
         cluster_score_l.append(cluster_score)
-        label_map = partition_info[1]
-        label_map_l.append(label_map)
+        label = partition_info[1]
+        label_l.append(label)
+    del query, dataset_partition_para, model_l
+
+    dir_io.save_numpy(program_train_para_dir + '/cls_score_l.npy', np.array(cluster_score_l))
+    dir_io.save_numpy(program_train_para_dir + '/label_l.npy', np.array(label_l, dtype=object))
 
     save_classifier_config = {
         'program_train_para_dir': program_train_para_dir,
         'n_item': base.shape[0]
     }
-    # integrate the cluster_score_l and label_map_l to get the score_table and store the score_table in /train_para
-    score_table, integrate_intermediate = train_eval_model.integrate_save_score_table_total(cluster_score_l,
-                                                                                            label_map_l,
-                                                                                            save_classifier_config,
-                                                                                            save=save_train_para)
+    # integrate the cluster_score_l and label_l to get the score_table and store the score_table in /train_para
+    score_table, integrate_intermediate = train_eval_model.integrate_save_score_table_parallel(cluster_score_l,
+                                                                                               label_l,
+                                                                                               save_classifier_config,
+                                                                                               save=save_train_para)
     # if the memory exceed, can change the method to integrate_save_score_table_single
+    del label_l, cluster_score_l
 
     result_integrate_config = {
         'k': long_term_config['k'],
         'program_result_dir': program_result_dir,
         'efSearch_l': [2 ** i for i in range(1 + int(math.log2(len(base))))],
     }
+    del base
     count_recall_intermediate = result_integrate.integrate_single(score_table, gnd, result_integrate_config)
+    del result_integrate_config, gnd
     total_end_time = time.time()
 
     intermediate_result_final = {
