@@ -18,12 +18,12 @@ if __name__ == '__main__':
     long_config_dir = base_config_dir + 'long_term_config.json'
 
     # short_config_fname_arr = ['1_hnsw_16', '1_kmeans_independent_16', '1_kmeans_multiple_16', '1_knn_16']
-    # short_config_fname_arr = ['1_kmeans_multiple_16']
+    # short_config_fname_arr = ['1_knn_parhip_16']
     # short_config_fname_arr = ['1_knn_16']
     # short_config_fname_arr = ['1_kmeans_multiple_256', '1_knn_256',
     #                           '4_kmeans_multiple_256', '4_knn_256']
-    # short_config_fname_arr = ['1_kmeans_multiple_256']
-    short_config_fname_arr = ['1_knn_256']
+    short_config_fname_arr = ['4_kmeans_multiple_256', '4_knn_parhip_256']
+    # short_config_fname_arr = ['4_kmeans_multiple_256', '4_knn_256']
     # short_config_fname_arr = ['8_kmeans_multiple_16']
     for tmp_fname in short_config_fname_arr:
         short_config_dir = base_config_dir + tmp_fname + '.json'

@@ -38,6 +38,10 @@ def save_numpy(save_dir, data):
     np.save(save_dir, data)
 
 
+def move_file(old_dir, new_dir):
+    os.system("sudo mv %s %s" % (old_dir, new_dir))
+
+
 def save_json(save_dir, result_fname, json_file):
     file_dire = '%s/%s' % (save_dir, result_fname)
     _save_file(file_dire)

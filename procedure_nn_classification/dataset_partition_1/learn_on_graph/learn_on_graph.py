@@ -3,6 +3,7 @@ from procedure_nn_classification.dataset_partition_1.learn_on_graph.build_graph 
 import numpy as np
 from util import read_data, dir_io
 import time
+import os
 
 
 class LearnOnGraph(base_partition.BasePartition):
@@ -15,6 +16,7 @@ class LearnOnGraph(base_partition.BasePartition):
         self.build_graph_config = config['build_graph']
         self.graph_partition_config = config['graph_partition']
         self.kahip_dir = config['kahip_dir']
+        self.n_process = 8
 
     def _partition(self, base, obj):
         graph_ins = graph_factory(self.build_graph_config)
@@ -35,17 +37,26 @@ class LearnOnGraph(base_partition.BasePartition):
     def graph_partition(self):
         # this function is to invoke kahip and read partition.txt
         partition_dir = '%s/partition.txt' % self.save_dir
-        kahip_command = '%s/deploy/kaffpa %s/graph.graph --preconfiguration=%s --output_filename=%s/partition.txt ' \
-                        '--k=%d' % (
-                            self.kahip_dir, self.save_dir, self.graph_partition_config['preconfiguration'],
-                            self.save_dir,
-                            self.n_cluster)
-        if self.graph_partition_config['time_limit'] != -1:
-            kahip_command = '%s --time_limit=%d' % (kahip_command, self.graph_partition_config['time_limit'])
-        dir_io.kahip(partition_dir, kahip_command)
-        partition_dir = '%s/partition.txt' % self.save_dir
+        if self.graph_partition_config['type'] == 'kaffpa':
+            kahip_command = '%s/deploy/kaffpa %s/graph.graph --preconfiguration=%s --output_filename=%s/partition.txt ' \
+                            '--k=%d' % (
+                                self.kahip_dir, self.save_dir, self.graph_partition_config['preconfiguration'],
+                                self.save_dir,
+                                self.n_cluster)
+            print(kahip_command)
+            dir_io.kahip(partition_dir, kahip_command)
+        elif self.graph_partition_config['type'] == 'parhip':
+            kahip_command = 'mpirun -n %d %s/deploy/parhip %s/graph.graph --preconfiguration %s --save_partition --k %d' % (
+                self.n_process, self.kahip_dir, self.save_dir, self.graph_partition_config['preconfiguration'],
+                self.n_cluster)
+            print(kahip_command)
+            dir_io.kahip('./tmppartition.txtp', kahip_command)
+            self.move_partition_txt()
         labels = read_data.read_partition(partition_dir)
         self.labels = np.array(labels)
+
+    def move_partition_txt(self):
+        dir_io.move_file('tmppartition.txtp', '%s/partition.txt' % self.save_dir)
 
 
 def graph_factory(config):

@@ -4,14 +4,13 @@ import torch
 import numpy as np
 from torch.utils.data import Dataset, DataLoader, TensorDataset
 
-torch.set_num_threads(12)
-
 
 class NeuralNetwork(classifier.Classifier):
 
     def __init__(self, config):
         super(NeuralNetwork, self).__init__(config)
         # self.type, self.save_dir, self.classifier_number, self.n_cluster
+        torch.set_num_threads(12)
         config['network']['n_output'] = self.n_cluster
         self.model = NNModel(config['network'])
         self.n_epochs = config['n_epochs']

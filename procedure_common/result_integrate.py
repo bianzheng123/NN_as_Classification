@@ -53,6 +53,7 @@ def integrate(score_table_ptr_l, gnd, config):
 
 
 def integrate_single(score_table, gnd, config):
+    torch.set_num_threads(12)
     start_time = time.time()
     # long_term_config, short_term_config, short_term_config_before_run, intermediate_result, total_score_table
     dir_io.mkdir(config['program_result_dir'])
@@ -87,64 +88,28 @@ def integrate_single(score_table, gnd, config):
     return intermediate
 
 
-@nb.jit(nopython=True)
-def resort_indices(val, total_candidate_index, score_table):
-    # sort according to the number of indices
-    start_same_ptr = 0
-    end_same_ptr = 1
-    len_val = val.shape[-1]
-    while True:
-        if val[end_same_ptr] == val[start_same_ptr]:
-            end_same_ptr += 1
-            if end_same_ptr == len_val:
-                n_same = end_same_ptr - start_same_ptr
-                for i, score in enumerate(score_table, 0):
-                    if score == val[start_same_ptr]:
-                        total_candidate_index[start_same_ptr] = i
-                        start_same_ptr += 1
-                        n_same -= 1
-                        if n_same == 0:
-                            break
-                break
-        else:
-            n_same = end_same_ptr - start_same_ptr
-            for i, score in enumerate(score_table, 0):
-                if score == val[start_same_ptr]:
-                    total_candidate_index[start_same_ptr] = i
-                    start_same_ptr += 1
-                    n_same -= 1
-                    if n_same == 0:
-                        break
-            start_same_ptr = end_same_ptr
-            end_same_ptr += 1
-    return total_candidate_index
-
-
 '''
-score_table: the score_table for a single query
+evaluate for a single query
 '''
 
 
 def evaluate(score_table, efSearch_l, gnd, k):
     # get recall in different efSearch
     recall_l = []
-    val, total_candidate_index = torch.topk(torch.from_numpy(score_table), dim=0, largest=True, k=efSearch_l[-1])
-
-    total_candidate_index = resort_indices(val.numpy(), total_candidate_index.numpy(), score_table)
-
-    # print(val, total_candidate_index)
+    arg_idx = score_table.argsort(kind='stable')
+    total_candidate_index = arg_idx[-efSearch_l[-1]:].tolist()
+    total_candidate_index.reverse()
     for efSearch in efSearch_l:
         candidate_index = total_candidate_index[:efSearch]
         # count recall for every single query
-        efsearch_recall = count_recall_single(candidate_index, gnd, k)
+        gnd_set = set(gnd[:efSearch])
+        efsearch_recall = count_recall_single(candidate_index, gnd_set, k)
         recall_l.append(efsearch_recall)
-
+    # print("end count recall")
     return recall_l
 
 
 def count_recall_single(predict_idx, gnd, k):
-    gnd = gnd[:k]
-    # predict_idx = predict_idx.numpy()
     matches = [index for index in predict_idx if index in gnd]
     recall = float(len(matches)) / k
     return recall

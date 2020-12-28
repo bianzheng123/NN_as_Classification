@@ -41,7 +41,7 @@ def run(long_term_config_dir, short_term_config_dir):
         "independent_config": short_term_config['independent_config'],
         'n_cluster': short_term_config['n_cluster'],
         'kahip_dir': long_term_config['kahip_dir'],
-        "program_train_para_dir": program_train_para_dir,
+        "program_train_para_dir": program_train_para_dir
     }
     # get the initial classifier object for each method
     # preprocess to get enable parallelization, however, when use the Multiprocessor, some bug happen
