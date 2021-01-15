@@ -61,4 +61,4 @@ class BasePartition:
         # dir_io.save_array_txt(save_distribution_dir, self.n_point_label, '%i')
 
     def __str__(self):
-        return '%s, n_cluster: %d, save_dir: %s' % (self.obj_id, self.n_cluster, self.save_dir)
+        return '%s, n_cluster: %d' % (self.obj_id, self.n_cluster)

@@ -64,7 +64,7 @@ def convert_data_type(config):
 
 
 def prepare_data(config):
-    data_dir = '%s/data/%s_%d' % (
+    data_dir = '%s/data/dataset/%s_%d' % (
         config['project_dir'], config['data_fname'], config['k'])
     print("data_dir", data_dir)
     config['data_dir'] = data_dir
@@ -82,7 +82,7 @@ if __name__ == '__main__':
         "k": 10,
         "base_base_gnd_k": 150,
         "data_fname": "sift",
-        "source_data_dir": "/home/bianzheng/Dataset/sift",
+        "source_data_dir": "/home/zhengbian/Dataset/sift",
         "source_data_type": {
             "base": "fvecs",
             "query": "fvecs",
@@ -93,7 +93,7 @@ if __name__ == '__main__':
             "query": "sift_query.fvecs",
             "learn": "sift_learn.fvecs"
         },
-        "project_dir": "/home/bianzheng/NN_as_Classification",
+        "project_dir": "/home/zhengbian/NN_as_Classification",
         "query_len": 1000
     }
     prepare_data(data_config)

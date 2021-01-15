@@ -1,0 +1,25 @@
+{
+  "1_kmeans_multiple": {
+    "n_instance": 1,
+    "type": "kmeans_multiple",
+    "dataset_partition": {
+      "max_iter": 40
+    }
+  },
+  "1_kmeans": {
+    "n_instance": 1,
+    "type": "kmeans_independent",
+    "dataset_partition": {
+      "max_iter": 40
+    }
+  },
+  "1_lsh": {
+    "n_instance": 2,
+    "type": "e2lsh",
+    "dataset_partition": {
+      "r": 1,
+      "a_sigma": 1,
+      "a_miu": 0
+    }
+  }
+}

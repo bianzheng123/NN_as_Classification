@@ -18,8 +18,3 @@ class KMeans(base_partition.BasePartition):
         kmeans_end_time = time.time()
         self.intermediate['kmeans_time'] = kmeans_end_time - kmeans_start_time
         self.labels = self.model.labels_
-
-    def __str__(self):
-        string = super(KMeans, self).__str__()
-        string = '%s max_iter: %s' % (string, self.max_iter)
-        return string

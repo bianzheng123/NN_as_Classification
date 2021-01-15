@@ -26,7 +26,7 @@ def preprocess(base, config):
 
 def factory(config):
     _type = config['type']
-    if _type == 'kmeans':
+    if _type == 'kmeans_independent':
         return preprocess_kmeans.PreprocessKMeans(config)
     elif _type == 'kmeans_multiple':
         return preprocess_kmeans_multiple.PreprocessKMeansMultiple(config)

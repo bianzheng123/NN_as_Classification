@@ -1,5 +1,6 @@
 from procedure_nn_classification.init_0.kmeans import multiple_kmeans, independent_kmeans
 from procedure_nn_classification.init_0.learn_on_graph import multiple_learn_on_graph
+from procedure_nn_classification.init_0.hash import multiple_random_hash
 from util import dir_io
 import time
 
@@ -38,4 +39,6 @@ def factory(config):
             return independent_kmeans.IndependentKMeans(config)
     elif _type == 'learn_on_graph':
         return multiple_learn_on_graph.MultipleLearnOnGraph(config)
+    elif _type == 'random_hash':
+        return multiple_random_hash.MultipleRandomHash(config)
     raise Exception('do not support the type of partition')

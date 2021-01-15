@@ -1,11 +1,11 @@
 import json
 
 if __name__ == '__main__':
-    config_dir = '/home/bianzheng/NN_as_Classification/config/counting_index/short_term_config.json'
+    config_dir = '/home/zhengbian/NN_as_Classification/config/counting_index/short_term_config.json'
     with open(config_dir, 'r') as f:
         config = json.load(f)
-    save_base_dir = '/home/bianzheng/NN_as_Classification/config/counting_index/siftsmall'
     dataset_name = 'siftsmall'
+    save_base_dir = '/home/zhengbian/NN_as_Classification/config/counting_index/%s' % dataset_name
     save_fname_content_m = {
         '1_kmeans_multiple': {
             "n_instance": 1,
@@ -14,9 +14,9 @@ if __name__ == '__main__':
                 "max_iter": 40
             }
         },
-        '1_kmeans': {
+        '1_kmeans_independent': {
             "n_instance": 1,
-            "type": "kmeans",
+            "type": "kmeans_independent",
             "dataset_partition": {
                 "max_iter": 40
             }
@@ -38,9 +38,9 @@ if __name__ == '__main__':
                 "max_iter": 40
             }
         },
-        '8_kmeans': {
+        '8_kmeans_independent': {
             "n_instance": 8,
-            "type": "kmeans",
+            "type": "kmeans_independent",
             "dataset_partition": {
                 "max_iter": 40
             }

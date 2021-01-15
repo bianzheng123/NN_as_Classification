@@ -15,13 +15,13 @@ def run_frontend(long_config_dir, short_config_dir):
 
 if __name__ == '__main__':
     ds_fname = 'siftsmall'
-    base_config_dir = '/home/bianzheng/NN_as_Classification/config/counting_index/%s/' % ds_fname
+    base_config_dir = '/home/zhengbian/NN_as_Classification/config/counting_index/%s/' % ds_fname
     long_config_dir = base_config_dir + 'long_term_config.json'
 
-    short_config_fname_arr = ['1_kmeans_16', '1_kmeans_multiple_16', '1_lsh_16',
-                              '8_kmeans_16', '8_kmeans_multiple_16', '8_lsh_16']
+    short_config_fname_arr = ['1_kmeans_independent_16', '1_kmeans_multiple_16', '1_lsh_16',
+                              '8_kmeans_independent_16', '8_kmeans_multiple_16', '8_lsh_16']
     # short_config_fname_arr = ['1_kmeans_16']
     for tmp_fname in short_config_fname_arr:
         short_config_dir = base_config_dir + tmp_fname + '.json'
-        run_nohup(long_config_dir, short_config_dir, ds_fname, tmp_fname)
-        # run_frontend(long_config_dir, short_config_dir)
+        # run_nohup(long_config_dir, short_config_dir, ds_fname, tmp_fname)
+        run_frontend(long_config_dir, short_config_dir)

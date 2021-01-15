@@ -25,7 +25,7 @@ def print_data_config_type(data_dir):
 
 
 def prepare_data(config):
-    data_dir = '%s/data/%s_%d' % (
+    data_dir = '%s/data/dataset/%s_%d' % (
         config['project_dir'], config['data_fname'], config['k'])
     print("data_dir", data_dir)
     config['data_dir'] = data_dir

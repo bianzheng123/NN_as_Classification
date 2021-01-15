@@ -20,7 +20,7 @@ def run(long_term_config_dir, short_term_config_dir):
     save_train_para = False
     total_start_time = time.time()
 
-    data_dir = '%s/data/%s_%d' % (
+    data_dir = '%s/data/dataset/%s_%d' % (
         long_term_config['project_dir'], long_term_config['data_fname'], long_term_config['k'])
     load_data_config = {
         'data_dir': data_dir
@@ -32,9 +32,9 @@ def run(long_term_config_dir, short_term_config_dir):
     gnd = data[3]
 
     # classification
-    program_train_para_dir = '%s/train_para/%s' % (
+    program_train_para_dir = '%s/data/train_para/%s' % (
         long_term_config['project_dir'], short_term_config['program_fname'])
-    program_result_dir = '%s/result/%s' % (
+    program_result_dir = '%s/data/result/%s' % (
         long_term_config['project_dir'], short_term_config['program_fname'])
 
     dir_io.delete_dir_if_exist(program_train_para_dir)

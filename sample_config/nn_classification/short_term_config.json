@@ -28,9 +28,8 @@
           "k_graph": 10
         },
         "graph_partition": {
-          "type": "kahip",
-          "preconfiguration": "eco",
-          "time_limit": 180
+          "type": "kaffpa",
+          "preconfiguration": "eco"
         }
       }
     },

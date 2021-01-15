@@ -1,6 +1,6 @@
 {
-  "project_dir": "/home/bz/NN_as_Classification",
+  "project_dir": "/home/zhengbian/NN_as_Classification",
   "data_fname": "siftsmall",
   "k": 10,
-  "kahip_dir": "/home/bz/KaHIP"
+  "kahip_dir": "/home/zhengbian/software/KaHIP"
 }

@@ -23,7 +23,7 @@ def run(long_term_config_dir, short_term_config_dir):
     total_start_time = time.time()
 
     # load data
-    data_dir = '%s/data/%s_%d' % (
+    data_dir = '%s/data/dataset/%s_%d' % (
         long_term_config['project_dir'], long_term_config['data_fname'], long_term_config['k'])
     load_data_config = {
         'data_dir': data_dir
@@ -31,8 +31,8 @@ def run(long_term_config_dir, short_term_config_dir):
     base, query, learn, gnd, base_base_gnd = load_data.load_data_npy(load_data_config)
     del load_data_config
 
-    program_train_para_dir = '%s/train_para/%s' % (long_term_config['project_dir'], short_term_config['program_fname'])
-    program_result_dir = '%s/result/%s' % (long_term_config['project_dir'], short_term_config['program_fname'])
+    program_train_para_dir = '%s/data/train_para/%s' % (long_term_config['project_dir'], short_term_config['program_fname'])
+    program_result_dir = '%s/data/result/%s' % (long_term_config['project_dir'], short_term_config['program_fname'])
 
     dir_io.delete_dir_if_exist(program_train_para_dir)
     dir_io.delete_dir_if_exist(program_result_dir)
