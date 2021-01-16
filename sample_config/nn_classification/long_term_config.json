@@ -1,6 +1,7 @@
 {
   "project_dir": "/home/zhengbian/NN_as_Classification",
   "data_fname": "siftsmall",
+  "distance_metric": "l2",
   "k": 10,
   "kahip_dir": "/home/zhengbian/software/KaHIP"
 }

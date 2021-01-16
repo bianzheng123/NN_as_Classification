@@ -7,6 +7,8 @@ class MultipleRandomHash(multiple_base_partition.MultipleBasePartition):
 
     def __init__(self, config):
         super(MultipleRandomHash, self).__init__(config)
+        if self.distance_metric != 'l2':
+            raise Exception("not support distance metric")
         self.obj_id = 'random_hash'
 
     def get_model(self, config):

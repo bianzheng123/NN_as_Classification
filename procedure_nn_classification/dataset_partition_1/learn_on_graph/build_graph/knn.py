@@ -17,9 +17,9 @@ class KNN(base_graph.BaseGraph):
     output vertices and edge
     '''
 
-    def build_graph(self, base, obj):
-        if obj is not None:
-            graph, label = obj
+    def build_graph(self, base, base_base_gnd, ins_intermediate):
+        if ins_intermediate is not None:
+            graph, label = ins_intermediate
             for i, cls in enumerate(label, 0):
                 for neighbor in graph[i]:
                     if label[neighbor - 1] != cls:  # means the neighbor have different cluster
@@ -32,11 +32,11 @@ class KNN(base_graph.BaseGraph):
         vertices = len(base)
         if vertices < self.k_graph + 1:
             raise Exception("build graph error, input dataset is too samll, do not meet the demand of number of edge")
+        if self.k_graph + 1 > len(base_base_gnd):
+            raise Exception("k_graph + 1 > the length in base_base_gnd, system crash. "
+                            "please use increase the k in base_base_gnd or decrease k_graph")
 
-        dim = base.shape[1]
-        index = faiss.IndexFlatL2(dim)
-        index.add(base)
-        distance, index_arr = index.search(base, self.k_graph + 1)  # +1 because the first index must be itself
+        index_arr = base_base_gnd[:, :self.k_graph + 1] # +1 because the first index must be itself
         index_arr = index_arr[:, :] + 1  # kahip need the index start from 1, so +1
         weightless_graph = index_arr.tolist()
         for i in range(len(weightless_graph)):

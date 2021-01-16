@@ -1,7 +1,7 @@
 from procedure_nn_classification.dataset_partition_1 import base_partition
 import numpy as np
 import time
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 
 
 class KMeans(base_partition.BasePartition):
@@ -9,15 +9,15 @@ class KMeans(base_partition.BasePartition):
     def __init__(self, config):
         super(KMeans, self).__init__(config)
         self.centroid_l = None
-        self.n_process = 12
-        self.n_pool_process = 12
-        # self.type, self.save_dir, self.classifier_number, self.label_map, self.n_cluster, self.labels
+        self.n_process = cpu_count()
+        self.n_pool_process = cpu_count()
+        # self.type, self.save_dir, self.classifier_number, self.label_map, self.n_cluster, self.labels, self.distance_metric
 
     def get_centroid(self, centroid_l):
         # k * d
         self.centroid_l = centroid_l
 
-    def _partition(self, base, obj):
+    def _partition(self, base, base_base_gnd, ins_intermediate):
         # count the distance for each item and centroid to get the distance_table
         labels, time_consumed = self.parallel(base)
         self.labels = labels

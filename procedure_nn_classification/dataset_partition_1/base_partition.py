@@ -10,6 +10,7 @@ class BasePartition:
         dir_io.mkdir(self.save_dir)
         self.classifier_number = config['classifier_number']
         self.entity_number = config['entity_number']
+        self.distance_metric = config['distance_metric']
         self.obj_id = "%s_%d_%d" % (self.type, self.entity_number, self.classifier_number)
         # number of cluster
         self.n_cluster = config['n_cluster']
@@ -22,10 +23,10 @@ class BasePartition:
 
         self.labels = None
 
-    def partition(self, base, obj):
+    def partition(self, base, base_base_gnd, ins_intermediate):
         start_time = time.time()
         print('start dataset partitioning %s' % self.obj_id)
-        para = self._partition(base, obj)
+        para = self._partition(base, base_base_gnd, ins_intermediate)
         self.get_labels(self.labels)
         print('finish dataset partitioning %s' % self.obj_id)
         end_time = time.time()
@@ -41,7 +42,7 @@ class BasePartition:
     son class should get the self.labels, which is a list, the label for each item
     '''
 
-    def _partition(self, base, obj):
+    def _partition(self, base, base_base_gnd, ins_intermediate):
         pass
 
     # the function partition the base according to the number of cluster

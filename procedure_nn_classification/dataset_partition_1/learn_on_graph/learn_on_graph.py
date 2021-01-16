@@ -10,18 +10,19 @@ class LearnOnGraph(base_partition.BasePartition):
 
     def __init__(self, config):
         super(LearnOnGraph, self).__init__(config)
-        # self.type, self.save_dir, self.classifier_number, self.label_map, self.n_cluster, self.labels
+        # self.type, self.save_dir, self.classifier_number, self.label_map, self.n_cluster, self.labels, self.distance_metric
         config['build_graph']['save_dir'] = self.save_dir
         config['build_graph']['classifier_number'] = self.classifier_number
+        config['build_graph']['distance_metric'] = self.distance_metric
         self.build_graph_config = config['build_graph']
         self.graph_partition_config = config['graph_partition']
         self.kahip_dir = config['kahip_dir']
         self.n_process = 8
 
-    def _partition(self, base, obj):
+    def _partition(self, base, base_base_gnd, ins_intermediate):
         graph_ins = graph_factory(self.build_graph_config)
         build_graph_start_time = time.time()
-        graph_ins.build_graph(base, obj)
+        graph_ins.build_graph(base, base_base_gnd, ins_intermediate)
         build_graph_end_time = time.time()
         self.intermediate['bulid_graph_time'] = build_graph_end_time - build_graph_start_time
         save_graph_start_time = time.time()
@@ -64,5 +65,7 @@ def graph_factory(config):
     if _type == 'knn':
         return knn.KNN(config)
     elif _type == 'hnsw':
+        if config['distance_metric'] != 'l2':
+            raise Exception("not support distance metrics")
         return hnsw.HNSW(config)
     raise Exception('do not support the type of buildin a graph')

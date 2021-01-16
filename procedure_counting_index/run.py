@@ -1,5 +1,5 @@
 import numpy as np
-from util.numpy import load_data
+from util.vecs import vecs_io
 from procedure_counting_index.dataset_partition_1 import partition_data
 from procedure_counting_index.init_0 import partition_preprocess
 from procedure_common import result_integrate
@@ -26,10 +26,10 @@ def run(long_term_config_dir, short_term_config_dir):
         'data_dir': data_dir
     }
     # load data
-    data = load_data.load_data_npy(load_data_config)
+    data = vecs_io.read_all(load_data_config)
     base = data[0]
     query = data[1]
-    gnd = data[3]
+    gnd = data[2]
 
     # classification
     program_train_para_dir = '%s/data/train_para/%s' % (

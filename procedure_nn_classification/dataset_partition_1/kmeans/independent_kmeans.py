@@ -10,9 +10,9 @@ class KMeans(base_partition.BasePartition):
         super(KMeans, self).__init__(config)
         self.max_iter = config['max_iter']
         self.model = cls.KMeans(n_clusters=self.n_cluster, init='k-means++', max_iter=self.max_iter)
-        # self.type, self.save_dir, self.classifier_number, self.label_map, self.n_cluster, self.labels
+        # self.type, self.save_dir, self.classifier_number, self.label_map, self.n_cluster, self.labels, self.distance_metric
 
-    def _partition(self, base, obj):
+    def _partition(self, base, base_base_gnd, ins_intermediate):
         kmeans_start_time = time.time()
         self.model.fit(base)
         kmeans_end_time = time.time()

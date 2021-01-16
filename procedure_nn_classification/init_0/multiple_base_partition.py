@@ -17,6 +17,7 @@ class MultipleBasePartition:
         self.n_cluster = config['n_cluster']
         self.kahip_dir = config['kahip_dir']
         self.entity_number = config['entity_number']
+        self.distance_metric = config['distance_metric']
         self.model_l = []
         # for identification
         self.obj_id = None
@@ -27,6 +28,7 @@ class MultipleBasePartition:
             tmp_config['entity_number'] = self.entity_number
             tmp_config['n_cluster'] = self.n_cluster
             tmp_config['kahip_dir'] = self.kahip_dir
+            tmp_config['distance_metric'] = self.distance_metric
             tmp_config['save_dir'] = '%s/Classifier_%d_%d' % (
                 self.program_train_para_dir, self.entity_number, tmp_config['classifier_number'])
             dir_io.mkdir(tmp_config['save_dir'])

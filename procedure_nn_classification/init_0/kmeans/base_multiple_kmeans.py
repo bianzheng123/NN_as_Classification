@@ -13,6 +13,8 @@ class BaseMultipleKMeans(multiple_base_partition.MultipleBasePartition):
 
     def __init__(self, config):
         super(BaseMultipleKMeans, self).__init__(config)
+        if self.distance_metric != 'l2':
+            raise Exception("not support distance metric")
         self.specific_type = config['specific_type']
         # to construct the centroid of m-kmeans, the shape is m * k * d
         self.centroid_l_l = None

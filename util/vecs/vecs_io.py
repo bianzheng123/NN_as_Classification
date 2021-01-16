@@ -1,5 +1,6 @@
 import numpy as np
 import struct
+from util import dir_io
 
 
 # to get the .vecs
@@ -14,7 +15,7 @@ def ivecs_read(fname):
 
 def fvecs_read(fname):
     data, d = ivecs_read(fname)
-    return data.view('float32'), d
+    return data.view('float32').astype(np.float32), d
 
 
 def bvecs_read(fname):
@@ -47,6 +48,7 @@ def ivecs_read_mmap(fname):
 
 # store in format of vecs
 def fvecs_write(filename, vecs):
+    dir_io._save_file(filename)
     f = open(filename, "wb")
     dimension = [len(vecs[0])]
 
@@ -58,6 +60,7 @@ def fvecs_write(filename, vecs):
 
 
 def ivecs_write(filename, vecs):
+    dir_io._save_file(filename)
     f = open(filename, "wb")
     dimension = [len(vecs[0])]
 
@@ -69,6 +72,7 @@ def ivecs_write(filename, vecs):
 
 
 def bvecs_write(filename, vecs):
+    dir_io._save_file(filename)
     f = open(filename, "wb")
     dimension = [len(vecs[0])]
 
@@ -79,30 +83,18 @@ def bvecs_write(filename, vecs):
     f.close()
 
 
-def read_all(global_path, base_file_name, gnd_file_name, learn_file_name, query_file_name):
+def read_all(config):
     # read from the file
-    base_data, vector_dim = fvecs_read(global_path + base_file_name)
-    groundtruth_data, gnd_dim = ivecs_read(global_path + gnd_file_name)
-    learn_data = fvecs_read(global_path + learn_file_name)[0]
-    query_data = fvecs_read(global_path + query_file_name)[0]
-    return base_data, groundtruth_data, learn_data, query_data, vector_dim, gnd_dim
-
-
-def read_all_bvecs(global_path, base_file_name, gnd_file_name, learn_file_name, query_file_name):
-    # read from the file
-    base_data, vector_dim = bvecs_read_mmap(global_path + base_file_name)
-    groundtruth_data, gnd_dim = ivecs_read(global_path + gnd_file_name)
-    learn_data = None
-    # learn_data = bvecs_read_mmap(global_path + learn_file_name)[0]
-    query_data = bvecs_read_mmap(global_path + query_file_name)[0]
-
-    base_data = base_data.astype(np.float32)
-    # learn_data = learn_data.astype(np.float32)
-    query_data = query_data.astype(np.float32)
-    print(base_data.flags['C_CONTIGUOUS'])
-
-    return base_data, groundtruth_data, learn_data, query_data, vector_dim, gnd_dim
-
+    data_dir = config['data_dir']
+    base_dir = "%s/base.fvecs" % data_dir
+    base = fvecs_read_mmap(base_dir)[0].astype(np.float32)
+    query_dir = '%s/query.fvecs' % data_dir
+    query = fvecs_read_mmap(query_dir)[0].astype(np.float32)
+    gnd_dir = '%s/gnd.ivecs' % data_dir
+    gnd = ivecs_read_mmap(gnd_dir)[0].astype(np.int)
+    base_base_gnd_dir = '%s/base_base_gnd.ivecs' % data_dir
+    base_base_gnd = ivecs_read_mmap(base_base_gnd_dir)[0].astype(np.int)
+    return base, query, gnd, base_base_gnd
 
 # global_path_b = '/home/bz/SIFT/bigann/'
 # base_data = bvecs_read_mmap(global_path_b + 'bigann_base.bvecs')

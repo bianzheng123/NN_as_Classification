@@ -4,7 +4,7 @@ if __name__ == '__main__':
     config_dir = '/home/zhengbian/NN_as_Classification/config/nn_classification/short_term_config.json'
     with open(config_dir, 'r') as f:
         config = json.load(f)
-    dataset_name = 'siftsmall'
+    dataset_name = 'unirefsmall'
     save_base_dir = '/home/zhengbian/NN_as_Classification/config/nn_classification/%s' % dataset_name
     save_fname_content_m = {
         "8_knn": {
@@ -64,6 +64,9 @@ if __name__ == '__main__':
     for fname in save_fname_content_m:
         config['independent_config'] = [save_fname_content_m[fname]]
         config['n_cluster'] = 16
+        config['train_model']['network']['n_input'] = 35500
+        # sift 128, deep 96, glove 200
+        # uniref 35500
         config['train_model']['n_epochs'] = 12
         config['program_fname'] = '%s_%d_nn_%s' % (dataset_name, config['n_cluster'], fname)
         with open('%s/%s_%d.json' % (save_base_dir, fname, config['n_cluster']), 'w') as f:

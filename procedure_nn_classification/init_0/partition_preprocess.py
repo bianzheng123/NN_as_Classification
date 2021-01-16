@@ -10,6 +10,7 @@ def preprocess(base, config):
     dir_io.mkdir(program_train_para_dir)
     n_cluster = config['n_cluster']
     kahip_dir = config['kahip_dir']
+    distance_metric = config['distance_metric']
     partition_model_l = []
     model_intermediate_m = {}
     start_time = time.time()
@@ -18,6 +19,7 @@ def preprocess(base, config):
         tmp_config['n_cluster'] = n_cluster
         tmp_config['kahip_dir'] = kahip_dir
         tmp_config['entity_number'] = entity_number
+        tmp_config['distance_metric'] = distance_metric
         multiple_model = factory(tmp_config)
         tmp_model_l, model_intermediate = multiple_model.preprocess(base)
         model_intermediate_m[model_intermediate['signature']] = model_intermediate['intermediate']

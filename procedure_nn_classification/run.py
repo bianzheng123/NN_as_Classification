@@ -1,4 +1,4 @@
-from util.numpy import load_data
+from util.vecs import vecs_io
 from procedure_nn_classification.init_0 import partition_preprocess
 from procedure_nn_classification.dataset_partition_1 import dataset_partition
 from procedure_nn_classification.prepare_train_sample_2 import prepare_train_sample
@@ -28,10 +28,11 @@ def run(long_term_config_dir, short_term_config_dir):
     load_data_config = {
         'data_dir': data_dir
     }
-    base, query, learn, gnd, base_base_gnd = load_data.load_data_npy(load_data_config)
+    base, query, gnd, base_base_gnd = vecs_io.read_all(load_data_config)
     del load_data_config
 
-    program_train_para_dir = '%s/data/train_para/%s' % (long_term_config['project_dir'], short_term_config['program_fname'])
+    program_train_para_dir = '%s/data/train_para/%s' % (
+        long_term_config['project_dir'], short_term_config['program_fname'])
     program_result_dir = '%s/data/result/%s' % (long_term_config['project_dir'], short_term_config['program_fname'])
 
     dir_io.delete_dir_if_exist(program_train_para_dir)
@@ -41,7 +42,8 @@ def run(long_term_config_dir, short_term_config_dir):
         "independent_config": short_term_config['independent_config'],
         'n_cluster': short_term_config['n_cluster'],
         'kahip_dir': long_term_config['kahip_dir'],
-        "program_train_para_dir": program_train_para_dir
+        "program_train_para_dir": program_train_para_dir,
+        'distance_metric': long_term_config['distance_metric']
     }
     # get the initial classifier object for each method
     # preprocess to get enable parallelization, however, when use the Multiprocessor, some bug happen
@@ -53,7 +55,7 @@ def run(long_term_config_dir, short_term_config_dir):
     label_l = []
     dataset_partition_para = None
     for model in model_l:
-        partition_info, model_info, dataset_partition_para = dataset_partition.partition(base, model,
+        partition_info, model_info, dataset_partition_para = dataset_partition.partition(base, model, base_base_gnd,
                                                                                          dataset_partition_para)
         partition_intermediate = model_info[1]
 
@@ -71,6 +73,8 @@ def run(long_term_config_dir, short_term_config_dir):
         train_model_config['classifier_number'] = model_info[0]['classifier_number']
         train_model_config['entity_number'] = model_info[0]['entity_number']
         train_model_config['program_train_para_dir'] = program_train_para_dir
+        train_model_config['distance_metric'] = long_term_config['distance_metric']
+        train_model_config['data_fname'] = long_term_config['data_fname']
 
         cluster_score, train_eval_intermediate = train_eval_model.train_eval_model(base, query, trainset,
                                                                                    train_model_config)
