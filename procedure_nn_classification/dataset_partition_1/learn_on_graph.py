@@ -1,5 +1,5 @@
 from procedure_nn_classification.dataset_partition_1 import base_partition
-from procedure_nn_classification.dataset_partition_1.learn_on_graph.build_graph import knn, hnsw
+from procedure_nn_classification.dataset_partition_1.build_graph import hnsw, knn
 import numpy as np
 from util import read_data, dir_io
 import time
@@ -10,23 +10,22 @@ class LearnOnGraph(base_partition.BasePartition):
 
     def __init__(self, config):
         super(LearnOnGraph, self).__init__(config)
-        # self.type, self.save_dir, self.classifier_number, self.label_map, self.n_cluster, self.labels, self.distance_metric
-        config['build_graph']['save_dir'] = self.save_dir
-        config['build_graph']['classifier_number'] = self.classifier_number
-        config['build_graph']['distance_metric'] = self.distance_metric
+        # self.save_dir, self.classifier_number, self.distance_metric, self.n_cluster,
+        # self.labels, self.label_map, self.n_point_label
         self.build_graph_config = config['build_graph']
-        self.graph_partition_config = config['graph_partition']
+        self.build_graph_config['distance_metric'] = self.distance_metric
+        self.graph_partition_type = config['graph_partition']
         self.kahip_dir = config['kahip_dir']
         self.n_process = 8
 
     def _partition(self, base, base_base_gnd, ins_intermediate):
-        graph_ins = graph_factory(self.build_graph_config)
+        graph_ins = graph_factory(self.type, self.build_graph_config)
         build_graph_start_time = time.time()
-        graph_ins.build_graph(base, base_base_gnd, ins_intermediate)
+        graph = graph_ins.build_graph(base, base_base_gnd, ins_intermediate)
         build_graph_end_time = time.time()
         self.intermediate['bulid_graph_time'] = build_graph_end_time - build_graph_start_time
         save_graph_start_time = time.time()
-        graph = graph_ins.save()
+        graph_ins.save(graph, self.save_dir)
         save_graph_end_time = time.time()
         self.intermediate['save_graph_time'] = save_graph_end_time - save_graph_start_time
         graph_partition_start_time = time.time()
@@ -38,17 +37,17 @@ class LearnOnGraph(base_partition.BasePartition):
     def graph_partition(self):
         # this function is to invoke kahip and read partition.txt
         partition_dir = '%s/partition.txt' % self.save_dir
-        if self.graph_partition_config['type'] == 'kaffpa':
-            kahip_command = '%s/deploy/kaffpa %s/graph.graph --preconfiguration=%s --output_filename=%s/partition.txt ' \
+        if self.graph_partition_type == 'kaffpa':
+            kahip_command = '%s/deploy/kaffpa %s/graph.graph --preconfiguration=eco --output_filename=%s/partition.txt ' \
                             '--k=%d' % (
-                                self.kahip_dir, self.save_dir, self.graph_partition_config['preconfiguration'],
+                                self.kahip_dir, self.save_dir,
                                 self.save_dir,
                                 self.n_cluster)
             print(kahip_command)
             dir_io.kahip(partition_dir, kahip_command)
-        elif self.graph_partition_config['type'] == 'parhip':
-            kahip_command = 'mpirun -n %d %s/deploy/parhip %s/graph.graph --preconfiguration %s --save_partition --k %d' % (
-                self.n_process, self.kahip_dir, self.save_dir, self.graph_partition_config['preconfiguration'],
+        elif self.graph_partition_type == 'parhip':
+            kahip_command = 'mpirun -n %d %s/deploy/parhip %s/graph.graph --preconfiguration fastsocial --save_partition --k %d' % (
+                self.n_process, self.kahip_dir, self.save_dir,
                 self.n_cluster)
             print(kahip_command)
             dir_io.kahip('./tmppartition.txtp', kahip_command)
@@ -60,8 +59,7 @@ class LearnOnGraph(base_partition.BasePartition):
         dir_io.move_file('tmppartition.txtp', '%s/partition.txt' % self.save_dir)
 
 
-def graph_factory(config):
-    _type = config['type']
+def graph_factory(_type, config):
     if _type == 'knn':
         return knn.KNN(config)
     elif _type == 'hnsw':

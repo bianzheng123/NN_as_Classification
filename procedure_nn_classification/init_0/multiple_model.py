@@ -1,30 +1,82 @@
-from procedure_nn_classification.init_0 import multiple_base_partition
-from procedure_nn_classification.dataset_partition_1.kmeans import multiple_kmeans
 import numpy as np
 import sklearn.cluster as cls
+from procedure_nn_classification.dataset_partition_1 import kmeans, learn_on_graph, \
+    random_hash
 import time
+import copy
+from util import dir_io
+
+'''
+the son class should rewrite the funciton of get_model() and preprocess()
+get_model() is to return the model of classifier
+preprocess is to return the array of the model
+'''
+
+
+class MultipleBasePartition:
+    def __init__(self, config):
+        self.program_train_para_dir = config['program_train_para_dir']
+        self.type = config['dataset_partition']['type']
+        self.n_instance = config['n_instance']
+        self.n_cluster = config['n_cluster']
+        self.kahip_dir = config['kahip_dir']
+        self.distance_metric = config['distance_metric']
+        self.model_l = []
+        for i in range(self.n_instance):
+            tmp_config = copy.deepcopy(config['dataset_partition'])
+            tmp_config['type'] = self.type
+            tmp_config['classifier_number'] = i
+            tmp_config['n_cluster'] = self.n_cluster
+            tmp_config['kahip_dir'] = self.kahip_dir
+            tmp_config['distance_metric'] = self.distance_metric
+            tmp_config['save_dir'] = '%s/Classifier_%d' % (
+                self.program_train_para_dir, tmp_config['classifier_number'])
+            dir_io.mkdir(tmp_config['save_dir'])
+            tmp_model = self.get_model(tmp_config)
+            self.model_l.append(tmp_model)
+
+    # the son class should set the list of model to self.model_l
+    def preprocess(self, base):
+        print('start preprocessing %s' % self.type)
+        intermediate = self._preprocess(base)
+        print('finish preprocessing %s' % self.type)
+        return self.model_l, intermediate
+
+
+class IndependentKMeans(MultipleBasePartition):
+
+    def __init__(self, config):
+        super(IndependentKMeans, self).__init__(config)
+        if self.distance_metric != 'l2':
+            raise Exception("not support distance metric")
+        # program_train_para_dir, n_cluster, n_instance, entity_number, models
+
+    def get_model(self, config):
+        return kmeans.IndependentKMeans(config)
+
+    def _preprocess(self, base):
+        return {}
+
 
 '''
 the son class need to get the object of m-kmeans, that is self.model
 '''
 
 
-class BaseMultipleKMeans(multiple_base_partition.MultipleBasePartition):
+class MultipleKMeans(MultipleBasePartition):
 
     def __init__(self, config):
-        super(BaseMultipleKMeans, self).__init__(config)
+        super(MultipleKMeans, self).__init__(config)
         if self.distance_metric != 'l2':
             raise Exception("not support distance metric")
-        self.specific_type = config['specific_type']
         # to construct the centroid of m-kmeans, the shape is m * k * d
         self.centroid_l_l = None
-        self.obj_id = '%s_%s' % (self.type, self.specific_type)
         self.max_iter = config['dataset_partition']['max_iter']
-        self.model = None
-        self.signature = None
+        self.model = cls.KMeans(n_clusters=self.n_cluster * self.n_instance, init='k-means++',
+                                max_iter=self.max_iter)
 
     def get_model(self, config):
-        return multiple_kmeans.KMeans(config)
+        return kmeans.MultipleKMeans(config)
 
     def _preprocess(self, base):
         # return the centroid of m-kmeans
@@ -84,7 +136,7 @@ class BaseMultipleKMeans(multiple_base_partition.MultipleBasePartition):
 
     def random_projection(self, centroid_l):
         res_idx = np.arange(self.n_cluster * self.n_instance)
-        BaseMultipleKMeans.divide_and_conquer(0, self.n_cluster, centroid_l, 0, len(centroid_l), res_idx)
+        MultipleKMeans.divide_and_conquer(0, self.n_cluster, centroid_l, 0, len(centroid_l), res_idx)
         return res_idx
 
     @staticmethod
@@ -107,8 +159,8 @@ class BaseMultipleKMeans(multiple_base_partition.MultipleBasePartition):
         sort_indices = np.argsort(random_l[start:end]) + start
         mid = int((start + end - 1) / 2)
         res_idx[start:end] = sort_indices
-        BaseMultipleKMeans.divide_and_conquer(depth, k, centroid_l, start, mid, res_idx)
-        BaseMultipleKMeans.divide_and_conquer(depth, k, centroid_l, mid, end, res_idx)
+        MultipleKMeans.divide_and_conquer(depth, k, centroid_l, start, mid, res_idx)
+        MultipleKMeans.divide_and_conquer(depth, k, centroid_l, mid, end, res_idx)
 
     # to see the distribution of different centroids
     def get_label(self, labels):
@@ -118,3 +170,29 @@ class BaseMultipleKMeans(multiple_base_partition.MultipleBasePartition):
             base_idx_i = np.argwhere(labels == cluster_i).reshape(-1)
             self.label_map[cluster_i] = base_idx_i
             self.n_point_label.append(len(base_idx_i))
+
+
+class MultipleLearnOnGraph(MultipleBasePartition):
+
+    def __init__(self, config):
+        super(MultipleLearnOnGraph, self).__init__(config)
+
+    def get_model(self, config):
+        return learn_on_graph.LearnOnGraph(config)
+
+    def _preprocess(self, base):
+        return {}
+
+
+class MultipleRandomHash(MultipleBasePartition):
+
+    def __init__(self, config):
+        super(MultipleRandomHash, self).__init__(config)
+        if self.distance_metric != 'l2':
+            raise Exception("not support distance metric")
+
+    def get_model(self, config):
+        return random_hash.RandomHash(config)
+
+    def _preprocess(self, base):
+        return {}

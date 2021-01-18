@@ -1,14 +1,12 @@
-from procedure_nn_classification.dataset_partition_1.learn_on_graph.build_graph import base_graph
 import numpy as np
 import faiss
+from util import dir_io
 
 
-class HNSW(base_graph.BaseGraph):
+class HNSW:
 
     def __init__(self, config):
-        super(HNSW, self).__init__(config)
-        # self.type, self.save_dir, self.classifier_number, self.graph = None
-        self.k_graph = config['k_graph']
+        self.k_graph = 10
 
     '''
     input the base file
@@ -26,7 +24,7 @@ class HNSW(base_graph.BaseGraph):
         index.add(shuffle_base)
         result_graph = HNSW.get_graph(index.hnsw, permutation_reverse)
 
-        self.graph = result_graph
+        return result_graph
 
     @staticmethod
     def shuffle_base(base, vertices):
@@ -68,3 +66,17 @@ class HNSW(base_graph.BaseGraph):
                 if (i + 1) not in graph[vertices_index - 1]:
                     graph[vertices_index - 1].add(i + 1)
         return graph
+
+    @staticmethod
+    def save(graph, save_dir):
+        # graph is the 2d array
+        vertices = len(graph)
+        edges = 0
+        for vecs in graph:
+            edges += len(vecs)
+        assert edges % 2 == 0
+        edges = edges / 2
+
+        save_dir = '%s/graph.graph' % save_dir
+        dir_io.save_graph(save_dir, graph, vertices, edges)
+        print("graph building complete")

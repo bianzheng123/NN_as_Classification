@@ -8,8 +8,8 @@ from multiprocessing.managers import BaseManager
 
 
 def train_eval_model(base, query, trainset, config):
-    save_dir = '%s/Classifier_%d_%d' % (
-        config['program_train_para_dir'], config['entity_number'], config['classifier_number'])
+    save_dir = '%s/Classifier_%d' % (
+        config['program_train_para_dir'], config['classifier_number'])
     config['save_dir'] = save_dir
     train_model_ins = train_model_factory(config)
     # if use the learn dataset, add the learn variable in here

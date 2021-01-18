@@ -8,9 +8,8 @@ class Classifier:
     def __init__(self, config):
         self.type = config['type']
         self.save_dir = '%s/train_model' % config['save_dir']
-        self.entity_number = config['entity_number']
         self.classifier_number = config['classifier_number']
-        self.obj_id = "%s_%d_%d" % (self.type, self.entity_number, self.classifier_number)
+        self.obj_id = "%s_%d" % (self.type, self.classifier_number)
         self.n_cluster = config['n_cluster']
         # this is the score_table, it stores the score of each classifier for each query, its shape is query.shape[0] * base.shape[0]
         self.result = None

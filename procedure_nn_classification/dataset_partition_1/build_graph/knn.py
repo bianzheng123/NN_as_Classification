@@ -1,15 +1,11 @@
-from procedure_nn_classification.dataset_partition_1.learn_on_graph.build_graph import base_graph
 import numpy as np
 import faiss
 from util import dir_io
 
 
-class KNN(base_graph.BaseGraph):
-
+class KNN:
     def __init__(self, config):
-        super(KNN, self).__init__(config)
-        # self.type, self.save_dir, self.classifier_number, self.graph = None
-        self.k_graph = config['k_graph']
+        self.k_graph = 10
         self.increase_weight = config['increase_weight']
 
     '''
@@ -26,8 +22,7 @@ class KNN(base_graph.BaseGraph):
                         graph[i][neighbor] = graph[i][neighbor] + self.increase_weight
                         graph[neighbor - 1][i + 1] = graph[neighbor - 1][i + 1] + self.increase_weight
 
-            self.graph = graph
-            return
+            return graph
 
         vertices = len(base)
         if vertices < self.k_graph + 1:
@@ -36,7 +31,7 @@ class KNN(base_graph.BaseGraph):
             raise Exception("k_graph + 1 > the length in base_base_gnd, system crash. "
                             "please use increase the k in base_base_gnd or decrease k_graph")
 
-        index_arr = base_base_gnd[:, :self.k_graph + 1] # +1 because the first index must be itself
+        index_arr = base_base_gnd[:, :self.k_graph + 1]  # +1 because the first index must be itself
         index_arr = index_arr[:, :] + 1  # kahip need the index start from 1, so +1
         weightless_graph = index_arr.tolist()
         for i in range(len(weightless_graph)):
@@ -58,19 +53,18 @@ class KNN(base_graph.BaseGraph):
                 tmp_line[vertices] = 1
             res_graph.append(tmp_line)
         # print("change the rank into graph successfully")
+        return res_graph
 
-        self.graph = res_graph
-
-    def save(self):
-        # self.graph is the 2d array
-        vertices = len(self.graph)
+    @staticmethod
+    def save(graph, save_dir):
+        # graph is the 2d array
+        vertices = len(graph)
         edges = 0
-        for vecs in self.graph:
+        for vecs in graph:
             edges += len(vecs)
         assert edges % 2 == 0
         edges = edges / 2
 
-        save_dir = '%s/graph.graph' % self.save_dir
-        dir_io.save_graph_edge_weight(save_dir, self.graph, vertices, edges)
-        print("graph building complete")
-        return self.graph
+        save_dir = '%s/graph.graph' % save_dir
+        dir_io.save_graph_edge_weight(save_dir, graph, vertices, edges)
+        print("save graph complete")

@@ -5,13 +5,11 @@ from util import dir_io
 
 class BasePartition:
     def __init__(self, config):
-        self.type = config['type']
         self.save_dir = '%s/dataset_partition' % config['save_dir']
         dir_io.mkdir(self.save_dir)
+        self.type = config['type']
         self.classifier_number = config['classifier_number']
-        self.entity_number = config['entity_number']
         self.distance_metric = config['distance_metric']
-        self.obj_id = "%s_%d_%d" % (self.type, self.entity_number, self.classifier_number)
         # number of cluster
         self.n_cluster = config['n_cluster']
         self.model_info = None
@@ -25,18 +23,14 @@ class BasePartition:
 
     def partition(self, base, base_base_gnd, ins_intermediate):
         start_time = time.time()
-        print('start dataset partitioning %s' % self.obj_id)
+        print('start dataset partitioning %s' % self.classifier_number)
         para = self._partition(base, base_base_gnd, ins_intermediate)
         self.get_labels(self.labels)
-        print('finish dataset partitioning %s' % self.obj_id)
+        print('finish dataset partitioning %s' % self.classifier_number)
         end_time = time.time()
         self.intermediate['total_time'] = end_time - start_time
         self.intermediate['cluster_number_distribution'] = self.n_point_label
-        model_info = {
-            "classifier_number": self.classifier_number,
-            "entity_number": self.entity_number,
-        }
-        return (self.labels, self.label_map), (model_info, self.intermediate), para
+        return (self.labels, self.label_map), (self.classifier_number, self.intermediate), para
 
     '''
     son class should get the self.labels, which is a list, the label for each item
@@ -63,3 +57,14 @@ class BasePartition:
 
     def __str__(self):
         return '%s, n_cluster: %d' % (self.obj_id, self.n_cluster)
+
+
+'''
+input base and output the text information of partition
+'''
+
+
+def partition(base, model, base_base_gnd, obj):
+    partition_info, model_info, para = model.partition(base, base_base_gnd, obj)
+    # model.save()
+    return partition_info, model_info, para

@@ -1,8 +1,11 @@
 from procedure_nn_classification.train_eval_model_3 import classifier
-import torch.nn as nn
+from procedure_nn_classification.train_eval_model_3 import networks
 import torch
 import numpy as np
 from torch.utils.data import Dataset, DataLoader, TensorDataset
+
+lr = 0.008
+acc_threshold = 0.95
 
 
 class NeuralNetwork(classifier.Classifier):
@@ -11,11 +14,13 @@ class NeuralNetwork(classifier.Classifier):
         super(NeuralNetwork, self).__init__(config)
         # self.type, self.save_dir, self.classifier_number, self.n_cluster
         torch.set_num_threads(12)
-        config['network']['n_output'] = self.n_cluster
-        self.model = NNModel(config['network'])
+        model_config = {
+            'n_input': config['n_input'],
+            'n_output': self.n_cluster
+        }
+        self.model = networks.NNModel(model_config)
         self.n_epochs = config['n_epochs']
-        self.acc_threshold = config['acc_threshold']
-        lr = config['lr']
+        self.acc_threshold = acc_threshold
         milestones = [10, 17, 24, 31, 38, 45, 50, 55, 60, 70]
         weight_decay = 10 ** (-4)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
@@ -108,30 +113,3 @@ class NeuralNetwork(classifier.Classifier):
         with torch.no_grad():
             eval_res = self.model(query)
             self.result = eval_res.numpy()
-
-
-class NNModel(nn.Module):
-    def __init__(self, config):
-        super().__init__()
-        input_dim = config['n_input']
-        hidden_dim_1 = config['n_hidden'][0]
-        hidden_dim_2 = config['n_hidden'][1]
-        output_dim = config['n_output']
-        dropout_probability = config['p_dropout']
-        self.layer = nn.Sequential(
-            nn.Linear(input_dim, hidden_dim_1),
-            nn.BatchNorm1d(hidden_dim_1),
-            nn.ReLU(),
-
-            nn.Linear(hidden_dim_1, hidden_dim_2),
-            nn.BatchNorm1d(hidden_dim_2),
-            nn.ReLU(),
-            nn.Dropout(p=dropout_probability),
-
-            nn.Linear(hidden_dim_2, output_dim),
-            nn.Softmax(dim=-1)
-        )
-
-    def forward(self, x):
-        x = self.layer(x)
-        return x
