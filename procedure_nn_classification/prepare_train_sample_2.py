@@ -1,7 +1,6 @@
 import time
 import torch
 from torch.utils.data import Dataset, DataLoader, TensorDataset
-from util.vecs import vecs_util
 
 label_k = 50
 batch_size = 64
@@ -15,6 +14,10 @@ def prepare_train(base, base_base_gnd, partition_info, config):
     classifier_number = config['classifier_number']
 
     prepare_method = factory(config['type'])
+    global label_k
+    if 'label_k' in config:
+        label_k = config['label_k']
+        print("label k %d ==========================================================================================" % label_k)
 
     start_time = time.time()
     print('start prepare data %s' % classifier_number)
@@ -38,7 +41,6 @@ def neighbor(base, base_base_gnd, partition_info, n_cluster):
     partition = partition_info[0]
     # extract the top label_k of gnd as the label of training set
     ranks = base_base_gnd[:, :label_k]
-    # ranks = vecs_util.get_gnd_numpy(base, base, label_k)
 
     base_idx = torch.arange(0, base.shape[0])
     partition = torch.LongTensor(partition)

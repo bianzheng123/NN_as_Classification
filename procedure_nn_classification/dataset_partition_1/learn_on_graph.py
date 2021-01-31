@@ -4,6 +4,7 @@ import numpy as np
 from util import read_data, dir_io
 import time
 import os
+import multiprocessing
 
 
 class LearnOnGraph(base_partition.BasePartition):
@@ -16,10 +17,10 @@ class LearnOnGraph(base_partition.BasePartition):
         self.build_graph_config['distance_metric'] = self.distance_metric
         self.graph_partition_type = config['graph_partition']
         self.kahip_dir = config['kahip_dir']
-        self.n_process = 8
+        self.n_process = 16
 
     def _partition(self, base, base_base_gnd, ins_intermediate):
-        graph_ins = graph_factory(self.type, self.build_graph_config)
+        graph_ins = self.graph_factory(self.type, self.build_graph_config)
         build_graph_start_time = time.time()
         graph = graph_ins.build_graph(base, base_base_gnd, ins_intermediate)
         build_graph_end_time = time.time()
@@ -46,7 +47,8 @@ class LearnOnGraph(base_partition.BasePartition):
             print(kahip_command)
             dir_io.kahip(partition_dir, kahip_command)
         elif self.graph_partition_type == 'parhip':
-            kahip_command = 'mpirun -n %d %s/deploy/parhip %s/graph.graph --preconfiguration fastsocial --save_partition --k %d' % (
+            kahip_command = 'mpirun -n %d %s/deploy/parhip %s/graph.graph --preconfiguration fastsocial --vertex_degree_weights ' \
+                            '--save_partition --k %d' % (
                 self.n_process, self.kahip_dir, self.save_dir,
                 self.n_cluster)
             print(kahip_command)
@@ -58,12 +60,12 @@ class LearnOnGraph(base_partition.BasePartition):
     def move_partition_txt(self):
         dir_io.move_file('tmppartition.txtp', '%s/partition.txt' % self.save_dir)
 
-
-def graph_factory(_type, config):
-    if _type == 'knn':
-        return knn.KNN(config)
-    elif _type == 'hnsw':
-        if config['distance_metric'] != 'l2':
-            raise Exception("not support distance metrics")
-        return hnsw.HNSW(config)
-    raise Exception('do not support the type of buildin a graph')
+    @staticmethod
+    def graph_factory(_type, config):
+        if _type == 'knn':
+            return knn.KNN(config)
+        elif _type == 'hnsw':
+            if config['distance_metric'] != 'l2':
+                raise Exception("not support distance metrics")
+            return hnsw.HNSW(config)
+        raise Exception('do not support the type of buildin a graph')

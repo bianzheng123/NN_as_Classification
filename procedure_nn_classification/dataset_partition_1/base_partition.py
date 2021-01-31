@@ -9,7 +9,9 @@ class BasePartition:
         dir_io.mkdir(self.save_dir)
         self.type = config['type']
         self.classifier_number = config['classifier_number']
-        self.distance_metric = config['distance_metric']
+        self.distance_metric = config[
+            'distance_metric'] if 'distance_metric' in config else 'l2'  # pq_nn will not include this parameter
+
         # number of cluster
         self.n_cluster = config['n_cluster']
         self.model_info = None
@@ -64,7 +66,7 @@ input base and output the text information of partition
 '''
 
 
-def partition(base, model, base_base_gnd, obj):
+def partition(base, model, base_base_gnd=None, obj=None):
     partition_info, model_info, para = model.partition(base, base_base_gnd, obj)
     # model.save()
     return partition_info, model_info, para

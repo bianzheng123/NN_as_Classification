@@ -1,0 +1,19 @@
+{
+  "specific_fname": "",
+  "n_cluster": 16,
+  "n_instance": 2,
+  "dataset_partition": {
+    "type": "knn",
+    "build_graph": {
+      "increase_weight": 2
+    },
+    "graph_partition": "parhip"
+  },
+  "prepare_train_sample": {
+    "type": "neighbor"
+  },
+  "train_model": {
+    "type": "neural_network",
+    "n_epochs": 2
+  }
+}

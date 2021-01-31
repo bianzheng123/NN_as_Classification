@@ -1,5 +1,6 @@
 from procedure_nn_classification.train_eval_model_3 import classifier
 from procedure_nn_classification.train_eval_model_3 import networks
+import multiprocessing
 import torch
 import numpy as np
 from torch.utils.data import Dataset, DataLoader, TensorDataset
@@ -13,12 +14,18 @@ class NeuralNetwork(classifier.Classifier):
     def __init__(self, config):
         super(NeuralNetwork, self).__init__(config)
         # self.type, self.save_dir, self.classifier_number, self.n_cluster
-        torch.set_num_threads(12)
+        torch.set_num_threads(multiprocessing.cpu_count() // 5 * 4)
         model_config = {
             'n_input': config['n_input'],
-            'n_output': self.n_cluster
+            'n_output': self.n_cluster,
+            'data_fname': config['data_fname'],
+            'distance_metric': config['distance_metric'] if "distance_metric" in config else 'l2'
         }
-        self.model = networks.NNModel(model_config)
+        if 'n_hidden' in config:
+            model_config['n_hidden'] = config['n_hidden']
+        if 'n_character' in config:
+            model_config['n_character'] = config['n_character']
+        self.model = model_factory(model_config)
         self.n_epochs = config['n_epochs']
         self.acc_threshold = acc_threshold
         milestones = [10, 17, 24, 31, 38, 45, 50, 55, 60, 70]
@@ -113,3 +120,12 @@ class NeuralNetwork(classifier.Classifier):
         with torch.no_grad():
             eval_res = self.model(query)
             self.result = eval_res.numpy()
+
+
+def model_factory(config):
+    if config['distance_metric'] == 'l2':
+        return networks.NNModel(config)
+    elif config['distance_metric'] == 'string':
+        if config['data_fname'] == 'uniref' or config['data_fname'] == 'unirefsmall':
+            return networks.UnirefCNN(config)
+    raise Exception("not support the distance metric or dataset")

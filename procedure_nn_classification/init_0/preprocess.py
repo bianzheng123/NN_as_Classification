@@ -24,6 +24,6 @@ def factory(config):
         return multiple_model.IndependentKMeans(config)
     elif _type == 'knn' or _type == 'hnsw':
         return multiple_model.MultipleLearnOnGraph(config)
-    elif _type == 'random_hash':
-        return multiple_model.MultipleRandomHash(config)
+    elif _type == 'random_hash' or _type == 'lsh':
+        return multiple_model.MultipleHash(config)
     raise Exception('do not support the type of partition')

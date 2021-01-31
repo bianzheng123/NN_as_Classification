@@ -83,13 +83,33 @@ def bvecs_write(filename, vecs):
     f.close()
 
 
-def read_all(config):
+def read_txt(dire):
+    with open(dire, "r") as f:
+        txt = f.read().split('\n')[:-1]
+    return np.array(txt).astype(np.float32)
+
+
+def read_data_l2(config):
     # read from the file
     data_dir = config['data_dir']
     base_dir = "%s/base.fvecs" % data_dir
     base = fvecs_read_mmap(base_dir)[0].astype(np.float32)
     query_dir = '%s/query.fvecs' % data_dir
     query = fvecs_read_mmap(query_dir)[0].astype(np.float32)
+    gnd_dir = '%s/gnd.ivecs' % data_dir
+    gnd = ivecs_read_mmap(gnd_dir)[0].astype(np.int)
+    base_base_gnd_dir = '%s/base_base_gnd.ivecs' % data_dir
+    base_base_gnd = ivecs_read_mmap(base_base_gnd_dir)[0].astype(np.int)
+    return base, query, gnd, base_base_gnd
+
+
+def read_data_string(config):
+    # read from the file
+    data_dir = config['data_dir']
+    base_dir = "%s/base.ivecs" % data_dir
+    base = ivecs_read_mmap(base_dir)[0].astype(np.float32)
+    query_dir = '%s/query.ivecs' % data_dir
+    query = ivecs_read_mmap(query_dir)[0].astype(np.float32)
     gnd_dir = '%s/gnd.ivecs' % data_dir
     gnd = ivecs_read_mmap(gnd_dir)[0].astype(np.int)
     base_base_gnd_dir = '%s/base_base_gnd.ivecs' % data_dir

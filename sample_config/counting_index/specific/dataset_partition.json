@@ -1,0 +1,16 @@
+[
+  {
+    "type": "e2lsh",
+    "r": 1,
+    "a_sigma": 1,
+    "a_miu": 0
+  },
+  {
+    "type": "kmeans_independent",
+    "max_iter": 40
+  },
+  {
+    "type": "kmeans_multiple",
+    "max_iter": 40
+  }
+]

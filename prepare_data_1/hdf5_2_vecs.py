@@ -1,8 +1,8 @@
 import numpy as np
 import h5py
 import _init_paths
-from util import dir_io
-from util.vecs import vecs_util, vecs_io
+from util import dir_io, groundtruth
+from util.vecs import vecs_io
 
 
 def print_data_config_type(data_dir):
@@ -37,8 +37,8 @@ def prepare_data(config):
     print("data_dir", data_dir)
     config['data_dir'] = data_dir
 
-    dir_io.delete_dir_if_exist(data_dir)
-    dir_io.mkdir(data_dir)
+    # dir_io.delete_dir_if_exist(data_dir)
+    # dir_io.mkdir(data_dir)
 
     # read data
     hdfFile = h5py.File(config['source_data_dir'], 'r')
@@ -64,12 +64,12 @@ def prepare_data(config):
     print("save query")
 
     save_gnd_dir = '%s/gnd.ivecs' % data_dir
-    gnd = vecs_util.get_gnd(base, query, config['k'])
+    gnd = groundtruth.get_gnd(base, query, config['k'])
     vecs_io.ivecs_write(save_gnd_dir, gnd)
     print("save gnd")
 
     base_base_gnd_npy_dir = '%s/base_base_gnd.ivecs' % config['data_dir']
-    base_base_gnd = vecs_util.get_gnd(base, base, max(config['base_base_gnd_k'], config['k']))
+    base_base_gnd = groundtruth.get_gnd(base, base, max(config['base_base_gnd_k'], config['k']))
     vecs_io.ivecs_write(base_base_gnd_npy_dir, base_base_gnd)
     print("save base_base_gnd for the training set preparation")
 
@@ -101,5 +101,5 @@ if __name__ == '__main__':
         "project_dir": "/home/zhengbian/NN_as_Classification",
         "normalization": True
     }
-    prepare_data(data_config)
-    # print_data_config_type(data_config['source_data_dir'])
+    # prepare_data(data_config)
+    print_data_config_type(data_config['source_data_dir'])

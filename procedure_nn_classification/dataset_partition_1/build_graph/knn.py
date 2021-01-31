@@ -5,7 +5,10 @@ from util import dir_io
 
 class KNN:
     def __init__(self, config):
-        self.k_graph = 10
+        if 'k_graph' in config:
+            self.k_graph = config['k_graph']
+        else:
+            self.k_graph = 40
         self.increase_weight = config['increase_weight']
 
     '''

@@ -10,6 +10,7 @@ import math
 
 
 def run(long_term_config_dir, short_term_config_dir):
+    np.random.seed(123)
     with open(long_term_config_dir, 'r') as f:
         long_term_config = json.load(f)
     with open(short_term_config_dir, 'r') as f:
@@ -26,23 +27,33 @@ def run(long_term_config_dir, short_term_config_dir):
         'data_dir': data_dir
     }
     # load data
-    data = vecs_io.read_all(load_data_config)
+    data = vecs_io.read_data_l2(load_data_config)
     base = data[0]
     query = data[1]
     gnd = data[2]
 
+    program_fname = '%s_%d_count_%d_%s_%s' % (
+        long_term_config['data_fname'], short_term_config['n_cluster'], short_term_config['n_instance'],
+        short_term_config['dataset_partition']['type'], short_term_config['specific_fname'])
+    if short_term_config['dataset_partition']['type'] == 'e2lsh':
+        program_fname = '%s_%d_count_%d_%s_%s' % (
+            long_term_config['data_fname'], short_term_config['n_cluster'] * short_term_config['n_cluster'],
+            short_term_config['n_instance'] // 2,
+            short_term_config['dataset_partition']['type'], short_term_config['specific_fname'])
+
     # classification
     program_train_para_dir = '%s/data/train_para/%s' % (
-        long_term_config['project_dir'], short_term_config['program_fname'])
+        long_term_config['project_dir'], program_fname)
     program_result_dir = '%s/data/result/%s' % (
-        long_term_config['project_dir'], short_term_config['program_fname'])
+        long_term_config['project_dir'], program_fname)
 
     dir_io.delete_dir_if_exist(program_train_para_dir)
     dir_io.delete_dir_if_exist(program_result_dir)
 
     partition_preprocess_config = {
-        "independent_config": short_term_config['independent_config'],
+        "dataset_partition": short_term_config['dataset_partition'],
         'n_cluster': short_term_config['n_cluster'],
+        'n_instance': short_term_config['n_instance'],
         "program_train_para_dir": program_train_para_dir,
     }
     model_l, preprocess_intermediate = partition_preprocess.preprocess(base, partition_preprocess_config)
@@ -59,7 +70,7 @@ def run(long_term_config_dir, short_term_config_dir):
         pred_cluster, predict_intermediate = model.predict(query)
 
         intermediate = {
-            "ins_id": '%d_%d' % (model_info[0]["entity_number"], model_info[0]["classifier_number"]),
+            "ins_id": model_info[0],
             'dataset_partition': partition_intermediate,
             'predict': predict_intermediate,
         }
@@ -102,7 +113,7 @@ def run(long_term_config_dir, short_term_config_dir):
             'short_term_config_before_run': short_term_config_before_run,
             'intermediate_result': intermediate_result_final,
             'save_dir': program_train_para_dir,
-            'program_fname': short_term_config['program_fname']
+            'program_fname': program_fname
         }
         dir_io.save_config(save_config_config)
 
@@ -112,6 +123,6 @@ def run(long_term_config_dir, short_term_config_dir):
         'short_term_config_before_run': short_term_config_before_run,
         'intermediate_result': intermediate_result_final,
         'save_dir': program_result_dir,
-        'program_fname': short_term_config['program_fname']
+        'program_fname': program_fname
     }
     dir_io.save_config(save_config_config)

@@ -12,6 +12,7 @@ import math
 
 
 def run(long_term_config_dir, short_term_config_dir):
+    np.random.seed(123)
     with open(long_term_config_dir, 'r') as f:
         long_term_config = json.load(f)
     with open(short_term_config_dir, 'r') as f:
@@ -28,7 +29,10 @@ def run(long_term_config_dir, short_term_config_dir):
     load_data_config = {
         'data_dir': data_dir
     }
-    base, query, gnd, base_base_gnd = vecs_io.read_all(load_data_config)
+    if long_term_config['distance_metric'] == 'l2':
+        base, query, gnd, base_base_gnd = vecs_io.read_data_l2(load_data_config)
+    elif long_term_config['distance_metric'] == 'string':
+        base, query, gnd, base_base_gnd = vecs_io.read_data_string(load_data_config)
     del load_data_config
 
     program_fname = '%s_%d_nn_%d_%s_%s' % (
@@ -79,6 +83,8 @@ def run(long_term_config_dir, short_term_config_dir):
         train_model_config['distance_metric'] = long_term_config['distance_metric']
         train_model_config['data_fname'] = long_term_config['data_fname']
         train_model_config['n_input'] = long_term_config['dimension']
+        if 'n_character' in long_term_config:
+            train_model_config['n_character'] = long_term_config['n_character']
 
         cluster_score, train_eval_intermediate = train_eval_model.train_eval_model(base, query, trainset,
                                                                                    train_model_config)

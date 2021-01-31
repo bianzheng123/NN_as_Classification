@@ -1,6 +1,6 @@
 import _init_paths
 from sorter import *
-from util.numpy import load_data
+from util.vecs import vecs_io
 from util import dir_io
 
 
@@ -23,7 +23,7 @@ def execute(pq, X, Q, G, metric, config, train_size=100000):
     compressed = chunk_compress(pq, X)
     print(compressed.dtype)
     print("# sorting items")
-    Ts = [2 ** i for i in range(2 + int(math.log2(len(X))))]
+    Ts = [2 ** i for i in range(1 + int(math.log2(len(X))))]
     recalls = BatchSorter(compressed, Q, X, G, Ts, metric=metric, batch_size=200).recall()
     print("# searching!")
 
@@ -37,7 +37,7 @@ def execute(pq, X, Q, G, metric, config, train_size=100000):
         res_l.append(tmp_res)
         # print("{}, {}, {}, {}, {}, {}".format(
         #     2 ** i, 0, recall, recall * len(G[0]) / t, 0, t))
-    save_data_dir = '/home/bianzheng/NN_as_Classification/result/%s_%d_baseline_%d_pq' % (
+    save_data_dir = '/home/zhengbian/NN_as_Classification/data/result/%s_%d_baseline_%d_pq' % (
         config['dataset'], config['n_cluster'], config['codebook'])
     dir_io.delete_dir_if_exist(save_data_dir)
     dir_io.mkdir(save_data_dir)
@@ -63,7 +63,7 @@ def parse_args():
 if __name__ == '__main__':
     dataset = 'siftsmall'
     k_gnd = 10
-    codebook = 1
+    codebook = 8
     n_cluster = 16
     metric = 'euclid_norm'
 
@@ -80,10 +80,10 @@ if __name__ == '__main__':
           .format(dataset, k_gnd, codebook, n_cluster, metric))
 
     load_data_config = {
-        'data_dir': 'data/%s_%d' % (dataset, k_gnd)
+        'data_dir': 'data/dataset/%s_%d' % (dataset, k_gnd)
     }
-    X, Q, T, G, base_base_gnd = load_data.load_data_npy(load_data_config)
-
+    X, Q, G, base_base_gnd = vecs_io.read_data_l2(load_data_config)
+    print(len(X))
     # pq, rq, or component of norm-pq
     quantizer = PQ(M=codebook, Ks=n_cluster)
     exe_config = {

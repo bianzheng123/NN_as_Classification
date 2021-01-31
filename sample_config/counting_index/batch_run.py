@@ -1,66 +1,35 @@
 import json
+import math
 
 if __name__ == '__main__':
-    config_dir = '/home/zhengbian/NN_as_Classification/config/counting_index/short_term_config.json'
+    config_dir = '/home/zhengbian/NN_as_Classification/sample_config/counting_index/short_term_config.json'
     with open(config_dir, 'r') as f:
         config = json.load(f)
     dataset_name = 'siftsmall'
-    save_base_dir = '/home/zhengbian/NN_as_Classification/config/counting_index/%s' % dataset_name
-    save_fname_content_m = {
-        '1_kmeans_multiple': {
-            "n_instance": 1,
-            "type": "kmeans_multiple",
-            "dataset_partition": {
-                "max_iter": 40
-            }
-        },
-        '1_kmeans_independent': {
-            "n_instance": 1,
-            "type": "kmeans_independent",
-            "dataset_partition": {
-                "max_iter": 40
-            }
-        },
-        '1_lsh': {
-            "n_instance": 2,
+    save_base_dir = '/home/zhengbian/NN_as_Classification/config/counting_index/small_ds'
+    save_fname_content_m = [
+        {
             "type": "e2lsh",
-            "dataset_partition": {
-                "r": 1,
-                "a_sigma": 1,
-                "a_miu": 0
-            }
-        },
-
-        '8_kmeans_multiple': {
-            "n_instance": 8,
-            "type": "kmeans_multiple",
-            "dataset_partition": {
-                "max_iter": 40
-            }
-        },
-        '8_kmeans_independent': {
-            "n_instance": 8,
+            "r": 1,
+            "a_sigma": 1,
+            "a_miu": 0
+        }, {
             "type": "kmeans_independent",
-            "dataset_partition": {
-                "max_iter": 40
-            }
-        },
-        '8_lsh': {
-            "n_instance": 16,
-            "type": "e2lsh",
-            "dataset_partition": {
-                "r": 1,
-                "a_sigma": 1,
-                "a_miu": 0
-            }
+            "max_iter": 40
+        }, {
+            "type": "kmeans_multiple",
+            "max_iter": 40
         }
-    }
-    for fname in save_fname_content_m:
-        config['independent_config'] = [save_fname_content_m[fname]]
+    ]
+
+    for tmp_config in save_fname_content_m:
+        config['dataset_partition'] = tmp_config
         n_cluster = 16
+        n_instance = 8
         config['n_cluster'] = n_cluster
-        if fname.split('_')[-1] == 'lsh':
-            config['n_cluster'] = 4
-        config['program_fname'] = '%s_%d_count_%s' % (dataset_name, n_cluster, fname)
-        with open('%s/%s_%d.json' % (save_base_dir, fname, n_cluster), 'w') as f:
+        config['n_instance'] = n_instance
+        if tmp_config['type'] == 'e2lsh':
+            config['n_cluster'] = int(math.sqrt(n_cluster))
+            config['n_instance'] = n_instance * 2
+        with open('%s/%d_%s_%d.json' % (save_base_dir, n_instance, tmp_config['type'], n_cluster), 'w') as f:
             json.dump(config, f)

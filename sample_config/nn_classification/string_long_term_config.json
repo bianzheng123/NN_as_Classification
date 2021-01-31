@@ -1,0 +1,10 @@
+{
+  "project_dir": "/home/zhengbian/NN_as_Classification",
+  "data_fname": "unirefsmall",
+  "distance_metric": "string",
+  "k": 10,
+  "n_character": 24,
+  "character": ["A", "B", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "Y", "Z"],
+  "dimension": 35215,
+  "kahip_dir": "/home/zhengbian/software/KaHIP"
+}

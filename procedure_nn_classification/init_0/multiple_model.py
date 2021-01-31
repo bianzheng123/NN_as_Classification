@@ -1,7 +1,6 @@
 import numpy as np
 import sklearn.cluster as cls
-from procedure_nn_classification.dataset_partition_1 import kmeans, learn_on_graph, \
-    random_hash
+from procedure_nn_classification.dataset_partition_1 import kmeans, learn_on_graph, hash
 import time
 import copy
 from util import dir_io
@@ -184,15 +183,19 @@ class MultipleLearnOnGraph(MultipleBasePartition):
         return {}
 
 
-class MultipleRandomHash(MultipleBasePartition):
+class MultipleHash(MultipleBasePartition):
 
     def __init__(self, config):
-        super(MultipleRandomHash, self).__init__(config)
+        super(MultipleHash, self).__init__(config)
         if self.distance_metric != 'l2':
             raise Exception("not support distance metric")
 
     def get_model(self, config):
-        return random_hash.RandomHash(config)
+        if self.type == 'random_hash':
+            return hash.RandomHash(config)
+        elif self.type == 'lsh':
+            return hash.LocalitySensitiveHash(config)
+        raise Exception('not support hash type')
 
     def _preprocess(self, base):
         return {}

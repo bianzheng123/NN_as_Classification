@@ -46,7 +46,8 @@ def convert_data_type(config):
 
     query_dir = '%s/%s' % (config['source_data_dir'], config['source_data_fname']['query'])
     query_save_dir = '%s/%s' % (config['data_dir'], 'query.fvecs')
-    query = vecs2vecs(query_dir, query_save_dir, config['source_data_type']['query'], 'fvecs', file_len=config['query_len'])
+    query = vecs2vecs(query_dir, query_save_dir, config['source_data_type']['query'], 'fvecs',
+                      file_len=config['query_len'])
     print("extract query")
 
     gnd = vecs_util.get_gnd(base, query, config['k'])
@@ -84,15 +85,16 @@ if __name__ == '__main__':
     data_config = {
         "k": 10,
         "base_base_gnd_k": 150,
-        "data_fname": "sift",
+        "data_fname": "siftsmall",
         "source_data_dir": "/home/zhengbian/Dataset/sift",
         "source_data_type": {
             "base": "fvecs",
             "query": "fvecs"
         },
+        "n_quantize": [1, 4, 8],
         "source_data_fname": {
-            "base": "sift_base.fvecs",
-            "query": "sift_query.fvecs"
+            "base": "siftsmall_base.fvecs",
+            "query": "siftsmall_query.fvecs"
         },
         "project_dir": "/home/zhengbian/NN_as_Classification",
         "query_len": 1000

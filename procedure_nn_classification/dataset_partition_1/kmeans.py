@@ -26,8 +26,8 @@ class MultipleKMeans(base_partition.BasePartition):
     def __init__(self, config):
         super(MultipleKMeans, self).__init__(config)
         self.centroid_l = None
-        self.n_process = cpu_count()
-        self.n_pool_process = cpu_count()
+        self.n_process = cpu_count() // 5 * 4
+        self.n_pool_process = cpu_count() // 5 * 4
         # self.type, self.save_dir, self.classifier_number, self.label_map, self.n_cluster, self.labels, self.distance_metric
 
     def get_centroid(self, centroid_l):

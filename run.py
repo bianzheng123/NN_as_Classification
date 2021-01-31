@@ -14,6 +14,10 @@ if __name__ == '__main__':
     if _type == 'nn_classification':
         from procedure_nn_classification import run
         run.run(long_term_config_dir, short_term_config_dir)
+    elif _type == 'pq_nn':
+        from procedure_pq_nn import run
+
+        run.run(long_term_config_dir, short_term_config_dir)
     elif _type == 'counting_index':
         from procedure_counting_index import run
 
