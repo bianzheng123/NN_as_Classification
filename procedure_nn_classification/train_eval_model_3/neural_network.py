@@ -19,10 +19,8 @@ class NeuralNetwork(classifier.Classifier):
             'n_input': config['n_input'],
             'n_output': self.n_cluster,
             'data_fname': config['data_fname'],
-            'distance_metric': config['distance_metric'] if "distance_metric" in config else 'l2'
+            'distance_metric': config['distance_metric']
         }
-        if 'n_hidden' in config:
-            model_config['n_hidden'] = config['n_hidden']
         if 'n_character' in config:
             model_config['n_character'] = config['n_character']
         self.model = model_factory(model_config)

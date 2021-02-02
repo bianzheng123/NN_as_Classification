@@ -9,8 +9,8 @@ class NNModel(nn.Module):
     def __init__(self, config):
         super().__init__()
         input_dim = config['n_input']
-        hidden_dim_1 = config['n_hidden'] if 'n_hidden' in config else 512
-        hidden_dim_2 = config['n_hidden'] if 'n_hidden' in config else 512
+        hidden_dim_1 = 512
+        hidden_dim_2 = 512
         output_dim = config['n_output']
         dropout_probability = 0.1
         self.layer = nn.Sequential(
@@ -36,7 +36,7 @@ class UnirefCNN(nn.Module):
     def __init__(self, config):
         super(UnirefCNN, self).__init__()
         if 'n_character' not in config:
-            raise Exception('character not in config')
+            raise Exception('n_character not in config')
         self.C = config['n_character']  # number of character
         self.M = config['n_input']  # dimension of the string
         self.embedding = config['n_output']
@@ -76,7 +76,7 @@ class UnirefCNN(nn.Module):
         )
 
         # Size after pooling
-        self.flat_size = self.M // 4096 * channel // self.input_channel
+        self.flat_size = self.M // 4096 * self.C // self.input_channel * channel
         print("# self.flat_size ", self.flat_size)
         self.fc1 = nn.Linear(self.flat_size, self.embedding)
         self.softmax = nn.Softmax(dim=-1)

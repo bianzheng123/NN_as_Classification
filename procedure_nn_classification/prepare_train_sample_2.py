@@ -40,6 +40,8 @@ def neighbor(base, base_base_gnd, partition_info, n_cluster):
     # datanode
     partition = partition_info[0]
     # extract the top label_k of gnd as the label of training set
+    if label_k > base_base_gnd.shape[1]:
+        print("Warning! the shape of base_base_gnd is not enough for label_k")
     ranks = base_base_gnd[:, :label_k]
 
     base_idx = torch.arange(0, base.shape[0])
