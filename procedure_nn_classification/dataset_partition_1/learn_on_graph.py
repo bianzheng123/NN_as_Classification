@@ -50,12 +50,7 @@ class LearnOnGraph(base_partition.BasePartition):
             kahip_command = 'mpirun -n %d %s/deploy/parhip %s/graph.graph --preconfiguration fastsocial ' \
                             '--save_partition --k %d' % (
                                 self.n_process, self.kahip_dir, self.save_dir,
-                                self.n_cluster)  # '--vertex_degree_weights ' \
-            if self.distance_metric == 'string':
-                kahip_command = 'mpirun -n %d %s/deploy/parhip %s/graph.graph --preconfiguration fastsocial ' \
-                                '--save_partition --k %d' % (
-                                    self.n_process, self.kahip_dir, self.save_dir,
-                                    self.n_cluster)
+                                self.n_cluster)
             print(kahip_command)
             dir_io.kahip('./tmppartition.txtp', kahip_command)
             self.move_partition_txt()
