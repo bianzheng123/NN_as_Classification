@@ -2,11 +2,13 @@ from procedure_nn_classification.train_eval_model_3 import classifier
 from procedure_nn_classification.train_eval_model_3 import networks
 import multiprocessing
 import torch
+import torch.nn as nn
 import numpy as np
 from torch.utils.data import Dataset, DataLoader, TensorDataset
 
 lr = 0.008
 acc_threshold = 0.95
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 class NeuralNetwork(classifier.Classifier):
@@ -14,7 +16,7 @@ class NeuralNetwork(classifier.Classifier):
     def __init__(self, config):
         super(NeuralNetwork, self).__init__(config)
         # self.type, self.save_dir, self.classifier_number, self.n_cluster
-        torch.set_num_threads(multiprocessing.cpu_count() // 5 * 4)
+        torch.set_num_threads(multiprocessing.cpu_count() // 10 * 9)
         model_config = {
             'n_input': config['n_input'],
             'n_output': self.n_cluster,
@@ -23,7 +25,7 @@ class NeuralNetwork(classifier.Classifier):
         }
         if 'n_character' in config:
             model_config['n_character'] = config['n_character']
-        self.model = model_factory(model_config)
+        self.model = nn.DataParallel(model_factory(model_config).to(device))
         self.n_epochs = config['n_epochs']
         self.acc_threshold = acc_threshold
         milestones = [10, 17, 24, 31, 38, 45, 50, 55, 60, 70]
@@ -39,6 +41,8 @@ class NeuralNetwork(classifier.Classifier):
         base = torch.from_numpy(base)
         trainloader, valloader = trainset
         self.model.train()
+
+        base = base.to(device)
 
         y = trainloader.dataset.tensors[1]
         # count the number of neighbor point for each label in different bucket
@@ -56,6 +60,10 @@ class NeuralNetwork(classifier.Classifier):
                     # since can't batchnorm over a batch of size 1
                     continue
                 batch_sz = len(ds_idx)
+
+                ds_idx = ds_idx.to(device)
+                partition = partition.to(device)
+                neighbor_distribution = neighbor_distribution.to(device)
 
                 ds = base[ds_idx]
                 predicted = self.model(ds)
@@ -76,6 +84,9 @@ class NeuralNetwork(classifier.Classifier):
             self.model.eval()
             with torch.no_grad():
                 for i, (ds_idx, partition, neighbor_distribution) in enumerate(valloader):
+                    ds_idx = ds_idx.to(device)
+                    partition = partition.to(device)
+                    neighbor_distribution = neighbor_distribution.to(device)
                     cur_data = base[ds_idx]
                     predicted = self.model(cur_data)
                     pred = torch.log(predicted).unsqueeze(-1)
@@ -114,10 +125,11 @@ class NeuralNetwork(classifier.Classifier):
 
     def _eval(self, query):
         query = torch.tensor(query)
+        query = query.to(device)
         eval_res = None
         with torch.no_grad():
             eval_res = self.model(query)
-            self.result = eval_res.numpy()
+            self.result = eval_res.cpu().numpy()
 
 
 def model_factory(config):

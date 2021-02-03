@@ -68,17 +68,16 @@ count the total score_table from all the score table in each classifier
 
 
 def integrate_save_score_table_parallel(cluster_score_l, label_l, config, save=False):
-    n_process = 8
-    n_pool_process = 8
     start_time = time.time()
 
     manager = BaseManager()
     manager.register('IntegrateScoreTable', IntegrateScoreTable)
     manager.start()
-    parallel_obj = manager.IntegrateScoreTable(cluster_score_l, label_l, config['n_item'], n_process)
+    parallel_obj = manager.IntegrateScoreTable(cluster_score_l, label_l, config['n_item'],
+                                               multiprocessing.cpu_count() // 10 * 9)
     res_l = []
-    pool = multiprocessing.Pool(n_pool_process)
-    for i in range(n_process):
+    pool = multiprocessing.Pool(multiprocessing.cpu_count() // 10 * 9)
+    for i in range(multiprocessing.cpu_count() // 10 * 9):
         res = pool.apply_async(score_table_parallel, args=(parallel_obj, i))
         res_l.append(res)
     pool.close()

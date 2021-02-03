@@ -15,7 +15,7 @@
   {
     "type": "knn",
     "build_graph": {
-      "increase_weight": 2
+      "increase_weight": 60
     },
     "graph_partition": "parhip"
   },

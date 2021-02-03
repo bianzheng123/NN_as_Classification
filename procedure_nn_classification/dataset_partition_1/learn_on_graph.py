@@ -17,7 +17,6 @@ class LearnOnGraph(base_partition.BasePartition):
         self.build_graph_config['distance_metric'] = self.distance_metric
         self.graph_partition_type = config['graph_partition']
         self.kahip_dir = config['kahip_dir']
-        self.n_process = 16
 
     def _partition(self, base, base_base_gnd, ins_intermediate):
         graph_ins = self.graph_factory(self.type, self.build_graph_config)
@@ -49,7 +48,7 @@ class LearnOnGraph(base_partition.BasePartition):
         elif self.graph_partition_type == 'parhip':
             kahip_command = 'mpirun -n %d %s/deploy/parhip %s/graph.graph --preconfiguration fastsocial ' \
                             '--save_partition --k %d' % (
-                                self.n_process, self.kahip_dir, self.save_dir,
+                                multiprocessing.cpu_count() // 2, self.kahip_dir, self.save_dir,
                                 self.n_cluster)
             print(kahip_command)
             dir_io.kahip('./tmppartition.txtp', kahip_command)

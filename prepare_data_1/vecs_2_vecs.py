@@ -1,8 +1,8 @@
 import numpy as np
 import _init_paths
 import os
-from util.vecs import vecs_io, vecs_util
-from util import dir_io
+from util.vecs import vecs_io
+from util import dir_io, groundtruth
 
 '''
 extract vecs file and output numpy file
@@ -50,12 +50,12 @@ def convert_data_type(config):
                       file_len=config['query_len'])
     print("extract query")
 
-    gnd = vecs_util.get_gnd(base, query, config['k'])
+    gnd = groundtruth.get_gnd(base, query, config['k'])
     gnd_save_dir = '%s/%s' % (config['data_dir'], 'gnd.ivecs')
     vecs_io.ivecs_write(gnd_save_dir, gnd)
     print("extract gnd")
 
-    base_base_gnd = vecs_util.get_gnd(base, base, config['base_base_gnd_k'])
+    base_base_gnd = groundtruth.get_gnd(base, base, config['base_base_gnd_k'])
     base_base_gnd_save_dir = '%s/%s' % (config['data_dir'], 'base_base_gnd.ivecs')
     vecs_io.ivecs_write(base_base_gnd_save_dir, base_base_gnd)
     print("extract base_base_gnd for the training set preparation")
@@ -86,17 +86,16 @@ if __name__ == '__main__':
         "k": 10,
         "base_base_gnd_k": 150,
         "data_fname": "siftsmall",
-        "source_data_dir": "/home/zhengbian/Dataset/sift",
+        "source_data_dir": "/home/zhengbian/Dataset/siftsmall",
         "source_data_type": {
             "base": "fvecs",
             "query": "fvecs"
         },
-        "n_quantize": [1, 4, 8],
         "source_data_fname": {
             "base": "siftsmall_base.fvecs",
             "query": "siftsmall_query.fvecs"
         },
         "project_dir": "/home/zhengbian/NN_as_Classification",
-        "query_len": 1000
+        "query_len": -1
     }
     prepare_data(data_config)

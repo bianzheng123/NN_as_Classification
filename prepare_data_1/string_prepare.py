@@ -149,13 +149,13 @@ if __name__ == '__main__':
         "n_character": 24,
         "base_base_gnd_k": 500,
         "padding_length": 5000,
-        "data_fname": "unirefsmall",
+        "data_fname": "uniref",
         "source_data_dir": "/home/zhengbian/Dataset/uniref",
         "source_data": {
             # 400000 in total
             "name": "uniref.txt",
-            "base_len": 1000,
-            "query_len": 100
+            "base_len": 399000,
+            "query_len": 1000
         },
         "project_dir": "/home/zhengbian/NN_as_Classification"
     }
