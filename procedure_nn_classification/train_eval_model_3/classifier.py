@@ -3,6 +3,9 @@ import time
 import torch
 from util import dir_io
 
+torch.manual_seed(100)
+torch.cuda.manual_seed_all(100)
+
 
 class Classifier:
     def __init__(self, config):

@@ -6,9 +6,10 @@ import torch.nn as nn
 import numpy as np
 from torch.utils.data import Dataset, DataLoader, TensorDataset
 
-lr = 0.008
 acc_threshold = 0.95
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+torch.manual_seed(100)
+torch.cuda.manual_seed_all(100)
 
 
 class NeuralNetwork(classifier.Classifier):
@@ -17,6 +18,15 @@ class NeuralNetwork(classifier.Classifier):
         super(NeuralNetwork, self).__init__(config)
         # self.type, self.save_dir, self.classifier_number, self.n_cluster
         torch.set_num_threads(multiprocessing.cpu_count() // 10 * 9)
+        parameter_config = {
+            'data_fname': config['data_fname'],
+            'distance_metric': config['distance_metric']
+        }
+        lr = parameter_factory(config)
+
+        if 'lr' in config:
+            lr = config['lr']
+            print("learning rate %f" % lr)
         model_config = {
             'n_input': config['n_input'],
             'n_output': self.n_cluster,
@@ -25,6 +35,7 @@ class NeuralNetwork(classifier.Classifier):
         }
         if 'n_character' in config:
             model_config['n_character'] = config['n_character']
+        # self.model = model_factory(model_config).to(device)
         self.model = nn.DataParallel(model_factory(model_config).to(device))
         self.n_epochs = config['n_epochs']
         self.acc_threshold = acc_threshold
@@ -42,7 +53,7 @@ class NeuralNetwork(classifier.Classifier):
         trainloader, valloader = trainset
         self.model.train()
 
-        base = base.to(device)
+        # base = base.to(device)
 
         y = trainloader.dataset.tensors[1]
         # count the number of neighbor point for each label in different bucket
@@ -61,11 +72,12 @@ class NeuralNetwork(classifier.Classifier):
                     continue
                 batch_sz = len(ds_idx)
 
-                ds_idx = ds_idx.to(device)
+                # ds_idx = ds_idx.to(device)
                 partition = partition.to(device)
                 neighbor_distribution = neighbor_distribution.to(device)
 
-                ds = base[ds_idx]
+                ds = base[ds_idx].float()
+                ds = ds.to(device)
                 predicted = self.model(ds)
 
                 # count cross entropy
@@ -84,10 +96,9 @@ class NeuralNetwork(classifier.Classifier):
             self.model.eval()
             with torch.no_grad():
                 for i, (ds_idx, partition, neighbor_distribution) in enumerate(valloader):
-                    ds_idx = ds_idx.to(device)
                     partition = partition.to(device)
                     neighbor_distribution = neighbor_distribution.to(device)
-                    cur_data = base[ds_idx]
+                    cur_data = base[ds_idx].to(device)
                     predicted = self.model(cur_data)
                     pred = torch.log(predicted).unsqueeze(-1)
                     loss = -torch.bmm(neighbor_distribution.unsqueeze(1), pred).sum()
@@ -124,12 +135,23 @@ class NeuralNetwork(classifier.Classifier):
         }
 
     def _eval(self, query):
-        query = torch.tensor(query)
+        query = torch.tensor(query).float()
         query = query.to(device)
         eval_res = None
         with torch.no_grad():
             eval_res = self.model(query)
             self.result = eval_res.cpu().numpy()
+
+
+def parameter_factory(config):
+    if config['distance_metric'] == 'l2':
+        lr = 0.008
+        return lr
+    elif config['distance_metric'] == 'string':
+        if config['data_fname'] == 'uniref' or config['data_fname'] == 'unirefsmall':
+            lr = 0.004
+            return lr
+    raise Exception("not support the distance metric or dataset")
 
 
 def model_factory(config):

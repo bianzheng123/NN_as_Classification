@@ -51,9 +51,9 @@ def words2vector(word_l, padding_len, alphabet):
             if len(tmp) < padding_len:
                 tmp += [0] * (padding_len - len(tmp))
             coding_l.append(tmp)
-        coding_l = np.array(coding_l).reshape(-1)
+        coding_l = np.array(coding_l, dtype=np.bool_).reshape(-1)
         vectors.append(coding_l)
-    return np.array(vectors, dtype=np.int)
+    return np.array(vectors, dtype=np.bool_)
 
 
 def text_count(config):
@@ -106,8 +106,10 @@ def prepare_data(config):
 
     start = time.time()
     gnd = groundtruth.get_gnd(base, query, config['k'], metrics="string")
-    gnd_save_dir = '%s/%s' % (data_dir, 'gnd.ivecs')
-    vecs_io.ivecs_write(gnd_save_dir, gnd)
+    gnd_save_dir = '%s/%s' % (data_dir, 'gnd.npy')
+    print(gnd.dtype)
+    dir_io.save_numpy(gnd_save_dir, gnd)
+    # vecs_io.ivecs_write(gnd_save_dir, gnd)
     end = time.time()
     print("save gnd, time:", end - start)
     print("gnd: ", gnd.shape)
@@ -115,25 +117,31 @@ def prepare_data(config):
 
     start = time.time()
     base_base_gnd, n_base_base_gnd = get_base_base_gnd(base, config)
-    base_base_gnd_save_dir = '%s/%s' % (data_dir, 'base_base_gnd.ivecs')
-    vecs_io.ivecs_write(base_base_gnd_save_dir, base_base_gnd)
+    base_base_gnd_save_dir = '%s/%s' % (data_dir, 'base_base_gnd.npy')
+    # vecs_io.ivecs_write(base_base_gnd_save_dir, base_base_gnd)
+    print(base_base_gnd.dtype)
+    dir_io.save_numpy(base_base_gnd_save_dir, base_base_gnd)
     end = time.time()
     print("save base_base_gnd for the training set preparation, time:", end - start)
     print("base_base_gnd: ", base_base_gnd.shape)
     del base_base_gnd
 
     # encoding and padding
-    base_save_dir = '%s/%s' % (data_dir, 'base.ivecs')
+    base_save_dir = '%s/%s' % (data_dir, 'base.npy')
     start = time.time()
     base = words2vector(base, config['padding_length'], alphabet)
+    print(base.dtype)
     print("wrods2vector time consume %d" % (time.time() - start))
-    vecs_io.ivecs_write(base_save_dir, base)
+    # vecs_io.ivecs_write(base_save_dir, base)
+    dir_io.save_numpy(base_save_dir, base)
     print("save base")
     print("base: ", base.shape)
 
-    query_save_dir = '%s/%s' % (data_dir, 'query.ivecs')
+    query_save_dir = '%s/%s' % (data_dir, 'query.npy')
     query = words2vector(query, config['padding_length'], alphabet)
-    vecs_io.ivecs_write(query_save_dir, query)
+    # vecs_io.ivecs_write(query_save_dir, query)
+    print(query.dtype)
+    dir_io.save_numpy(query_save_dir, query)
     print("save query")
     print("query: ", query.shape)
 

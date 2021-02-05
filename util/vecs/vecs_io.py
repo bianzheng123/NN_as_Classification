@@ -106,14 +106,14 @@ def read_data_l2(config):
 def read_data_string(config):
     # read from the file
     data_dir = config['data_dir']
-    base_dir = "%s/base.ivecs" % data_dir
-    base = ivecs_read_mmap(base_dir)[0].astype(np.float32)
-    query_dir = '%s/query.ivecs' % data_dir
-    query = ivecs_read_mmap(query_dir)[0].astype(np.float32)
-    gnd_dir = '%s/gnd.ivecs' % data_dir
-    gnd = ivecs_read_mmap(gnd_dir)[0].astype(np.int)
-    base_base_gnd_dir = '%s/base_base_gnd.ivecs' % data_dir
-    base_base_gnd = ivecs_read_mmap(base_base_gnd_dir)[0].astype(np.int)
+    base_dir = "%s/base.npy" % data_dir
+    base = np.load(base_dir)
+    query_dir = '%s/query.npy' % data_dir
+    query = np.load(query_dir)
+    gnd_dir = '%s/gnd.npy' % data_dir
+    gnd = np.load(gnd_dir)
+    base_base_gnd_dir = '%s/base_base_gnd.npy' % data_dir
+    base_base_gnd = np.load(base_base_gnd_dir)
     return base, query, gnd, base_base_gnd
 
 # global_path_b = '/home/bz/SIFT/bigann/'

@@ -8,7 +8,8 @@ class KNN:
         if 'k_graph' in config:
             self.k_graph = config['k_graph']
         else:
-            self.k_graph = 40
+            # self.k_graph = 40
+            self.k_graph = 200
         self.increase_weight = config['increase_weight']
 
     '''
@@ -30,9 +31,11 @@ class KNN:
         vertices = len(base)
         if vertices < self.k_graph + 1:
             raise Exception("build graph error, input dataset is too samll, do not meet the demand of number of edge")
-        if self.k_graph + 1 > len(base_base_gnd):
-            raise Exception("k_graph + 1 > the length in base_base_gnd, system crash. "
-                            "please use increase the k in base_base_gnd or decrease k_graph")
+        if self.k_graph + 1 > base_base_gnd.shape[1]:
+            # raise Exception("k_graph + 1 > the length in base_base_gnd, system crash. "
+            #                 "please use increase the k in base_base_gnd or decrease k_graph")
+            print("\033[32;1m Warning! the length of k_graph + 1 is larger than base_base_gnd could provide \033[0m")
+            print("length of base_base_gnd %d" % (base_base_gnd.shape[1]))
 
         index_arr = base_base_gnd[:, :self.k_graph + 1]  # +1 because the first index must be itself
         index_arr = index_arr[:, :] + 1  # kahip need the index start from 1, so +1

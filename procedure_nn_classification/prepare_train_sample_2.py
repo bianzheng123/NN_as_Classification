@@ -1,5 +1,6 @@
 import time
 import torch
+import numpy as np
 from torch.utils.data import Dataset, DataLoader, TensorDataset
 
 label_k = 50
@@ -41,9 +42,10 @@ def neighbor(base, base_base_gnd, partition_info, n_cluster):
     partition = partition_info[0]
     # extract the top label_k of gnd as the label of training set
     if label_k > base_base_gnd.shape[1]:
-        print("Warning! the shape of base_base_gnd is not enough for label_k")
+        print("\033[32;1m Warning! the shape of base_base_gnd is not enough for label_k \033[0m")
     ranks = base_base_gnd[:, :label_k]
 
+    ranks = ranks.astype(np.int64)
     base_idx = torch.arange(0, base.shape[0])
     partition = torch.LongTensor(partition)
     datalen = len(partition)
