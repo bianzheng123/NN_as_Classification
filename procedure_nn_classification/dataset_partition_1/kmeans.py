@@ -26,8 +26,8 @@ class MultipleKMeans(base_partition.BasePartition):
     def __init__(self, config):
         super(MultipleKMeans, self).__init__(config)
         self.centroid_l = None
-        self.n_process = cpu_count() // 5 * 4
-        self.n_pool_process = cpu_count() // 5 * 4
+        self.n_process = cpu_count() // 10 * 9
+        self.n_pool_process = cpu_count() // 10 * 9
         # self.type, self.save_dir, self.classifier_number, self.label_map, self.n_cluster, self.labels, self.distance_metric
 
     def get_centroid(self, centroid_l):
@@ -50,7 +50,7 @@ class MultipleKMeans(base_partition.BasePartition):
 
         p.close()
         p.join()
-        res_labels = np.zeros(data.shape[0]).astype(np.int)
+        res_labels = np.zeros(data.shape[0]).astype(np.int64)
         for i, res in enumerate(res_l, 0):
             tmp_labels = res.get()
             for j in range(len(tmp_labels)):
@@ -70,4 +70,4 @@ class MultipleKMeans(base_partition.BasePartition):
             tmp_dis = [np.linalg.norm(vecs - centroid) for centroid in centroid_l]
             tmp_label = np.argmin(tmp_dis, axis=0)
             labels.append(tmp_label)
-        return np.array(labels)
+        return np.array(labels, dtype=np.int64)

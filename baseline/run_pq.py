@@ -37,8 +37,8 @@ def execute(pq, X, Q, G, metric, config, train_size=100000):
         res_l.append(tmp_res)
         # print("{}, {}, {}, {}, {}, {}".format(
         #     2 ** i, 0, recall, recall * len(G[0]) / t, 0, t))
-    save_data_dir = '/home/zhengbian/NN_as_Classification/data/result/%s_%d_baseline_%d_pq' % (
-        config['dataset'], config['n_cluster'], config['codebook'])
+    save_data_dir = '/home/zhengbian/NN_as_Classification/data/result/%s_%d_baseline_%d_%s' % (
+        config['dataset'], config['n_cluster'], config['codebook'], config['method'])
     dir_io.delete_dir_if_exist(save_data_dir)
     dir_io.mkdir(save_data_dir)
     dir_io.save_json(save_data_dir, 'result.json', res_l)
@@ -61,10 +61,10 @@ def parse_args():
 # python3 run_pq --dataset siftsmall --k_gnd 10 --metric euclid_norm --num_codebook 8 --num_cluster 16
 
 if __name__ == '__main__':
-    dataset = 'glove'
+    dataset = 'siftsmall'
     k_gnd = 10
-    codebook = 4
-    n_cluster = 256
+    codebook = 8
+    n_cluster = 16
     metric = 'euclid_norm'
 
     # override default parameters with command line parameters
@@ -89,6 +89,7 @@ if __name__ == '__main__':
     exe_config = {
         'dataset': dataset,
         'codebook': codebook,
-        'n_cluster': n_cluster
+        'n_cluster': n_cluster,
+        'method': 'pq'
     }
     execute(quantizer, X, Q, G, metric, exe_config)

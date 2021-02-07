@@ -17,6 +17,8 @@ def vecs2vecs(old_dir, new_dir, old_file_type, new_file_type, file_len=None):
         vectors, dim = vecs_io.ivecs_read_mmap(old_dir)
     elif old_file_type == 'fvecs':
         vectors, dim = vecs_io.fvecs_read_mmap(old_dir)
+
+    print("shape before shrink", vectors.shape)
     if file_len is not None and file_len < len(vectors) and file_len != -1:
         vectors = vectors[:file_len]
     vectors = vectors.astype(np.float32)
@@ -41,7 +43,7 @@ def convert_data_type(config):
 
     base_dir = '%s/%s' % (config['source_data_dir'], config['source_data_fname']['base'])
     base_save_dir = '%s/%s' % (config['data_dir'], 'base.fvecs')
-    base = vecs2vecs(base_dir, base_save_dir, config['source_data_type']['base'], 'fvecs')
+    base = vecs2vecs(base_dir, base_save_dir, config['source_data_type']['base'], 'fvecs', file_len=config['base_len'])
     print("extract base")
 
     query_dir = '%s/%s' % (config['source_data_dir'], config['source_data_fname']['query'])
@@ -85,17 +87,18 @@ if __name__ == '__main__':
     data_config = {
         "k": 10,
         "base_base_gnd_k": 150,
-        "data_fname": "siftsmall",
-        "source_data_dir": "/home/zhengbian/Dataset/siftsmall",
+        "data_fname": "imagenet",
+        "source_data_dir": "/home/zhengbian/Dataset/imagenet",
         "source_data_type": {
             "base": "fvecs",
             "query": "fvecs"
         },
         "source_data_fname": {
-            "base": "siftsmall_base.fvecs",
-            "query": "siftsmall_query.fvecs"
+            "base": "imagenet_base.fvecs",
+            "query": "imagenet_query.fvecs"
         },
         "project_dir": "/home/zhengbian/NN_as_Classification",
-        "query_len": -1
+        "query_len": 1000,
+        'base_len': 1000000
     }
     prepare_data(data_config)

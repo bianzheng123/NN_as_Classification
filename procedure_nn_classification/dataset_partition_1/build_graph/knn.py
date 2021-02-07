@@ -7,9 +7,9 @@ class KNN:
     def __init__(self, config):
         if 'k_graph' in config:
             self.k_graph = config['k_graph']
+            print("k_graph %d" % self.k_graph)
         else:
-            # self.k_graph = 40
-            self.k_graph = 200
+            self.k_graph = 40
         self.increase_weight = config['increase_weight']
 
     '''

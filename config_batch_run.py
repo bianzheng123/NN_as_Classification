@@ -26,16 +26,16 @@ short_config_fname_arr = ['1_kmeans_independent_16', '1_kmeans_multiple_16', '1_
 '''
 
 if __name__ == '__main__':
-    ds_fname = 'unirefsmall'
+    ds_fname = 'siftsmall'
     _type = 'nn_classification'  # pq_nn nn_classification counting_index
     base_config_dir = '/home/zhengbian/NN_as_Classification/config/%s/small_ds/' % _type
     long_config_dir = base_config_dir + ds_fname + '.json'
 
-    short_config_fname_arr = [0.0005, 0.0010, 0.0020, 0.0040, 0.0080]
+    short_config_fname_arr = [10**i for i in range(15)]
     # short_config_fname_arr = ['1_knn_16',
     #                           '8_knn_16']
     for tmp in short_config_fname_arr:
-        fname = '4_knn_16_learning_rate_%.4f.json' % tmp
+        fname = '8_knn_16_increase_weight_%d.json' % tmp
         short_config_dir = base_config_dir + fname
         # run_nohup(long_config_dir, short_config_dir, ds_fname, tmp, _type)
         run_frontend(long_config_dir, short_config_dir, _type)
