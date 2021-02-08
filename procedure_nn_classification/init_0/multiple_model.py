@@ -70,7 +70,11 @@ class MultipleKMeans(MultipleBasePartition):
             raise Exception("not support distance metric")
         # to construct the centroid of m-kmeans, the shape is m * k * d
         self.centroid_l_l = None
-        self.max_iter = config['dataset_partition']['max_iter']
+        if 'max_iter' in config['dataset_partition']:
+            self.max_iter = config['dataset_partition']['max_iter']
+            print("max_iter %d" % self.max_iter)
+        else:
+            self.max_iter = 40
         self.model = cls.KMeans(n_clusters=self.n_cluster * self.n_instance, init='k-means++',
                                 max_iter=self.max_iter)
 

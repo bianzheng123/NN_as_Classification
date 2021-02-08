@@ -149,7 +149,7 @@ def parameter_factory(config):
         return lr
     elif config['distance_metric'] == 'string':
         if config['data_fname'] == 'uniref' or config['data_fname'] == 'unirefsmall':
-            lr = 0.004
+            lr = 0.0005
             return lr
     raise Exception("not support the distance metric or dataset")
 

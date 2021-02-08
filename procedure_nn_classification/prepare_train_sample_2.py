@@ -70,9 +70,9 @@ def neighbor(base, base_base_gnd, partition_info, n_cluster):
 
     trainset = TensorDataset(base_idx[:cur_split], partition[:cur_split], cls_distr[:cur_split])
     trainloader = DataLoader(dataset=trainset, batch_size=batch_size,
-                             shuffle=shuffle)
+                             shuffle=shuffle, drop_last=True)
 
     # validation set
     valset = TensorDataset(base_idx[cur_split:], partition[cur_split:], cls_distr[cur_split:])
-    valloader = DataLoader(dataset=valset, batch_size=batch_size, shuffle=False)
+    valloader = DataLoader(dataset=valset, batch_size=batch_size, shuffle=False, drop_last=True)
     return trainloader, valloader

@@ -37,8 +37,8 @@ def prepare_data(config):
     print("data_dir", data_dir)
     config['data_dir'] = data_dir
 
-    # dir_io.delete_dir_if_exist(data_dir)
-    # dir_io.mkdir(data_dir)
+    dir_io.delete_dir_if_exist(data_dir)
+    dir_io.mkdir(data_dir)
 
     # read data
     hdfFile = h5py.File(config['source_data_dir'], 'r')
@@ -49,6 +49,7 @@ def prepare_data(config):
         base = base[:base_info['length']]
     if config['normalization']:
         base = normalization(base)
+        print("normalize base")
     save_base_dir = '%s/base.fvecs' % data_dir
     vecs_io.fvecs_write(save_base_dir, base)
     print("save base")
@@ -59,6 +60,7 @@ def prepare_data(config):
         query = query[:query_info['length']]
     if config['normalization']:
         query = normalization(query)
+        print("normalize query")
     save_query_dir = '%s/query.fvecs' % data_dir
     vecs_io.fvecs_write(save_query_dir, query)
     print("save query")
@@ -84,22 +86,21 @@ if __name__ == '__main__':
     data_config = {
         "k": 10,
         "base_base_gnd_k": 150,
-        "data_fname": "glovesmall",
-        # "data_fname": "deep",
-        "source_data_dir": "/home/zhengbian/Dataset/glove-200-angular.hdf5",
-        # "source_data_dir": "/home/zhengbian/Dataset/deep-image-96-angular.hdf5",
+        "data_fname": "deep",
+        # "source_data_dir": "/home/zhengbian/Dataset/glove-200-angular.hdf5",
+        "source_data_dir": "/home/zhengbian/Dataset/deep-image-96-angular.hdf5",
         "file": {
             'base': {
                 "name": "train",
-                "length": 10000,
+                "length": 1000000,
             },
             'query': {
                 "name": "test",
-                "length": 100
+                "length": 1000
             }
         },
         "project_dir": "/home/zhengbian/NN_as_Classification",
         "normalization": True
     }
-    # prepare_data(data_config)
-    print_data_config_type(data_config['source_data_dir'])
+    prepare_data(data_config)
+    # print_data_config_type(data_config['source_data_dir'])

@@ -10,7 +10,11 @@ class KNN:
             print("k_graph %d" % self.k_graph)
         else:
             self.k_graph = 40
-        self.increase_weight = config['increase_weight']
+        if 'increase_weight' in config:
+            self.increase_weight = config['increase_weight']
+            print("increase_weight %d" % self.increase_weight)
+        else:
+            self.increase_weight = 60
 
     '''
     input base

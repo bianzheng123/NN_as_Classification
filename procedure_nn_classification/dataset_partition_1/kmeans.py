@@ -9,7 +9,11 @@ class IndependentKMeans(base_partition.BasePartition):
 
     def __init__(self, config):
         super(IndependentKMeans, self).__init__(config)
-        self.max_iter = config['max_iter']
+        if 'max_iter' in config:
+            self.max_iter = config['max_iter']
+            print("max_iter %d" % self.max_iter)
+        else:
+            self.max_iter = 40
         self.model = cls.KMeans(n_clusters=self.n_cluster, init='k-means++', max_iter=self.max_iter)
         # self.type, self.save_dir, self.classifier_number, self.label_map, self.n_cluster, self.labels, self.distance_metric
 
