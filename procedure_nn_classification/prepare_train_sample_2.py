@@ -4,7 +4,7 @@ import numpy as np
 from torch.utils.data import Dataset, DataLoader, TensorDataset
 
 label_k = 50
-batch_size = 16
+batch_size = 32
 shuffle = True
 train_split = 0.99
 

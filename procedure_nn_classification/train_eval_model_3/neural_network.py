@@ -39,8 +39,8 @@ class NeuralNetwork(classifier.Classifier):
         self.model = nn.DataParallel(model_factory(model_config).to(device))
         self.n_epochs = config['n_epochs']
         self.acc_threshold = acc_threshold
-        milestones = [10, 17, 24, 31, 38, 45, 50, 55, 60, 70]
-        weight_decay = 10 ** (-4)
+        milestones = [2, 6]
+        weight_decay = 0.3
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
         self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=milestones, gamma=0.21)
         # the shape of base, which is used in the function eval() to create the score_table
