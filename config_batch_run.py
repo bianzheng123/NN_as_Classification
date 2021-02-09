@@ -26,12 +26,12 @@ short_config_fname_arr = ['1_kmeans_independent_16', '1_kmeans_multiple_16', '1_
 '''
 
 if __name__ == '__main__':
-    ds_fname = 'siftsmall'
+    ds_fname = 'imagenetsmall'
     _type = 'nn_classification'  # pq_nn nn_classification counting_index
     base_config_dir = '/home/zhengbian/NN_as_Classification/config/%s/small_ds/' % _type
     long_config_dir = base_config_dir + ds_fname + '.json'
 
-    short_config_fname_arr = [10**i for i in range(15)]
+    short_config_fname_arr = [10**i for i in range(7)]
     # short_config_fname_arr = ['1_knn_16',
     #                           '8_knn_16']
     for tmp in short_config_fname_arr:

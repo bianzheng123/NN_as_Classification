@@ -1,0 +1,22 @@
+[
+  {
+    "type": "hnsw",
+    "build_graph": {},
+    "graph_partition": "kaffpa"
+  },
+  {
+    "type": "kmeans_independent",
+    "max_iter": 40
+  },
+  {
+    "type": "knn",
+    "build_graph": {},
+    "graph_partition": "parhip"
+  },
+  {
+    "type": "random_hash"
+  },
+  {
+    "type": "lsh"
+  }
+]

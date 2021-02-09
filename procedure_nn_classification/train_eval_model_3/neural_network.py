@@ -145,7 +145,8 @@ class NeuralNetwork(classifier.Classifier):
 
 def parameter_factory(config):
     if config['distance_metric'] == 'l2':
-        lr = 0.008
+        # lr = 0.008
+        lr = 0.004
         return lr
     elif config['distance_metric'] == 'string':
         if config['data_fname'] == 'uniref' or config['data_fname'] == 'unirefsmall':

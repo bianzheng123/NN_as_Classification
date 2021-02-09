@@ -18,10 +18,8 @@ def segment_data(n_codebook, dimension, data):
     for i in range(n_codebook):
         if i == n_codebook - 1:
             seg_l.append(data[:, i * n_seg:])
-            print("%d" % (i * n_seg))
             continue
         seg_l.append(data[:, i * n_seg: (i + 1) * n_seg])
-        print("%d %d" % (i * n_seg, (i + 1) * n_seg))
     for i in range(len(seg_l)):
         seg_l[i] = seg_l[i].astype(np.float32)
         dim_l.append(len(seg_l[i][0]))
@@ -101,6 +99,7 @@ def run(long_term_config_dir, short_term_config_dir):
         train_model_config['program_train_para_dir'] = program_train_para_dir
         train_model_config['data_fname'] = long_term_config['data_fname']
         train_model_config['n_input'] = base_dim_l[i]
+        train_model_config['distance_metric'] = long_term_config['distance_metric']
 
         cluster_score, train_eval_intermediate = train_eval_model.train_eval_model(base, query, trainset,
                                                                                    train_model_config)

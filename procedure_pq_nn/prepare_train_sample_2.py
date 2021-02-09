@@ -4,7 +4,7 @@ from torch.utils.data import Dataset, DataLoader, TensorDataset
 import faiss
 
 label_k = 50
-batch_size = 64
+batch_size = 32
 shuffle = True
 train_split = 0.99
 
