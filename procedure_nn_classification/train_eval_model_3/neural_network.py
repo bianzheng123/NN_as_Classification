@@ -22,7 +22,7 @@ class NeuralNetwork(classifier.Classifier):
             'data_fname': config['data_fname'],
             'distance_metric': config['distance_metric']
         }
-        lr = parameter_factory(config)
+        lr, milestones = parameter_factory(config)
 
         if 'lr' in config:
             lr = config['lr']
@@ -39,10 +39,9 @@ class NeuralNetwork(classifier.Classifier):
         self.model = nn.DataParallel(model_factory(model_config).to(device))
         self.n_epochs = config['n_epochs']
         self.acc_threshold = acc_threshold
-        milestones = [2, 6]
-        weight_decay = 0.3
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay)
-        self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=milestones, gamma=0.21)
+        weight_decay = 0
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay, amsgrad=True)
+        self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=milestones, gamma=0.1)
         # the shape of base, which is used in the function eval() to create the score_table
         self.base_shape = None
         self.intermediate_config['train_intermediate'] = []
@@ -51,6 +50,11 @@ class NeuralNetwork(classifier.Classifier):
         self.base_shape = base.shape
         base = torch.from_numpy(base)
         trainloader, valloader = trainset
+
+        for m in self.model.modules():
+            if isinstance(m, nn.Linear):
+                nn.init.xavier_uniform_(m.weight)
+
         self.model.train()
 
         # base = base.to(device)
@@ -59,17 +63,11 @@ class NeuralNetwork(classifier.Classifier):
         # count the number of neighbor point for each label in different bucket
         self.candidate_count_l = [(y == i).sum() for i in range(self.n_cluster)]
 
-        X = []
         for epoch in range(self.n_epochs):
             correct = 0
             loss_l = []
             for i, data_blob in enumerate(trainloader):
                 ds_idx, partition, neighbor_distribution = data_blob
-                if i == 0:
-                    X.extend(list(ds_idx))
-                if len(ds_idx) == 1:
-                    # since can't batchnorm over a batch of size 1
-                    continue
                 batch_sz = len(ds_idx)
 
                 # ds_idx = ds_idx.to(device)
@@ -144,19 +142,26 @@ class NeuralNetwork(classifier.Classifier):
 
 
 def parameter_factory(config):
+    milestones = [3, 7]
     if config['distance_metric'] == 'l2':
-        # lr = 0.008
-        lr = 0.004
-        return lr
+        lr = 0.008
+        # lr = 0.001
+        if config['data_fname'] == 'imagenetsmall' or config['data_fname'] == 'imagenet':
+            milestones = [5, 7]
+        return lr, milestones
     elif config['distance_metric'] == 'string':
         if config['data_fname'] == 'uniref' or config['data_fname'] == 'unirefsmall':
             lr = 0.0005
-            return lr
+            return lr, milestones
     raise Exception("not support the distance metric or dataset")
 
 
 def model_factory(config):
     if config['distance_metric'] == 'l2':
+        if config['data_fname'] == 'imagenetsmall' or config['data_fname'] == 'imagenet':
+            return networks.ImagenetModel(config)
+        elif config['data_fname'] == 'siftsmall' or config['data_fname'] == 'sift':
+            return networks.SiftModel(config)
         return networks.NNModel(config)
     elif config['distance_metric'] == 'string':
         if config['data_fname'] == 'uniref' or config['data_fname'] == 'unirefsmall':
