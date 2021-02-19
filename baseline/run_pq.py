@@ -61,9 +61,9 @@ def parse_args():
 # python3 run_pq --dataset siftsmall --k_gnd 10 --metric euclid_norm --num_codebook 8 --num_cluster 16
 
 if __name__ == '__main__':
-    dataset = 'imagenetsmall'
+    dataset = 'deepsmall'
     k_gnd = 10
-    codebook = 1
+    codebook = 4
     n_cluster = 16
     metric = 'euclid_norm'
 

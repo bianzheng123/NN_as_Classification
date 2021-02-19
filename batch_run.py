@@ -36,7 +36,7 @@ if __name__ == '__main__':
     # short_config_fname_arr = ['1_kmeans_multiple_256', '1_knn_256', '4_kmeans_multiple_256', '4_knn_256']
     # short_config_fname_arr = ['1_knn_256', '2_knn_256', '4_knn_256', '8_knn_256']
     # short_config_fname_arr = ['1_knn_256', '2_knn_256', '4_knn_256']
-    short_config_fname_arr = ['1_knn_16', '1_lsh_16', '4_lsh_16', '4_knn_16']
+    short_config_fname_arr = ['1_kmeans_multiple_16', '1_knn_16', '4_kmeans_multiple_16', '4_knn_16']
     # short_config_fname_arr = ['1_lsh_16']
     for tmp_fname in short_config_fname_arr:
         short_config_dir = base_config_dir + tmp_fname + '.json'

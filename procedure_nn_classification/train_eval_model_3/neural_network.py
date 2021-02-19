@@ -22,7 +22,7 @@ class NeuralNetwork(classifier.Classifier):
             'data_fname': config['data_fname'],
             'distance_metric': config['distance_metric']
         }
-        lr, milestones, n_epochs = parameter_factory(config)
+        lr, milestones, self.n_epochs = parameter_factory(config)
 
         if 'lr' in config:
             lr = config['lr']
