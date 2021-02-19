@@ -13,7 +13,6 @@
     "type": "neighbor"
   },
   "train_model": {
-    "type": "neural_network",
-    "n_epochs": 12
+    "type": "neural_network"
   }
 }

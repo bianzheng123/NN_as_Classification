@@ -22,10 +22,13 @@ class NeuralNetwork(classifier.Classifier):
             'data_fname': config['data_fname'],
             'distance_metric': config['distance_metric']
         }
-        lr, milestones = parameter_factory(config)
+        lr, milestones, n_epochs = parameter_factory(config)
 
         if 'lr' in config:
             lr = config['lr']
+            print("learning rate %f" % lr)
+        if 'n_epochs' in config:
+            self.n_epochs = config['n_epochs']
             print("learning rate %f" % lr)
         model_config = {
             'n_input': config['n_input'],
@@ -37,7 +40,6 @@ class NeuralNetwork(classifier.Classifier):
             model_config['n_character'] = config['n_character']
         # self.model = model_factory(model_config).to(device)
         self.model = nn.DataParallel(model_factory(model_config).to(device))
-        self.n_epochs = config['n_epochs']
         self.acc_threshold = acc_threshold
         weight_decay = 0
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay, amsgrad=True)
@@ -143,16 +145,18 @@ class NeuralNetwork(classifier.Classifier):
 
 def parameter_factory(config):
     milestones = [3, 7]
+    n_epochs = 12
     if config['distance_metric'] == 'l2':
         lr = 0.008
         # lr = 0.001
         if config['data_fname'] == 'imagenetsmall' or config['data_fname'] == 'imagenet':
             milestones = [5, 7]
-        return lr, milestones
+            lr = 0.001
+        return lr, milestones, n_epochs
     elif config['distance_metric'] == 'string':
         if config['data_fname'] == 'uniref' or config['data_fname'] == 'unirefsmall':
             lr = 0.0005
-            return lr, milestones
+            return lr, milestones, n_epochs
     raise Exception("not support the distance metric or dataset")
 
 
