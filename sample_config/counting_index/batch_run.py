@@ -5,19 +5,10 @@ if __name__ == '__main__':
     config_dir = '/home/zhengbian/NN_as_Classification/sample_config/counting_index/short_term_config.json'
     with open(config_dir, 'r') as f:
         config = json.load(f)
-    dataset_name = 'siftsmall'
     save_base_dir = '/home/zhengbian/NN_as_Classification/config/counting_index/small_ds'
     save_fname_content_m = [
         {
-            "type": "e2lsh",
-            "r": 1,
-            "a_sigma": 1,
-            "a_miu": 0
-        }, {
             "type": "kmeans_independent",
-            "max_iter": 40
-        }, {
-            "type": "kmeans_multiple",
             "max_iter": 40
         }
     ]
@@ -25,7 +16,7 @@ if __name__ == '__main__':
     for tmp_config in save_fname_content_m:
         config['dataset_partition'] = tmp_config
         n_cluster = 16
-        n_instance = 8
+        n_instance = 1
         config['n_cluster'] = n_cluster
         config['n_instance'] = n_instance
         if tmp_config['type'] == 'e2lsh':

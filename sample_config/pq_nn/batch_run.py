@@ -6,9 +6,7 @@ if __name__ == '__main__':
     save_base_dir = '/home/zhengbian/NN_as_Classification/config/pq_nn/small_ds'
     save_fname_content_m = [
         {
-            "type": "knn",
-            "build_graph": {},
-            "graph_partition": "parhip"
+            "type": "lsh"
         }
     ]
     for tmp_config in save_fname_content_m:

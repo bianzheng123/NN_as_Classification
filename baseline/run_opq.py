@@ -7,9 +7,9 @@ from util import dir_io
 
 
 if __name__ == '__main__':
-    dataset = 'deepsmall'
+    dataset = 'siftsmall_normal'
     k_gnd = 10
-    codebook = 4
+    codebook = 8
     n_cluster = 16
     metric = 'euclid_norm'
 

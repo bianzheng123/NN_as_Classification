@@ -52,6 +52,13 @@ def convert_data_type(config):
                       file_len=config['query_len'])
     print("extract query")
 
+    if config['minus_avg']:
+        average_vecs = np.average(base, axis=0)
+        print(average_vecs)
+        base = base - average_vecs
+        query = query - average_vecs
+        print("minus average number in each dimension")
+
     gnd = groundtruth.get_gnd(base, query, config['k'])
     gnd_save_dir = '%s/%s' % (config['data_dir'], 'gnd.ivecs')
     vecs_io.ivecs_write(gnd_save_dir, gnd)
@@ -87,18 +94,19 @@ if __name__ == '__main__':
     data_config = {
         "k": 10,
         "base_base_gnd_k": 150,
-        "data_fname": "imagenet",
-        "source_data_dir": "/home/zhengbian/Dataset/imagenet",
+        "data_fname": "siftsmall_normal",
+        "source_data_dir": "/home/zhengbian/Dataset/sift",
         "source_data_type": {
             "base": "fvecs",
             "query": "fvecs"
         },
         "source_data_fname": {
-            "base": "imagenet_base.fvecs",
-            "query": "imagenet_query.fvecs"
+            "base": "sift_base.fvecs",
+            "query": "sift_query.fvecs"
         },
         "project_dir": "/home/zhengbian/NN_as_Classification",
-        "query_len": 1000,
-        'base_len': 1000000
+        "query_len": 100,
+        'base_len': 10000,
+        'minus_avg': True  # whether minus the average of data in different dimension
     }
     prepare_data(data_config)

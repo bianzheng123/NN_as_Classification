@@ -29,7 +29,7 @@ class NeuralNetwork(classifier.Classifier):
             print("learning rate %f" % lr)
         if 'n_epochs' in config:
             self.n_epochs = config['n_epochs']
-            print("learning rate %f" % lr)
+            print("n_epochs %d" % self.n_epochs)
         model_config = {
             'n_input': config['n_input'],
             'n_output': self.n_cluster,

@@ -1,5 +1,5 @@
 from procedure_nn_classification.dataset_partition_1 import base_partition
-from procedure_nn_classification.dataset_partition_1.build_graph import hnsw, knn
+from procedure_nn_classification.dataset_partition_1.build_graph import hnsw, knn, partition_knn
 import numpy as np
 from util import read_data, dir_io
 import time
@@ -29,7 +29,17 @@ class LearnOnGraph(base_partition.BasePartition):
         save_graph_end_time = time.time()
         self.intermediate['save_graph_time'] = save_graph_end_time - save_graph_start_time
         graph_partition_start_time = time.time()
-        self.graph_partition()
+        if self.type == 'partition_knn':
+            graph_partition_config = {
+                "kahip_dir": self.kahip_dir,
+                "save_dir": self.save_dir,
+                "graph_partition_type": self.graph_partition_type,
+                "n_cluster": self.n_cluster,
+                'n_item': len(base)
+            }
+            self.labels = graph_ins.graph_partition(graph_partition_config)
+        else:
+            self.graph_partition()
         graph_partition_end_time = time.time()
         self.intermediate['graph_partition_time'] = graph_partition_end_time - graph_partition_start_time
         return graph, self.labels
@@ -63,8 +73,13 @@ class LearnOnGraph(base_partition.BasePartition):
     def graph_factory(_type, config):
         if _type == 'knn':
             return knn.KNN(config)
+        elif _type == 'partition_knn':
+            if config['distance_metric'] != 'l2':
+                raise Exception("not support distance metrics")
+            return partition_knn.KNN(config)
         elif _type == 'hnsw':
             if config['distance_metric'] != 'l2':
                 raise Exception("not support distance metrics")
             return hnsw.HNSW(config)
         raise Exception('do not support the type of buildin a graph')
+

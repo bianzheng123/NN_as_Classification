@@ -133,9 +133,12 @@ class LSH(BasePartition):
 
     def __init__(self, config):
         super(LSH, self).__init__(config)
-        self.r = config['r']
-        self.a_sigma = config['a_sigma']
-        self.a_miu = config['a_miu']
+        self.r = 1
+        self.a_sigma = 1
+        self.a_miu = 0
+        if 'a_sigma' in config:
+            self.a_sigma = config['a_sigma']
+            print('a_sigma %d' % self.a_sigma)
         # self.type, self.save_dir, self.classifier_number, self.label_map, self.n_cluster, self.labels
 
     def _partition(self, base):
@@ -144,7 +147,7 @@ class LSH(BasePartition):
         self.norm_div = np.max(norm)
         # print(norm_div)
         base_normlize = base / self.norm_div
-        self.a = np.random.normal(size=base.shape[1])
+        self.a = np.random.normal(loc=self.a_miu, scale=self.a_sigma, size=base.shape[1])
         proj_result = np.dot(base_normlize, self.a)
         self.b = np.random.random() * self.r
         arr = np.floor((proj_result + self.b) / self.r) % self.n_cluster

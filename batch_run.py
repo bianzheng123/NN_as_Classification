@@ -26,7 +26,7 @@ short_config_fname_arr = ['1_kmeans_independent_16', '1_kmeans_multiple_16', '1_
 '''
 
 if __name__ == '__main__':
-    ds_fname = 'deepsmall'
+    ds_fname = 'siftsmall'
     _type = 'nn_classification'  # pq_nn nn_classification counting_index
     base_config_dir = '/home/zhengbian/NN_as_Classification/config/%s/small_ds/' % _type
     long_config_dir = base_config_dir + ds_fname + '.json'
@@ -36,8 +36,12 @@ if __name__ == '__main__':
     # short_config_fname_arr = ['1_kmeans_multiple_256', '1_knn_256', '4_kmeans_multiple_256', '4_knn_256']
     # short_config_fname_arr = ['1_knn_256', '2_knn_256', '4_knn_256', '8_knn_256']
     # short_config_fname_arr = ['1_knn_256', '2_knn_256', '4_knn_256']
-    short_config_fname_arr = ['1_kmeans_multiple_16', '1_knn_16', '4_kmeans_multiple_16', '4_knn_16']
-    # short_config_fname_arr = ['1_lsh_16']
+    # short_config_fname_arr = ['1_kmeans_multiple_16', '1_knn_16', '4_kmeans_multiple_16', '4_knn_16']
+    # short_config_fname_arr = ['1_partition_knn_16', '8_partition_knn_16']
+    short_config_fname_arr = ['1_partition_knn_16']
+    # short_config_fname_arr = ['1_knn_16', '8_knn_16']
+    # short_config_fname_arr = ['1_e2lsh_16', '8_e2lsh_16']
+    # short_config_fname_arr = ['1_lsh_4', '4_lsh_4']
     for tmp_fname in short_config_fname_arr:
         short_config_dir = base_config_dir + tmp_fname + '.json'
         # run_nohup(long_config_dir, short_config_dir, ds_fname, tmp_fname, _type)

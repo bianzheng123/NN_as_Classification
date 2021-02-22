@@ -17,9 +17,21 @@
     "graph_partition": "parhip"
   },
   {
+    "type": "partition_knn",
+    "build_graph": {
+    },
+    "graph_partition": "parhip"
+  },
+  {
     "type": "random_hash"
   },
   {
     "type": "lsh"
+  },
+  {
+    "type": "lsh_base"
+  },
+  {
+    "type": "random_projection"
   }
 ]

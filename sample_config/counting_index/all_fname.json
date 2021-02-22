@@ -1,0 +1,13 @@
+[
+  {
+    "type": "e2lsh"
+  },
+  {
+    "type": "kmeans_independent",
+    "max_iter": 40
+  },
+  {
+    "type": "kmeans_multiple",
+    "max_iter": 40
+  }
+]

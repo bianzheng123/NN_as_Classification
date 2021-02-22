@@ -149,17 +149,14 @@ class MultipleKMeans(MultipleBasePartition):
         # vector = np.random.rand(centroid_l.shape[1])
         # random_vector = vector / np.linalg.norm(vector)
         random_vector = np.random.normal(size=centroid_l.shape[1], scale=100)
-        random_l = None
-        for i in range(len(centroid_l)):
-            if i == 0:
-                random_num = np.dot(random_vector, centroid_l[i])
-                random_l = np.array([random_num])
-            random_num = np.dot(random_vector, centroid_l[i])
-            to_append = np.array([random_num])
-            random_l = np.append(random_l, to_append)
+        random_l = []
+        for i in range(start, end):
+            random_num = np.dot(random_vector, centroid_l[res_idx[i]])
+            random_l.append(random_num)
         # random_l is the result of dot product of centroid and random vector(follow Gauss distribution)
+        random_l = np.array(random_l)
         depth += 1
-        sort_indices = np.argsort(random_l[start:end]) + start
+        sort_indices = np.argsort(random_l) + start
         mid = int((start + end - 1) / 2)
         res_idx[start:end] = sort_indices
         MultipleKMeans.divide_and_conquer(depth, k, centroid_l, start, mid, res_idx)
@@ -199,6 +196,10 @@ class MultipleHash(MultipleBasePartition):
             return hash.RandomHash(config)
         elif self.type == 'lsh':
             return hash.LocalitySensitiveHash(config)
+        elif self.type == 'lsh_base':
+            return hash.LocalitySensitiveHashBase(config)
+        elif self.type == 'random_projection':
+            return hash.RandomProjection(config)
         raise Exception('not support hash type')
 
     def _preprocess(self, base):
