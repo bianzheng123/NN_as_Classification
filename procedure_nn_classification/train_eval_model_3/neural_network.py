@@ -11,6 +11,49 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 torch.manual_seed(100)
 torch.cuda.manual_seed_all(100)
 
+model_config_m = {
+    'std_nn': {
+        'model': networks.StdNN,
+        'lr': 0.008,
+        'n_epochs': 12,
+        'milestones': [3, 7]
+    },
+    'res_net': {
+        'model': networks.ResNet,
+        'lr': 0.008,
+        'n_epochs': 5,
+        'milestones': [3, 7]
+    },
+    'one_block_2048_dim': {
+        'model': networks.OneBlock2048Dim,
+        'lr': 0.008,
+        'n_epochs': 12,
+        'milestones': [3, 7]
+    },
+    'two_block_8192_dim_no_bn_dropout': {
+        'model': networks.TwoBlock8192DimNoBnDropout,
+        'lr': 0.001,
+        'n_epochs': 12,
+        'milestones': [5, 7]
+    },
+    'cnn': {
+        'model': networks.CNN,
+        'lr': 0.0005,
+        'n_epochs': 12,
+        'milestones': [3, 7]
+    }
+}
+
+
+def model_parameter_factory(config):
+    if config['distance_metric'] == 'l2':
+        if config['data_fname'] == 'imagenetsmall' or config['data_fname'] == 'imagenet':
+            return model_config_m['two_block_8192_dim_no_bn_dropout']
+        return model_config_m['std_nn']
+    elif config['distance_metric'] == 'string':
+        return model_config_m['cnn']
+    raise Exception("not support the distance metric or dataset")
+
 
 class NeuralNetwork(classifier.Classifier):
 
@@ -22,24 +65,24 @@ class NeuralNetwork(classifier.Classifier):
             'data_fname': config['data_fname'],
             'distance_metric': config['distance_metric']
         }
-        lr, milestones, self.n_epochs = parameter_factory(config)
-
-        if 'lr' in config:
-            lr = config['lr']
-            print("learning rate %f" % lr)
-        if 'n_epochs' in config:
-            self.n_epochs = config['n_epochs']
-            print("n_epochs %d" % self.n_epochs)
+        model_m = model_parameter_factory(config)
+        if 'model_name' in config:
+            model_m = model_config_m[config['model_name']]
+            print("model_name %s" % config['model_name'])
         model_config = {
             'n_input': config['n_input'],
             'n_output': self.n_cluster,
             'data_fname': config['data_fname'],
             'distance_metric': config['distance_metric']
         }
+        self.model = nn.DataParallel(model_m['model'](model_config).to(device))
+        lr = model_m['lr']
+        self.n_epochs = model_m['n_epochs']
+        milestones = model_m['milestones']
+
         if 'n_character' in config:
             model_config['n_character'] = config['n_character']
-        # self.model = model_factory(model_config).to(device)
-        self.model = nn.DataParallel(model_factory(model_config).to(device))
+
         self.acc_threshold = acc_threshold
         weight_decay = 0
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=weight_decay, amsgrad=True)
@@ -141,33 +184,3 @@ class NeuralNetwork(classifier.Classifier):
         with torch.no_grad():
             eval_res = self.model(query)
             self.result = eval_res.cpu().numpy()
-
-
-def parameter_factory(config):
-    milestones = [3, 7]
-    n_epochs = 12
-    if config['distance_metric'] == 'l2':
-        lr = 0.008
-        # lr = 0.001
-        if config['data_fname'] == 'imagenetsmall' or config['data_fname'] == 'imagenet':
-            milestones = [5, 7]
-            lr = 0.001
-        return lr, milestones, n_epochs
-    elif config['distance_metric'] == 'string':
-        if config['data_fname'] == 'uniref' or config['data_fname'] == 'unirefsmall':
-            lr = 0.0005
-            return lr, milestones, n_epochs
-    raise Exception("not support the distance metric or dataset")
-
-
-def model_factory(config):
-    if config['distance_metric'] == 'l2':
-        if config['data_fname'] == 'imagenetsmall' or config['data_fname'] == 'imagenet':
-            return networks.ImagenetModel(config)
-        elif config['data_fname'] == 'siftsmall' or config['data_fname'] == 'sift':
-            return networks.SiftModel(config)
-        return networks.NNModel(config)
-    elif config['distance_metric'] == 'string':
-        if config['data_fname'] == 'uniref' or config['data_fname'] == 'unirefsmall':
-            return networks.UnirefCNN(config)
-    raise Exception("not support the distance metric or dataset")

@@ -91,10 +91,13 @@ class RandomProjection(base_partition.BasePartition):
         partition_idx = self.random_projection(base)
 
         n_part = 2 ** self.partition_depth
-        self.partition_idx = partition_idx.reshape(n_part, -1)
         labels = np.empty(len(base), dtype=np.int)
+
+        start_idx = 0
         for i in range(n_part):
-            labels[self.partition_idx[i]] = i
+            end_idx = int(np.ceil(len(base) / n_part)) * (i + 1)
+            labels[partition_idx[start_idx:end_idx]] = i
+            start_idx = end_idx
         self.labels = labels
 
         partition_dir = '%s/partition.txt' % self.save_dir
