@@ -6,13 +6,28 @@ if __name__ == '__main__':
     save_base_dir = '/home/zhengbian/NN_as_Classification/config/nn_classification/big_ds'
     save_fname_content_m = [
         {
-            "type": "random_projection"
+            "type": "knn_kmeans",
+            "build_graph": {
+            },
+            "graph_partition": "parhip"
+        },
+        {
+            "type": "knn_lsh",
+            "build_graph": {
+            },
+            "graph_partition": "parhip"
+        },
+        {
+            "type": "knn_random_projection",
+            "build_graph": {
+            },
+            "graph_partition": "parhip"
         }
     ]
     for tmp_config in save_fname_content_m:
         config['dataset_partition'] = tmp_config
         config['n_cluster'] = 256
-        config['n_instance'] = 1
+        config['n_instance'] = 4
         with open('%s/%d_%s_%d.json' % (save_base_dir, config['n_instance'], tmp_config['type'], config['n_cluster']),
                   'w') as f:
             json.dump(config, f)

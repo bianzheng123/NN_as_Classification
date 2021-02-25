@@ -61,7 +61,7 @@ def parse_args():
 # python3 run_pq --dataset siftsmall --k_gnd 10 --metric euclid_norm --num_codebook 8 --num_cluster 16
 
 if __name__ == '__main__':
-    dataset = 'siftsmall_normal'
+    dataset = 'glove'
     k_gnd = 10
     codebook = 8
     n_cluster = 16

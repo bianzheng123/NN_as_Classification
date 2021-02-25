@@ -29,7 +29,7 @@ class LearnOnGraph(base_partition.BasePartition):
         save_graph_end_time = time.time()
         self.intermediate['save_graph_time'] = save_graph_end_time - save_graph_start_time
         graph_partition_start_time = time.time()
-        if self.type == 'partition_knn':
+        if self.type == 'knn_random_projection' or self.type == 'knn_lsh' or self.type == 'knn_kmeans':
             graph_partition_config = {
                 "kahip_dir": self.kahip_dir,
                 "save_dir": self.save_dir,
@@ -73,10 +73,18 @@ class LearnOnGraph(base_partition.BasePartition):
     def graph_factory(_type, config):
         if _type == 'knn':
             return knn.KNN(config)
-        elif _type == 'partition_knn':
+        elif _type == 'knn_random_projection':
             if config['distance_metric'] != 'l2':
                 raise Exception("not support distance metrics")
-            return partition_knn.KNN(config)
+            return partition_knn.KNNRandomProjection(config)
+        elif _type == 'knn_lsh':
+            if config['distance_metric'] != 'l2':
+                raise Exception("not support distance metrics")
+            return partition_knn.KNNLSH(config)
+        elif _type == 'knn_kmeans':
+            if config['distance_metric'] != 'l2':
+                raise Exception("not support distance metrics")
+            return partition_knn.KNNKMeans(config)
         elif _type == 'hnsw':
             if config['distance_metric'] != 'l2':
                 raise Exception("not support distance metrics")

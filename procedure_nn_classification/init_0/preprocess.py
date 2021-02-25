@@ -22,7 +22,7 @@ def factory(config):
         return multiple_model.MultipleKMeans(config)
     elif _type == 'kmeans_independent':
         return multiple_model.IndependentKMeans(config)
-    elif _type == 'knn' or _type == 'hnsw' or _type == 'partition_knn':
+    elif _type == 'knn' or _type == 'hnsw' or _type == 'knn_random_projection' or _type == 'knn_lsh' or _type == 'knn_kmeans':
         return multiple_model.MultipleLearnOnGraph(config)
     elif _type == 'random_hash' or _type == 'lsh' or _type == 'lsh_base' or _type == 'random_projection':
         return multiple_model.MultipleHash(config)
