@@ -10,49 +10,51 @@ acc_threshold = 0.95
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 torch.manual_seed(100)
 torch.cuda.manual_seed_all(100)
+torch.set_num_threads(multiprocessing.cpu_count())
 
-model_config_m = {
-    'std_nn': {
-        'model': networks.StdNN,
-        'lr': 0.008,
-        'n_epochs': 12,
-        'milestones': [3, 7]
-    },
-    'res_net': {
-        'model': networks.ResNet,
-        'lr': 0.008,
-        'n_epochs': 5,
-        'milestones': [3, 7]
-    },
-    'one_block_2048_dim': {
-        'model': networks.OneBlock2048Dim,
-        'lr': 0.008,
-        'n_epochs': 12,
-        'milestones': [3, 7]
-    },
-    'two_block_8192_dim_no_bn_dropout': {
-        'model': networks.TwoBlock8192DimNoBnDropout,
-        'lr': 0.001,
-        'n_epochs': 12,
-        'milestones': [5, 7]
-    },
-    'cnn': {
-        'model': networks.CNN,
-        'lr': 0.0005,
-        'n_epochs': 12,
-        'milestones': [3, 7]
-    }
+network_config_m = {
+    'two_block_512_dim': networks.TwoBlock512Dim,
+    'res_net': networks.ResNet,
+    'one_block_2048_dim': networks.OneBlock2048Dim,
+    'two_block_8192_dim_no_bn_dropout': networks.TwoBlock8192DimNoBnDropout,
+    'cnn': networks.CNN
 }
 
 
-def model_parameter_factory(config):
+def model_factory(config):
     if config['distance_metric'] == 'l2':
         if config['data_fname'] == 'imagenetsmall' or config['data_fname'] == 'imagenet':
-            return model_config_m['two_block_8192_dim_no_bn_dropout']
-        return model_config_m['std_nn']
+            return 'two_block_8192_dim_no_bn_dropout'
+        return 'one_block_2048_dim'
     elif config['distance_metric'] == 'string':
-        return model_config_m['cnn']
+        return 'cnn'
     raise Exception("not support the distance metric or dataset")
+
+
+def parameter_factory(dataset_partition_method, distance_metric, data_fname, model_name):
+    # config['dataset_partition_method'], config['distance_metric'], config['data_fname']
+    milestones = [3, 7]
+    lr = 0.008
+    n_epochs = 12
+    if model_name == 'two_block_512_dim':
+        if dataset_partition_method == 'knn_random_projection' or dataset_partition_method == 'knn_kmeans' or dataset_partition_method == 'knn_lsh':
+            lr = 0.004
+        pass
+    elif model_name == 'res_net':
+        pass
+    elif model_name == 'one_block_2048_dim':
+        if dataset_partition_method == 'knn_random_projection' or dataset_partition_method == 'knn_kmeans' or dataset_partition_method == 'knn_lsh':
+            lr = 0.004
+        pass
+    elif model_name == 'two_block_8192_dim_no_bn_dropout':
+        milestones = [5, 7]
+        pass
+    elif model_name == 'cnn':
+        lr = 0.0005
+        pass
+    else:
+        raise Exception('not support model_name')
+    return lr, n_epochs, milestones
 
 
 class NeuralNetwork(classifier.Classifier):
@@ -60,25 +62,35 @@ class NeuralNetwork(classifier.Classifier):
     def __init__(self, config):
         super(NeuralNetwork, self).__init__(config)
         # self.type, self.save_dir, self.classifier_number, self.n_cluster
-        torch.set_num_threads(multiprocessing.cpu_count() // 10 * 9)
-        parameter_config = {
-            'data_fname': config['data_fname'],
-            'distance_metric': config['distance_metric']
-        }
-        model_m = model_parameter_factory(config)
+        # choose by default
+        model_name = model_factory(config)
+        lr, self.n_epochs, milestones = parameter_factory(config['dataset_partition_method'], config['distance_metric'], config['data_fname'], model_name)
+        # choose by self config
         if 'model_name' in config:
-            model_m = model_config_m[config['model_name']]
-            print("model_name %s" % config['model_name'])
+            model_name = config['model_name']
+        if 'lr' in config:
+            lr = config['lr']
+        if 'n_epochs' in config:
+            self.n_epochs = config['n_epochs']
+        if 'milestones' in config:
+            milestones = config['milestones']
+
+        print('model_name: {}, lr: {}, n_epochs: {}, milestones: {}'.format(model_name, lr,
+                                                                            self.n_epochs, milestones))
+        self.intermediate_config['train_config'] = {
+            'model_name': model_name,
+            'lr': lr,
+            'n_epochs': self.n_epochs,
+            'milestones': milestones
+        }
+
         model_config = {
             'n_input': config['n_input'],
             'n_output': self.n_cluster,
             'data_fname': config['data_fname'],
             'distance_metric': config['distance_metric']
         }
-        self.model = nn.DataParallel(model_m['model'](model_config).to(device))
-        lr = model_m['lr']
-        self.n_epochs = model_m['n_epochs']
-        milestones = model_m['milestones']
+        self.model = nn.DataParallel(network_config_m[model_name](model_config).to(device))
 
         if 'n_character' in config:
             model_config['n_character'] = config['n_character']

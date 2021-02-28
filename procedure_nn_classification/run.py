@@ -83,6 +83,7 @@ def run(long_term_config_dir, short_term_config_dir):
         train_model_config['distance_metric'] = long_term_config['distance_metric']
         train_model_config['data_fname'] = long_term_config['data_fname']
         train_model_config['n_input'] = long_term_config['dimension']
+        train_model_config['dataset_partition_method'] = short_term_config["dataset_partition"]['type']
         if 'n_character' in long_term_config:
             train_model_config['n_character'] = long_term_config['n_character']
 

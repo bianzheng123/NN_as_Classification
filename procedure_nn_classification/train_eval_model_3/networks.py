@@ -8,7 +8,7 @@ torch.manual_seed(100)
 torch.cuda.manual_seed_all(100)
 
 
-class StdNN(nn.Module):
+class TwoBlock512Dim(nn.Module):
     def __init__(self, config):
         super().__init__()
         input_dim = config['n_input']
