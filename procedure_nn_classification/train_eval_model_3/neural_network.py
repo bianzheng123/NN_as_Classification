@@ -14,9 +14,12 @@ torch.set_num_threads(multiprocessing.cpu_count())
 
 network_config_m = {
     'two_block_512_dim': networks.TwoBlock512Dim,
-    'res_net': networks.ResNet,
+    'two_block_1024_dim': networks.TwoBlock1024Dim,
     'one_block_2048_dim': networks.OneBlock2048Dim,
+    'one_block_512_dim': networks.OneBlock512Dim,
+    'two_block_512_dim_no_bn_dropout': networks.TwoBlock512DimNoBnDropout,
     'two_block_8192_dim_no_bn_dropout': networks.TwoBlock8192DimNoBnDropout,
+    'res_net': networks.ResNet,
     'cnn': networks.CNN
 }
 
@@ -36,15 +39,21 @@ def parameter_factory(dataset_partition_method, distance_metric, data_fname, mod
     milestones = [3, 7]
     lr = 0.008
     n_epochs = 12
-    if model_name == 'two_block_512_dim':
-        if dataset_partition_method == 'knn_random_projection' or dataset_partition_method == 'knn_kmeans' or dataset_partition_method == 'knn_lsh':
-            lr = 0.004
+    if dataset_partition_method == 'knn_random_projection' or dataset_partition_method == 'knn_kmeans' or dataset_partition_method == 'knn_lsh':
+        lr = 0.004
         pass
-    elif model_name == 'res_net':
+    if model_name == 'two_block_512_dim':
+        pass
+    elif model_name == 'two_block_1024_dim':
         pass
     elif model_name == 'one_block_2048_dim':
-        if dataset_partition_method == 'knn_random_projection' or dataset_partition_method == 'knn_kmeans' or dataset_partition_method == 'knn_lsh':
-            lr = 0.004
+        pass
+    elif model_name == 'one_block_512_dim':
+        pass
+    elif model_name == 'two_block_512_dim_no_bn_dropout':
+        lr = 0.0001
+        pass
+    elif model_name == 'res_net':
         pass
     elif model_name == 'two_block_8192_dim_no_bn_dropout':
         milestones = [5, 7]
@@ -64,7 +73,8 @@ class NeuralNetwork(classifier.Classifier):
         # self.type, self.save_dir, self.classifier_number, self.n_cluster
         # choose by default
         model_name = model_factory(config)
-        lr, self.n_epochs, milestones = parameter_factory(config['dataset_partition_method'], config['distance_metric'], config['data_fname'], model_name)
+        lr, self.n_epochs, milestones = parameter_factory(config['dataset_partition_method'], config['distance_metric'],
+                                                          config['data_fname'], model_name)
         # choose by self config
         if 'model_name' in config:
             model_name = config['model_name']

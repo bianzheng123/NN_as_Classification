@@ -10,6 +10,18 @@ if __name__ == '__main__':
             "build_graph": {
             },
             "graph_partition": "parhip"
+        },
+        {
+            "type": "knn_lsh",
+            "build_graph": {
+            },
+            "graph_partition": "parhip"
+        },
+        {
+            "type": "knn_kmeans",
+            "build_graph": {
+            },
+            "graph_partition": "parhip"
         }
     ]
     for tmp_config in save_fname_content_m:

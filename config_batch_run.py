@@ -31,14 +31,18 @@ if __name__ == '__main__':
     base_config_dir = '/home/zhengbian/NN_as_Classification/config/%s/big_ds/' % _type
     long_config_dir = base_config_dir + ds_fname + '.json'
 
-    # short_config_fname_arr = ['std_nn', 'res_net', 'one_block_2048_dim', 'two_block_8192_dim_no_bn_dropout'] # cnn
-    para_l = [1, 2, 3]
+    # para_l = ['two_block_512_dim', 'res_net', 'one_block_2048_dim'] # cnn 'two_block_8192_dim_no_bn_dropout'
+    # para_l = ['two_block_512_dim', 'two_block_1024_dim', 'one_block_2048_dim', 'one_block_512_dim',
+    #           'two_block_512_dim_no_bn_dropout', 'res_net']  # cnn two_block_8192_dim_no_bn_dropout
+    para_l = ['two_block_512_dim_no_bn_dropout']  # cnn two_block_8192_dim_no_bn_dropout
+    # para_l = [1, 2, 3]
     method_l = ['knn_random_projection']
+    para_name = 'model'
+    n_classifier = 4
     for method in method_l:
-        for n_classifier in [4]:
-            for para in para_l:
-                fname = '{}_{}_256_partition_iter_{}.json'.format(n_classifier, method, para)
-                short_config_dir = base_config_dir + fname
-                # run_nohup(long_config_dir, short_config_dir, ds_fname, fname, _type)
-                run_frontend(long_config_dir, short_config_dir, _type)
+        for para in para_l:
+            fname = '{}_{}_256_{}_{}.json'.format(n_classifier, method, para_name, para)
+            short_config_dir = base_config_dir + fname
+            # run_nohup(long_config_dir, short_config_dir, ds_fname, fname, _type)
+            run_frontend(long_config_dir, short_config_dir, _type)
     # send_email.send("glove increase weight complete")
