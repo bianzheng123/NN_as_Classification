@@ -3,6 +3,7 @@ import faiss
 from util import dir_io, read_data
 import multiprocessing
 import sklearn.cluster as cls
+from multiprocessing import Pool, cpu_count
 
 np.random.seed(123)
 
@@ -243,3 +244,54 @@ class KNNKMeans(KNN):
             base_idx_i = np.argwhere(label == i).reshape(-1)
             res_idx.append(base_idx_i)
         return res_idx
+
+
+class KNNMultipleKMeans(KNN):
+    def __init__(self, config):
+        super(KNNMultipleKMeans, self).__init__(config)
+        self.centroid_l = None
+        self.n_process = cpu_count()
+        self.n_pool_process = cpu_count()
+
+    def get_centroid(self, centroid_l):
+        self.centroid_l = centroid_l
+
+    # return the index of result,
+    def partition_dataset(self, base):
+        n_part = 2 ** self.partition_iter
+        label = self.parallel_count_label_centroid(base)
+
+        res_idx = []
+        for i in range(n_part):
+            base_idx_i = np.argwhere(label == i).reshape(-1)
+            res_idx.append(base_idx_i)
+        return res_idx
+
+    def parallel_count_label_centroid(self, data):
+        p = Pool(self.n_pool_process)
+        res_l = []
+        for i in range(self.n_process):
+            res = p.apply_async(KNNMultipleKMeans.count_centroid, args=(data, self.centroid_l, i, self.n_process))
+            res_l.append(res)
+
+        p.close()
+        p.join()
+        res_labels = np.zeros(data.shape[0]).astype(np.int64)
+        for i, res in enumerate(res_l, 0):
+            tmp_labels = res.get()
+            for j in range(len(tmp_labels)):
+                res_labels[i + j * self.n_process] = tmp_labels[j]
+        # np.savetxt('label_parallel.txt', res_labels, fmt='%d')
+        return res_labels
+
+    @staticmethod
+    def count_centroid(base, centroid_l, idx, pool_size):
+        # count the distance for each item and centroid to get the distance_table
+        labels = []
+        len_base = len(base)
+        for i in range(idx, len_base, pool_size):
+            vecs = base[i]
+            tmp_dis = [np.linalg.norm(vecs - centroid) for centroid in centroid_l]
+            tmp_label = np.argmin(tmp_dis, axis=0)
+            labels.append(tmp_label)
+        return np.array(labels, dtype=np.int64)

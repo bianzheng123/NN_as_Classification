@@ -91,3 +91,75 @@ class LearnOnGraph(base_partition.BasePartition):
             return hnsw.HNSW(config)
         raise Exception('do not support the type of buildin a graph')
 
+
+class LearnOnGraphMultipleKMeans(base_partition.BasePartition):
+
+    def __init__(self, config):
+        super(LearnOnGraphMultipleKMeans, self).__init__(config)
+        # self.save_dir, self.classifier_number, self.distance_metric, self.n_cluster,
+        # self.labels, self.label_map, self.n_point_label
+        self.build_graph_config = config['build_graph']
+        self.build_graph_config['distance_metric'] = self.distance_metric
+        self.graph_partition_type = config['graph_partition']
+        self.kahip_dir = config['kahip_dir']
+
+    def get_centroid(self, centroid_l):
+        # (2**self.partition_iter) * d
+        self.centroid_l = centroid_l
+
+    def _partition(self, base, base_base_gnd, ins_intermediate):
+        graph_ins = self.graph_factory(self.type, self.build_graph_config)
+        graph_ins.get_centroid(self.centroid_l)
+        build_graph_start_time = time.time()
+        graph = graph_ins.build_graph(base, base_base_gnd, ins_intermediate)
+        build_graph_end_time = time.time()
+        self.intermediate['bulid_graph_time'] = build_graph_end_time - build_graph_start_time
+        save_graph_start_time = time.time()
+        graph_ins.save(graph, self.save_dir)
+        save_graph_end_time = time.time()
+        self.intermediate['save_graph_time'] = save_graph_end_time - save_graph_start_time
+        graph_partition_start_time = time.time()
+        graph_partition_config = {
+            "kahip_dir": self.kahip_dir,
+            "save_dir": self.save_dir,
+            "graph_partition_type": self.graph_partition_type,
+            "n_cluster": self.n_cluster,
+            'n_item': len(base)
+        }
+        self.labels = graph_ins.graph_partition(graph_partition_config)
+        graph_partition_end_time = time.time()
+        self.intermediate['graph_partition_time'] = graph_partition_end_time - graph_partition_start_time
+        return graph, self.labels
+
+    def graph_partition(self):
+        # this function is to invoke kahip and read partition.txt
+        partition_dir = '%s/partition.txt' % self.save_dir
+        if self.graph_partition_type == 'kaffpa':
+            kahip_command = '%s/deploy/kaffpa %s/graph.graph --preconfiguration=eco --output_filename=%s/partition.txt ' \
+                            '--k=%d' % (
+                                self.kahip_dir, self.save_dir,
+                                self.save_dir,
+                                self.n_cluster)
+            print(kahip_command)
+            dir_io.kahip(partition_dir, kahip_command)
+        elif self.graph_partition_type == 'parhip':
+            kahip_command = 'mpirun -n %d %s/deploy/parhip %s/graph.graph --preconfiguration fastsocial ' \
+                            '--save_partition --k %d' % (
+                                multiprocessing.cpu_count() // 2, self.kahip_dir, self.save_dir,
+                                self.n_cluster)
+            print(kahip_command)
+            dir_io.kahip('./tmppartition.txtp', kahip_command)
+            self.move_partition_txt()
+        labels = read_data.read_partition(partition_dir)
+        self.labels = np.array(labels)
+
+    def move_partition_txt(self):
+        dir_io.move_file('tmppartition.txtp', '%s/partition.txt' % self.save_dir)
+
+    @staticmethod
+    def graph_factory(_type, config):
+        if _type == 'knn_kmeans_multiple':
+            if config['distance_metric'] != 'l2':
+                raise Exception("not support distance metrics")
+            return partition_knn.KNNMultipleKMeans(config)
+        raise Exception('do not support the type of buildin a graph')

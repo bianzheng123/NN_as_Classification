@@ -35,6 +35,12 @@
     "graph_partition": "parhip"
   },
   {
+    "type": "knn_kmeans_multiple",
+    "build_graph": {
+    },
+    "graph_partition": "parhip"
+  },
+  {
     "type": "random_hash"
   },
   {
