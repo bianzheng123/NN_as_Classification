@@ -36,7 +36,7 @@ if __name__ == '__main__':
     # short_config_fname_arr = ['1_knn_kmeans_256', '1_knn_random_projection_256', '1_knn_lsh_256',
     #                           '4_knn_kmeans_256', '4_knn_random_projection_256', '4_knn_lsh_256']
     # short_config_fname_arr = ['4_knn_256', '2_knn_65536', '8_knn_16']
-    short_config_fname_arr = ['8_knn_kmeans_multiple_16']
+    short_config_fname_arr = ['4_knn_16', '4_knn_kmeans_16', '4_knn_kmeans_multiple_16_partition_iter_3', '4_knn_lsh_16', '4_knn_random_projection_16']
     # short_config_fname_arr = ['1_random_projection_64']
     # short_config_fname_arr = ['1_knn_16', '8_knn_16']
     # short_config_fname_arr = ['1_e2lsh_16', '8_e2lsh_16']

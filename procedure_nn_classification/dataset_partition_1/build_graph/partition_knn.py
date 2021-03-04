@@ -80,6 +80,17 @@ class KNN:
         len_sum = np.sum(partition_len_l)
         partition_proportion_l = 1.0 * partition_len_l / len_sum
         res_proportion = np.round(partition_proportion_l * (n_cluster - n_part)).astype(np.int) + 1
+        if n_cluster - np.sum(res_proportion) > 0:
+            for i in range(n_cluster - np.sum(res_proportion)):
+                res_proportion[np.random.randint(0, len(res_proportion))] += 1
+        elif n_cluster - np.sum(res_proportion) < 0:
+            for i in range(np.sum(res_proportion) - n_cluster):
+                while True:
+                    rand_num = np.random.randint(0, len(res_proportion))
+                    if res_proportion[rand_num] > 0:
+                        res_proportion[rand_num] -= 1
+                        break
+
         assert np.sum(res_proportion) == n_cluster
         return res_proportion
 
