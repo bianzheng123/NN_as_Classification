@@ -2,16 +2,19 @@ import time
 import torch
 import numpy as np
 from torch.utils.data import Dataset, DataLoader, TensorDataset
+import torch
+from util import dir_io
 
 label_k = 50
 batch_size = 32
 shuffle = True
 train_split = 0.99
-
+save_sample = True
 
 def prepare_train(base, base_base_gnd, partition_info, config):
     save_dir = '%s/Classifier_%d/prepare_train_sample' % (
         config['program_train_para_dir'], config['classifier_number'])
+    dir_io.mkdir(save_dir)
     classifier_number = config['classifier_number']
 
     prepare_method = factory(config['type'])
@@ -29,7 +32,19 @@ def prepare_train(base, base_base_gnd, partition_info, config):
     intermediate_config = {
         'time': end_time - start_time
     }
+    if save_sample:
+        save(trainloader, valloader, save_dir)
+
     return (trainloader, valloader), intermediate_config
+
+
+def save(train_loader, val_loader, save_dir):
+    train_save_dir = '%s/trainloader.pth' % save_dir
+    torch.save(train_loader, train_save_dir)
+
+    val_save_dir = '%s/valloader.pth' % save_dir
+    torch.save(val_loader, val_save_dir)
+    print("save train sample %s" % save_dir)
 
 
 def factory(_type):

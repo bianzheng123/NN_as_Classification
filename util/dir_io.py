@@ -7,14 +7,25 @@ import torch
 def delete_dir_if_exist(dire):
     if os.path.isdir(dire):
         # command = 'sudo rm -rf %s' % dire
-        command = 'sudo rm -rf %s' % dire
+        command = 'rm -rf %s' % dire
         print(command)
         os.system(command)
 
 
+def mkdir(dire):
+    # os.system("sudo mkdir %s" % dire)
+    os.system("mkdir %s" % dire)
+
+
 def _save_file(dire):
-    os.system('sudo touch %s' % dire)
-    os.system('sudo chmod 766 %s' % dire)
+    pass
+    # os.system('sudo touch %s' % dire)
+    # os.system('sudo chmod 766 %s' % dire)
+
+
+def move_file(old_dir, new_dir):
+    # os.system("sudo mv %s %s" % (old_dir, new_dir))
+    os.system("mv %s %s" % (old_dir, new_dir))
 
 
 def write_ptr(dire):
@@ -36,10 +47,6 @@ def save_array_txt(save_dir, arr, fmt):
 def save_numpy(save_dir, data):
     _save_file(save_dir)
     np.save(save_dir, data)
-
-
-def move_file(old_dir, new_dir):
-    os.system("sudo mv %s %s" % (old_dir, new_dir))
 
 
 def save_json(save_dir, result_fname, json_file):
@@ -80,7 +87,7 @@ def save_graph_edge_weight(save_dir, graph, vertices, edges):
 
 def save_config(config):
     save_dir = '%s/config' % config['save_dir']
-    os.system('sudo mkdir %s' % save_dir)
+    mkdir(save_dir)
 
     long_config = config['long_term_config']
     short_config = config['short_term_config']
@@ -92,7 +99,3 @@ def save_config(config):
     save_json(save_dir, 'short_term_config_before_run.json', short_config_before_run)
     save_json(config['save_dir'], 'intermediate_result.json', intermediate_result)
     print('save program: %s' % config['program_fname'])
-
-
-def mkdir(dire):
-    os.system("sudo mkdir %s" % dire)
