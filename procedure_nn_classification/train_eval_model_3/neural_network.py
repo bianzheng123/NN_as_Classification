@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 from torch.utils.data import Dataset, DataLoader, TensorDataset
+from util import send_email
 
 acc_threshold = 0.95
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -148,6 +149,9 @@ class NeuralNetwork(classifier.Classifier):
                 # count cross entropy
                 pred = torch.log(predicted).unsqueeze(-1)
                 loss = -torch.bmm(neighbor_distribution.unsqueeze(1), pred).sum()
+                if torch.isnan(loss):
+                    send_email.send("train parameter contains nan, hostname %s" % send_email.get_host_name())
+                    raise Exception("train parameter contains nan")
                 loss_l.append(loss.item())
                 self.optimizer.zero_grad()
                 loss.backward()

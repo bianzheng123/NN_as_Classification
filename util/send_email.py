@@ -1,5 +1,6 @@
 import smtplib
 from email.mime.text import MIMEText
+import socket
 
 
 def send(title):
@@ -40,3 +41,7 @@ def send(title):
         print('success')
     except smtplib.SMTPException as e:
         print('error', e)  # 打印错误
+
+
+def get_host_name():
+    return socket.gethostname()
