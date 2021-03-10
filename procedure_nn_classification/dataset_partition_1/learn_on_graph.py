@@ -15,17 +15,19 @@ class LearnOnGraph(base_partition.BasePartition):
         # self.labels, self.label_map, self.n_point_label
         self.build_graph_config = config['build_graph']
         self.build_graph_config['distance_metric'] = self.distance_metric
-        self.graph_partition_type = config['graph_partition']
+        self.graph_partition_type = config['graph_partition']['type']
         self.kahip_dir = config['kahip_dir']
         self.preconfiguration = None
-        if 'preconfiguration' in config:
-            self.preconfiguration = config['preconfiguration']
+        if 'preconfiguration' in config['graph_partition']:
+            self.preconfiguration = config['graph_partition']['preconfiguration']
             print("kahip configuration {} {}".format(self.graph_partition_type, self.preconfiguration))
         if self.preconfiguration is None:
             if self.graph_partition_type == 'kaffpa':
                 self.preconfiguration = 'eco'
+                # stong eco fast fastsocial ecosocial strongsocial
             elif self.graph_partition_type == 'parhip':
                 self.preconfiguration = 'fastsocial'
+                # ecosocial fastsocial ultrafastsocial ecomesh fastmesh ultrafastmesh
             else:
                 raise Exception("not support graph_partition_type")
 
@@ -68,9 +70,9 @@ class LearnOnGraph(base_partition.BasePartition):
             print(kahip_command)
             dir_io.kahip(partition_dir, kahip_command)
         elif self.graph_partition_type == 'parhip':
-            kahip_command = 'mpirun -n %d %s/deploy/parhip %s/graph.graph --preconfiguration %s ' \
+            kahip_command = 'mpirun --oversubscribe -n %d %s/deploy/parhip %s/graph.graph --preconfiguration %s ' \
                             '--save_partition --k %d' % (
-                                multiprocessing.cpu_count() // 2, self.kahip_dir, self.save_dir,
+                                multiprocessing.cpu_count() - 1, self.kahip_dir, self.save_dir,
                                 self.preconfiguration,
                                 self.n_cluster)
             print(kahip_command)
@@ -113,8 +115,21 @@ class LearnOnGraphMultipleKMeans(base_partition.BasePartition):
         # self.labels, self.label_map, self.n_point_label
         self.build_graph_config = config['build_graph']
         self.build_graph_config['distance_metric'] = self.distance_metric
-        self.graph_partition_type = config['graph_partition']
+        self.graph_partition_type = config['graph_partition']['type']
         self.kahip_dir = config['kahip_dir']
+        self.preconfiguration = None
+        if 'preconfiguration' in config['graph_partition']:
+            self.preconfiguration = config['graph_partition']['preconfiguration']
+            print("kahip configuration {} {}".format(self.graph_partition_type, self.preconfiguration))
+        if self.preconfiguration is None:
+            if self.graph_partition_type == 'kaffpa':
+                self.preconfiguration = 'eco'
+                # stong eco fast fastsocial ecosocial strongsocial
+            elif self.graph_partition_type == 'parhip':
+                self.preconfiguration = 'fastsocial'
+                # ecosocial fastsocial ultrafastsocial ecomesh fastmesh ultrafastmesh
+            else:
+                raise Exception("not support graph_partition_type")
 
     def get_centroid(self, centroid_l):
         # (2**self.partition_iter) * d
@@ -148,18 +163,19 @@ class LearnOnGraphMultipleKMeans(base_partition.BasePartition):
         # this function is to invoke kahip and read partition.txt
         partition_dir = '%s/partition.txt' % self.save_dir
         if self.graph_partition_type == 'kaffpa':
-            kahip_command = '%s/deploy/kaffpa %s/graph.graph --preconfiguration=eco --output_filename=%s/partition.txt ' \
+            kahip_command = '%s/deploy/kaffpa %s/graph.graph --preconfiguration=%s --output_filename=%s/partition.txt ' \
                             '--k=%d' % (
-                                self.kahip_dir, self.save_dir,
+                                self.kahip_dir, self.save_dir, self.preconfiguration,
                                 self.save_dir,
                                 self.n_cluster)
             print(kahip_command)
             dir_io.kahip(partition_dir, kahip_command)
         elif self.graph_partition_type == 'parhip':
-            kahip_command = 'mpirun -n %d %s/deploy/parhip %s/graph.graph --preconfiguration fastsocial ' \
+            kahip_command = 'mpirun --oversubscribe -n %d %s/deploy/parhip %s/graph.graph --preconfiguration %s ' \
                             '--save_partition --k %d' % (
-                                multiprocessing.cpu_count() // 2, self.kahip_dir, self.save_dir,
+                                multiprocessing.cpu_count() - 1, self.kahip_dir, self.save_dir, self.preconfiguration,
                                 self.n_cluster)
+            print(multiprocessing.cpu_count())
             print(kahip_command)
             dir_io.kahip('./tmppartition.txtp', kahip_command)
             self.move_partition_txt()

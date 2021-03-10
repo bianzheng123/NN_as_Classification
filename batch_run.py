@@ -27,16 +27,16 @@ short_config_fname_arr = ['1_kmeans_independent_16', '1_kmeans_multiple_16', '1_
 
 if __name__ == '__main__':
     # deep gist glove imagenet sift
-    ds_fname = 'siftsmall'
+    ds_fname = 'sift'
     _type = 'nn_classification'  # pq_nn nn_classification counting_index
-    base_config_dir = '/home/zhengbian/NN_as_Classification/config/%s/small_ds/' % _type
+    base_config_dir = '/home/zhengbian/NN_as_Classification/config/%s/big_ds/' % _type
     long_config_dir = base_config_dir + ds_fname + '.json'
 
     # short_config_fname_arr = ['1_knn_random_projection_16', '8_knn_random_projection_16']
     # short_config_fname_arr = ['1_knn_kmeans_256', '1_knn_random_projection_256', '1_knn_lsh_256',
     #                           '4_knn_kmeans_256', '4_knn_random_projection_256', '4_knn_lsh_256']
     # short_config_fname_arr = ['4_knn_256', '2_knn_65536', '8_knn_16']
-    short_config_fname_arr = ['4_knn_16', '4_knn_kmeans_16', '4_knn_kmeans_multiple_16_partition_iter_3', '4_knn_lsh_16', '4_knn_random_projection_16']
+    short_config_fname_arr = ['1_kmeans_256', '1_knn_256', '1_knn_kmeans_multiple_256', '1_knn_lsh_256', '1_knn_random_projection_256']
     # short_config_fname_arr = ['1_random_projection_64']
     # short_config_fname_arr = ['1_knn_16', '8_knn_16']
     # short_config_fname_arr = ['1_e2lsh_16', '8_e2lsh_16']

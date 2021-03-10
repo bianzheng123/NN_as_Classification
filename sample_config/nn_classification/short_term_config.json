@@ -3,11 +3,7 @@
   "n_cluster": 16,
   "n_instance": 1,
   "dataset_partition": {
-    "type": "knn",
-    "build_graph": {
-      "increase_weight": 2
-    },
-    "graph_partition": "parhip"
+    "type": "kmeans_independent"
   },
   "prepare_train_sample": {
     "type": "neighbor"

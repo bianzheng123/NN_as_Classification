@@ -1,46 +1,5 @@
 [
   {
-    "type": "hnsw",
-    "build_graph": {},
-    "graph_partition": "kaffpa"
-  },
-  {
-    "type": "kmeans_independent"
-  },
-  {
-    "type": "kmeans_multiple"
-  },
-  {
-    "type": "knn",
-    "build_graph": {
-    },
-    "graph_partition": "parhip"
-  },
-  {
-    "type": "knn_random_projection",
-    "build_graph": {
-    },
-    "graph_partition": "parhip"
-  },
-  {
-    "type": "knn_lsh",
-    "build_graph": {
-    },
-    "graph_partition": "parhip"
-  },
-  {
-    "type": "knn_kmeans",
-    "build_graph": {
-    },
-    "graph_partition": "parhip"
-  },
-  {
-    "type": "knn_kmeans_multiple",
-    "build_graph": {
-    },
-    "graph_partition": "parhip"
-  },
-  {
     "type": "random_hash"
   },
   {
@@ -51,5 +10,58 @@
   },
   {
     "type": "random_projection"
+  },
+  {
+    "type": "kmeans_independent"
+  },
+  {
+    "type": "kmeans_multiple"
+  },
+  {
+    "type": "hnsw",
+    "build_graph": {},
+    "graph_partition": {
+      "type": "kaffpa"
+    }
+  },
+  {
+    "type": "knn",
+    "build_graph": {
+    },
+    "graph_partition": {
+      "type": "parhip"
+    }
+  },
+  {
+    "type": "knn_random_projection",
+    "build_graph": {
+    },
+    "graph_partition": {
+      "type": "parhip"
+    }
+  },
+  {
+    "type": "knn_lsh",
+    "build_graph": {
+    },
+    "graph_partition": {
+      "type": "parhip"
+    }
+  },
+  {
+    "type": "knn_kmeans",
+    "build_graph": {
+    },
+    "graph_partition": {
+      "type": "parhip"
+    }
+  },
+  {
+    "type": "knn_kmeans_multiple",
+    "build_graph": {
+    },
+    "graph_partition": {
+      "type": "parhip"
+    }
   }
 ]
