@@ -110,18 +110,19 @@ class KNN:
         for i in range(n_part):
             partition_dir = '%s/partition_%d.txt' % (save_dir, i)
             graph_dir = "%s/graph_%d.graph" % (save_dir, i)
+            preconfiguration = config['preconfiguration']
             if graph_partition_type == 'kaffpa':
-                kahip_command = '%s/deploy/kaffpa %s --preconfiguration=eco --output_filename=%s ' \
+                kahip_command = '%s/deploy/kaffpa %s --preconfiguration=%s --output_filename=%s ' \
                                 '--k=%d' % (
-                                    kahip_dir, graph_dir,
+                                    kahip_dir, graph_dir, preconfiguration,
                                     partition_dir,
                                     n_cluster_l[i])
                 print(kahip_command)
                 dir_io.kahip(partition_dir, kahip_command)
             elif graph_partition_type == 'parhip':
-                kahip_command = 'mpirun -n %d %s/deploy/parhip %s --preconfiguration fastsocial ' \
+                kahip_command = 'mpirun -n %d %s/deploy/parhip %s --preconfiguration %s ' \
                                 '--save_partition --k %d' % (
-                                    multiprocessing.cpu_count() // 2, kahip_dir, graph_dir,
+                                    multiprocessing.cpu_count() // 2, kahip_dir, graph_dir, preconfiguration,
                                     n_cluster_l[i])
                 print(kahip_command)
                 dir_io.kahip('./tmppartition.txtp', kahip_command)

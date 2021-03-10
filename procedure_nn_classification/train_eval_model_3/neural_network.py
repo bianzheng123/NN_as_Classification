@@ -43,6 +43,8 @@ def parameter_factory(dataset_partition_method, distance_metric, data_fname, mod
     if dataset_partition_method == 'knn_random_projection' or dataset_partition_method == 'knn_kmeans' or dataset_partition_method == 'knn_lsh':
         lr = 0.004
         pass
+    if data_fname == 'gist':
+        lr = 0.00002
     if model_name == 'two_block_512_dim':
         pass
     elif model_name == 'two_block_1024_dim':

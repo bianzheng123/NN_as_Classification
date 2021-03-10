@@ -19,7 +19,7 @@ if __name__ == '__main__':
     for tmp_config in save_fname_content_m:
         config['dataset_partition'] = tmp_config
         config['n_cluster'] = 256
-        config['n_instance'] = 1
+        config['n_instance'] = 4
         for para in para_l:
             config['specific_fname'] = "{}_{}".format(specific_fname, para)
             # config['dataset_partition']['build_graph']['partition_iter'] = para
