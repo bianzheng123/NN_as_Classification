@@ -6,33 +6,6 @@ if __name__ == '__main__':
     save_base_dir = '/home/zhengbian/NN_as_Classification/config/nn_classification/big_ds'
     save_fname_content_m = [
         {
-            "type": "knn",
-            "build_graph": {
-            },
-            "graph_partition": {
-                "type": "parhip",
-            }
-        },
-        {
-            "type": "kmeans_multiple"
-        },
-        {
-            "type": "knn_random_projection",
-            "build_graph": {
-            },
-            "graph_partition": {
-                "type": "parhip"
-            }
-        },
-        {
-            "type": "knn_lsh",
-            "build_graph": {
-            },
-            "graph_partition": {
-                "type": "parhip"
-            }
-        },
-        {
             "type": "knn_kmeans_multiple",
             "build_graph": {
             },

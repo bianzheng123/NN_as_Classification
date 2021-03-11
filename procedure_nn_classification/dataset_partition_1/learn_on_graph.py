@@ -151,6 +151,7 @@ class LearnOnGraphMultipleKMeans(base_partition.BasePartition):
             "kahip_dir": self.kahip_dir,
             "save_dir": self.save_dir,
             "graph_partition_type": self.graph_partition_type,
+            'preconfiguration': self.preconfiguration,
             "n_cluster": self.n_cluster,
             'n_item': len(base)
         }
