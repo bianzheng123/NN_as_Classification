@@ -120,9 +120,9 @@ class KNN:
                 print(kahip_command)
                 dir_io.kahip(partition_dir, kahip_command)
             elif graph_partition_type == 'parhip':
-                kahip_command = 'mpirun --oversubscribe -n %d %s/deploy/parhip %s --preconfiguration %s ' \
+                kahip_command = 'mpirun -n %d %s/deploy/parhip %s --preconfiguration %s ' \
                                 '--save_partition --k %d' % (
-                                    multiprocessing.cpu_count() - 1, kahip_dir, graph_dir, preconfiguration,
+                                    multiprocessing.cpu_count() // 2, kahip_dir, graph_dir, preconfiguration,
                                     n_cluster_l[i])
                 print(kahip_command)
                 dir_io.kahip('./tmppartition.txtp', kahip_command)

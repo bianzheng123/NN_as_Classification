@@ -70,9 +70,9 @@ class LearnOnGraph(base_partition.BasePartition):
             print(kahip_command)
             dir_io.kahip(partition_dir, kahip_command)
         elif self.graph_partition_type == 'parhip':
-            kahip_command = 'mpirun --oversubscribe -n %d %s/deploy/parhip %s/graph.graph --preconfiguration %s ' \
+            kahip_command = 'mpirun -n %d %s/deploy/parhip %s/graph.graph --preconfiguration %s ' \
                             '--save_partition --k %d' % (
-                                multiprocessing.cpu_count() - 1, self.kahip_dir, self.save_dir,
+                                multiprocessing.cpu_count() // 2, self.kahip_dir, self.save_dir,
                                 self.preconfiguration,
                                 self.n_cluster)
             print(kahip_command)
@@ -171,11 +171,10 @@ class LearnOnGraphMultipleKMeans(base_partition.BasePartition):
             print(kahip_command)
             dir_io.kahip(partition_dir, kahip_command)
         elif self.graph_partition_type == 'parhip':
-            kahip_command = 'mpirun --oversubscribe -n %d %s/deploy/parhip %s/graph.graph --preconfiguration %s ' \
+            kahip_command = 'mpirun -n %d %s/deploy/parhip %s/graph.graph --preconfiguration %s ' \
                             '--save_partition --k %d' % (
-                                multiprocessing.cpu_count() - 1, self.kahip_dir, self.save_dir, self.preconfiguration,
+                                multiprocessing.cpu_count() // 2, self.kahip_dir, self.save_dir, self.preconfiguration,
                                 self.n_cluster)
-            print(multiprocessing.cpu_count())
             print(kahip_command)
             dir_io.kahip('./tmppartition.txtp', kahip_command)
             self.move_partition_txt()

@@ -26,21 +26,21 @@ short_config_fname_arr = ['1_kmeans_independent_16', '1_kmeans_multiple_16', '1_
 '''
 
 if __name__ == '__main__':
-    ds_fname = 'siftsmall'
+    ds_fname = 'sift'
     _type = 'nn_classification'  # pq_nn nn_classification counting_index
-    base_config_dir = '/home/zhengbian/NN_as_Classification/config/%s/small_ds/' % _type
+    base_config_dir = '/home/zhengbian/NN_as_Classification/config/%s/big_ds/' % _type
     long_config_dir = base_config_dir + ds_fname + '.json'
 
     # para_l = ['two_block_512_dim', 'two_block_1024_dim', 'one_block_2048_dim', 'one_block_512_dim',
     #           'two_block_512_dim_no_bn_dropout', 'res_net']  # cnn two_block_8192_dim_no_bn_dropout
-    para_l = ['fastsocial', 'fastmesh']  # cnn two_block_8192_dim_no_bn_dropout
+    para_l = ['fastsocial', 'fastmesh', 'ecosocial', 'ecomesh']  # cnn two_block_8192_dim_no_bn_dropout
     # para_l = [1, 2, 3]
     method_l = ['knn']
     para_name = 'preconfiguration'
     n_classifier = 1
     for method in method_l:
         for para in para_l:
-            fname = '{}_{}_16_{}_{}.json'.format(n_classifier, method, para_name, para)
+            fname = '{}_{}_256_{}_{}.json'.format(n_classifier, method, para_name, para)
             short_config_dir = base_config_dir + fname
             # run_nohup(long_config_dir, short_config_dir, ds_fname, fname, _type)
             run_frontend(long_config_dir, short_config_dir, _type)
