@@ -7,7 +7,6 @@ import torch
 import numpy as np
 import torch.nn as nn
 import multiprocessing
-from util import send_email
 
 start_lr = 0.006
 lr_gap = 0.001
