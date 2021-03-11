@@ -7,8 +7,9 @@ import torch
 import numpy as np
 import torch.nn as nn
 import multiprocessing
+from util import send_email
 
-start_lr = 0.001
+start_lr = 0.006
 lr_gap = 0.001
 
 n_epochs = 12
@@ -17,9 +18,14 @@ milestones = [3, 7]
 distance_metric = 'l2'  # string
 acc_threshold = 0.95
 model_name = 'one_block_2048_dim'
-base_dir = '/home/bz/NN_as_Classification/data/dataset/siftsmall_10/base.fvecs'
+base_dir = '/home/zhengbian/NN_as_Classification/data/dataset/siftsmall_10/base.fvecs'
+# base_dir = '/home/zhengbian/NN_as_Classification/data/dataset/sift_10/base.fvecs'
 dataset, dimension = vecs_io.fvecs_read(base_dir)
-train_sample_dir = '/home/bz/NN_as_Classification/pytest/prune_parameter/prepare_train_sample'
+
+# train_sample_dir = '/home/zhengbian/NN_as_Classification/data/train_para/sift_256_nn_1_kmeans_multiple_/Classifier_0' \
+#                    '/prepare_train_sample'
+train_sample_dir = '/home/zhengbian/NN_as_Classification/data/train_para/siftsmall_16_nn_1_knn_preconfiguration_fastsocial/Classifier_0' \
+                   '/prepare_train_sample'
 
 model_config = {
     'n_input': dimension,  # dimension of base
@@ -63,7 +69,7 @@ def prune_lr(learning_rate, trainset, base):
     # base = base.to(device)
 
     y = trainloader.dataset.tensors[1]
-    final_loss = -1
+    final_loss = []
     for epoch in range(n_epochs):
         correct = 0
         loss_l = []
@@ -83,7 +89,6 @@ def prune_lr(learning_rate, trainset, base):
             pred = torch.log(predicted).unsqueeze(-1)
             loss = -torch.bmm(neighbor_distribution.unsqueeze(1), pred).sum()
             if torch.isnan(loss):
-                send_email.send("train parameter contains nan, hostname %s" % send_email.get_host_name())
                 raise Exception("train parameter contains nan")
             loss_l.append(loss.item())
             optimizer.zero_grad()
@@ -118,7 +123,7 @@ def prune_lr(learning_rate, trainset, base):
                                                                                                    0][
                                                                                                    'lr']))
         if epoch == n_epochs - 1:
-            final_loss = np.mean(loss_l)
+            final_loss = [np.mean(loss_l), np.mean(eval_loss_l)]
         model.train()
         if cur_recall > acc_threshold:
             print('Stopping training as acc is now {}'.format(cur_recall))
@@ -135,18 +140,18 @@ if __name__ == '__main__':
 
     current_lr = start_lr - lr_gap
     greatest_lr = -1
-    min_loss = 1000000
+    min_loss = [1000000, 1000000] # first is train loss, second is eval loss
     try:
         while True:
+            print("now learning rate: %.5f" % (current_lr + lr_gap))
             tmp_loss = prune_lr(current_lr + lr_gap, (trainloader, valloader), dataset)
-            if tmp_loss < min_loss:
+            if tmp_loss[1] < min_loss[1]:
                 min_loss = tmp_loss
                 greatest_lr = current_lr + lr_gap
-            min_loss = min(min_loss, tmp_loss)
             current_lr += lr_gap
-            print("min loss %.2f, greatest_lr %.2f\n" % (min_loss, greatest_lr))
+            print("tmp best loss: train %.2f eval %.2f, greatest_lr %.5f\n" % (min_loss[0], min_loss[1], greatest_lr))
     except Exception as e:
         traceback.print_exc()
         print("greatest lr %.5f" % greatest_lr)
         print("biggest lr %.5f" % current_lr)
-        print("minimum loss %.2f" % min_loss)
+        print("best lr loss: train %.2f eval %.2f" % (min_loss[0], min_loss[1]))
