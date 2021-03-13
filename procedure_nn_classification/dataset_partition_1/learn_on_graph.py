@@ -26,7 +26,7 @@ class LearnOnGraph(base_partition.BasePartition):
                 self.preconfiguration = 'eco'
                 # stong eco fast fastsocial ecosocial strongsocial
             elif self.graph_partition_type == 'parhip':
-                self.preconfiguration = 'fastsocial'
+                self.preconfiguration = 'ecosocial'
                 # ecosocial fastsocial ultrafastsocial ecomesh fastmesh ultrafastmesh
             else:
                 raise Exception("not support graph_partition_type")
@@ -126,7 +126,7 @@ class LearnOnGraphMultipleKMeans(base_partition.BasePartition):
                 self.preconfiguration = 'eco'
                 # stong eco fast fastsocial ecosocial strongsocial
             elif self.graph_partition_type == 'parhip':
-                self.preconfiguration = 'fastsocial'
+                self.preconfiguration = 'ecosocial'
                 # ecosocial fastsocial ultrafastsocial ecomesh fastmesh ultrafastmesh
             else:
                 raise Exception("not support graph_partition_type")
