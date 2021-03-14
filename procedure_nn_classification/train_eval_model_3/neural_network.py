@@ -17,6 +17,7 @@ network_config_m = {
     'two_block_512_dim': networks.TwoBlock512Dim,
     'two_block_1024_dim': networks.TwoBlock1024Dim,
     'one_block_2048_dim': networks.OneBlock2048Dim,
+    'one_block_8192_dim': networks.OneBlock8192Dim,
     'one_block_512_dim': networks.OneBlock512Dim,
     'two_block_512_dim_no_bn_dropout': networks.TwoBlock512DimNoBnDropout,
     'two_block_8192_dim_no_bn_dropout': networks.TwoBlock8192DimNoBnDropout,
@@ -29,7 +30,7 @@ def model_factory(config):
     if config['distance_metric'] == 'l2':
         if config['data_fname'] == 'imagenetsmall' or config['data_fname'] == 'imagenet':
             return 'two_block_8192_dim_no_bn_dropout'
-        return 'one_block_2048_dim'
+        return 'one_block_8192_dim'
     elif config['distance_metric'] == 'string':
         return 'cnn'
     raise Exception("not support the distance metric or dataset")
@@ -50,6 +51,11 @@ def parameter_factory(dataset_partition_method, distance_metric, data_fname, mod
     elif model_name == 'two_block_1024_dim':
         pass
     elif model_name == 'one_block_2048_dim':
+        if data_fname == 'sift' and dataset_partition_method == 'knn_kmeans_multiple':
+            lr = 0.005
+        pass
+    elif model_name == 'one_block_8192_dim':
+        lr = 0.001
         pass
     elif model_name == 'one_block_512_dim':
         pass

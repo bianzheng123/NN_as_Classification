@@ -88,6 +88,30 @@ class OneBlock2048Dim(nn.Module):
         return x
 
 
+class OneBlock8192Dim(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.input_dim = config['n_input']
+        hidden_dim_1 = 8192
+        output_dim = config['n_output']
+        dropout_probability = 0.1
+
+        self.layer = nn.Sequential(
+            nn.Linear(self.input_dim, hidden_dim_1),
+            nn.BatchNorm1d(hidden_dim_1),
+            nn.ReLU(),
+
+            nn.Dropout(p=dropout_probability),
+
+            nn.Linear(hidden_dim_1, output_dim),
+            nn.Softmax(dim=-1)
+        )
+
+    def forward(self, x):
+        x = self.layer(x)
+        return x
+
+
 class OneBlock512Dim(nn.Module):
     def __init__(self, config):
         super().__init__()

@@ -18,3 +18,5 @@ train_para
 /Test/
 ./tmppartition.txtp
 *.pth
+notice.txd
+/pytest/lr_data/

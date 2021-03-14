@@ -7,8 +7,9 @@ import torch
 import numpy as np
 import torch.nn as nn
 import multiprocessing
+import time
 
-start_lr = 0.006
+start_lr = 0.005
 lr_gap = 0.001
 
 n_epochs = 12
@@ -17,18 +18,18 @@ milestones = [3, 7]
 distance_metric = 'l2'  # string
 acc_threshold = 0.95
 model_name = 'one_block_2048_dim'
-base_dir = '/home/zhengbian/NN_as_Classification/data/dataset/siftsmall_10/base.fvecs'
-# base_dir = '/home/zhengbian/NN_as_Classification/data/dataset/sift_10/base.fvecs'
+# base_dir = '/home/zhengbian/NN_as_Classification/data/dataset/siftsmall_10/base.fvecs'
+base_dir = '/home/zhengbian/NN_as_Classification/data/dataset/sift_10/base.fvecs'
 dataset, dimension = vecs_io.fvecs_read(base_dir)
 
-# train_sample_dir = '/home/zhengbian/NN_as_Classification/data/train_para/sift_256_nn_1_kmeans_multiple_/Classifier_0' \
-#                    '/prepare_train_sample'
-train_sample_dir = '/home/zhengbian/NN_as_Classification/data/train_para/siftsmall_16_nn_1_knn_preconfiguration_fastsocial/Classifier_0' \
+train_sample_dir = '/home/zhengbian/NN_as_Classification/data/train_para/sift_256_nn_1_knn_kmeans_multiple_/Classifier_0' \
                    '/prepare_train_sample'
+# train_sample_dir = '/home/zhengbian/NN_as_Classification/data/train_para/siftsmall_16_nn_1_knn_preconfiguration_fastsocial/Classifier_0' \
+#                    '/prepare_train_sample'
 
 model_config = {
     'n_input': dimension,  # dimension of base
-    'n_output': 16,  # n_cluster
+    'n_output': 256,  # n_cluster
     'data_fname': 'knn',
     'distance_metric': 'l2'
 }
@@ -132,14 +133,16 @@ def prune_lr(learning_rate, trainset, base):
 
 
 if __name__ == '__main__':
+    print(train_sample_dir)
     trainloader_dir = '%s/trainloader.pth' % train_sample_dir
     trainloader = torch.load(trainloader_dir)
     valloader_dir = '%s/valloader.pth' % train_sample_dir
     valloader = torch.load(valloader_dir)
 
+    start_time = time.time()
     current_lr = start_lr - lr_gap
     greatest_lr = -1
-    min_loss = [1000000, 1000000] # first is train loss, second is eval loss
+    min_loss = [1000000, 1000000]  # first is train loss, second is eval loss
     try:
         while True:
             print("now learning rate: %.5f" % (current_lr + lr_gap))
@@ -150,7 +153,9 @@ if __name__ == '__main__':
             current_lr += lr_gap
             print("tmp best loss: train %.2f eval %.2f, greatest_lr %.5f\n" % (min_loss[0], min_loss[1], greatest_lr))
     except Exception as e:
+        end_time = time.time()
         traceback.print_exc()
+        print("process consume time %d s" % (end_time - start_time))
         print("greatest lr %.5f" % greatest_lr)
         print("biggest lr %.5f" % current_lr)
         print("best lr loss: train %.2f eval %.2f" % (min_loss[0], min_loss[1]))

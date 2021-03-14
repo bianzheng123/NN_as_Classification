@@ -7,25 +7,25 @@ import torch
 def delete_dir_if_exist(dire):
     if os.path.isdir(dire):
         # command = 'sudo rm -rf %s' % dire
-        command = 'rm -rf %s' % dire
+        command = 'sudo rm -rf %s' % dire
         print(command)
         os.system(command)
 
 
 def mkdir(dire):
-    # os.system("sudo mkdir %s" % dire)
-    os.system("mkdir %s" % dire)
+    os.system("sudo mkdir %s" % dire)
+    # os.system("mkdir %s" % dire)
 
 
 def _save_file(dire):
-    pass
-    # os.system('sudo touch %s' % dire)
-    # os.system('sudo chmod 766 %s' % dire)
+    # pass
+    os.system('sudo touch %s' % dire)
+    os.system('sudo chmod 766 %s' % dire)
 
 
 def move_file(old_dir, new_dir):
     # os.system("sudo mv %s %s" % (old_dir, new_dir))
-    os.system("mv %s %s" % (old_dir, new_dir))
+    os.system("sudo mv %s %s" % (old_dir, new_dir))
 
 
 def write_ptr(dire):
