@@ -28,6 +28,11 @@ def move_file(old_dir, new_dir):
     os.system("sudo mv %s %s" % (old_dir, new_dir))
 
 
+def save_pytorch(pth_ins, save_dir):
+    _save_file(save_dir)
+    torch.save(pth_ins, save_dir)
+
+
 def write_ptr(dire):
     _save_file(dire)
     f_ptr = open(dire, "w")

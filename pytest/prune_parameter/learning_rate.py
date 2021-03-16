@@ -8,9 +8,10 @@ import numpy as np
 import torch.nn as nn
 import multiprocessing
 import time
+from util import send_email
 
-start_lr = 0.005
-lr_gap = 0.001
+start_lr = 0.0003
+lr_gap = 0.0001
 
 n_epochs = 12
 milestones = [3, 7]
@@ -22,10 +23,8 @@ model_name = 'one_block_2048_dim'
 base_dir = '/home/zhengbian/NN_as_Classification/data/dataset/sift_10/base.fvecs'
 dataset, dimension = vecs_io.fvecs_read(base_dir)
 
-train_sample_dir = '/home/zhengbian/NN_as_Classification/data/train_para/sift_256_nn_1_knn_kmeans_multiple_/Classifier_0' \
+train_sample_dir = '/home/zhengbian/NN_as_Classification/pytest/lr_data/1_block_8192_dim/train_para/sift_256_nn_1_kmeans_multiple_/Classifier_0' \
                    '/prepare_train_sample'
-# train_sample_dir = '/home/zhengbian/NN_as_Classification/data/train_para/siftsmall_16_nn_1_knn_preconfiguration_fastsocial/Classifier_0' \
-#                    '/prepare_train_sample'
 
 model_config = {
     'n_input': dimension,  # dimension of base
@@ -159,3 +158,5 @@ if __name__ == '__main__':
         print("greatest lr %.5f" % greatest_lr)
         print("biggest lr %.5f" % current_lr)
         print("best lr loss: train %.2f eval %.2f" % (min_loss[0], min_loss[1]))
+        complete_msg = "learning rate training complete {}".format(send_email.get_host_name())
+        send_email.send(complete_msg)

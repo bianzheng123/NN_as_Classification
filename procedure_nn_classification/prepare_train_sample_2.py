@@ -40,10 +40,10 @@ def prepare_train(base, base_base_gnd, partition_info, config):
 
 def save(train_loader, val_loader, save_dir):
     train_save_dir = '%s/trainloader.pth' % save_dir
-    torch.save(train_loader, train_save_dir)
+    dir_io.save_pytorch(train_loader, train_save_dir)
 
     val_save_dir = '%s/valloader.pth' % save_dir
-    torch.save(val_loader, val_save_dir)
+    dir_io.save_pytorch(val_loader, val_save_dir)
     print("save train sample %s" % save_dir)
 
 

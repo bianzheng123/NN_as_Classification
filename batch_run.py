@@ -37,6 +37,8 @@ if __name__ == '__main__':
     #                           '4_knn_kmeans_256', '4_knn_random_projection_256', '4_knn_lsh_256']
     short_config_fname_arr = ['1_kmeans_multiple_256', '1_knn_256', '1_knn_kmeans_multiple_256',
                               '1_knn_lsh_256', '1_knn_random_projection_256']
+    # short_config_fname_arr = ['1_kmeans_multiple_16', '1_knn_16', '1_knn_kmeans_multiple_16',
+    #                           '1_knn_lsh_16', '1_knn_random_projection_16']
     # short_config_fname_arr = ['1_random_projection_64']
     # short_config_fname_arr = ['1_knn_16', '8_knn_16']
     # short_config_fname_arr = ['1_e2lsh_16', '8_e2lsh_16']
