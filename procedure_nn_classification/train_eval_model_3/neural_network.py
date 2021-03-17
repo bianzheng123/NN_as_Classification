@@ -53,8 +53,6 @@ def parameter_factory(dataset_partition_method, distance_metric, data_fname, mod
     elif model_name == 'one_block_2048_dim':
         if data_fname == 'sift' and dataset_partition_method == 'knn_kmeans_multiple':
             lr = 0.005
-        if dataset_partition_method == 'kmeans_multiple':
-            lr = 0.0027
         pass
     elif model_name == 'one_block_8192_dim':
         lr = 0.001
