@@ -14,7 +14,7 @@ class KNN:
             self.increase_weight = config['increase_weight']
             print("increase_weight %d" % self.increase_weight)
         else:
-            self.increase_weight = 60
+            self.increase_weight = 500
 
     '''
     input base

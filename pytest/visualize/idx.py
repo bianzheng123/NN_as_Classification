@@ -1,9 +1,9 @@
 import numpy as np
 
-n_classifier = 4
-method = 'partition_knn'
+n_classifier = 1
+method = 'knn'
 
-result = np.loadtxt('data/result/normalsmall_4_nn_%d_%s_/recall_l.txt' % (n_classifier, method))
+result = np.loadtxt('data/result/normalsmall_16_nn_%d_%s_/recall_l.txt' % (n_classifier, method))
 
 
 def get_min(result):

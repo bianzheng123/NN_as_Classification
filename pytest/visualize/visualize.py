@@ -41,38 +41,11 @@ if __name__ == '__main__':
 
     show_data(base)
 
-    method = 'partition_knn'
-    small_idx = 43
-    large_idx = 95
+    method = 'knn'
+    small_idx = 17
+    large_idx = 0
 
-    label = np.loadtxt('data/train_para/normalsmall_4_nn_1_%s_/Classifier_0/dataset_partition/partition.txt' % method)
+    label = np.loadtxt('data/train_para/normalsmall_16_nn_1_%s_/Classifier_0/dataset_partition/partition.txt' % method)
     show_clustering(base, label, '%s_1_1' % method)
     show_answer(base, label, query[small_idx], '%s_1_1_small_recall' % method)
     show_answer(base, label, query[large_idx], '%s_1_1_large_recall' % method)
-
-    small_idx = 29
-    large_idx = 2
-
-    label = np.loadtxt('data/train_para/normalsmall_4_nn_4_%s_/Classifier_0/dataset_partition/partition.txt' % method)
-
-    show_clustering(base, label, '%s_4_1' % method)
-    show_answer(base, label, query[small_idx], '%s_4_1_small_recall' % method)
-    show_answer(base, label, query[large_idx], '%s_4_1_large_recall' % method)
-
-    label = np.loadtxt('data/train_para/normalsmall_4_nn_4_%s_/Classifier_1/dataset_partition/partition.txt' % method)
-
-    show_clustering(base, label, '%s_4_2' % method)
-    show_answer(base, label, query[small_idx], '%s_4_2_small_recall' % method)
-    show_answer(base, label, query[large_idx], '%s_4_2_large_recall' % method)
-
-    label = np.loadtxt('data/train_para/normalsmall_4_nn_4_%s_/Classifier_2/dataset_partition/partition.txt' % method)
-
-    show_clustering(base, label, '%s_4_3' % method)
-    show_answer(base, label, query[small_idx], '%s_4_3_small_recall' % method)
-    show_answer(base, label, query[large_idx], '%s_4_3_large_recall' % method)
-
-    label = np.loadtxt('data/train_para/normalsmall_4_nn_4_%s_/Classifier_3/dataset_partition/partition.txt' % method)
-
-    show_clustering(base, label, '%s_4_4' % method)
-    show_answer(base, label, query[small_idx], '%s_4_4_small_recall' % method)
-    show_answer(base, label, query[large_idx], '%s_4_4_large_recall' % method)
