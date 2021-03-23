@@ -31,9 +31,7 @@ def model_factory(config):
     if config['distance_metric'] == 'l2':
         if config['data_fname'] == 'imagenetsmall' or config['data_fname'] == 'imagenet':
             return 'two_block_8192_dim_no_bn_dropout'
-        if config['dataset_partition_method'] == 'kmeans_multiple':
-            return 'two_block_2048_dim'
-        return 'one_block_8192_dim'
+        return 'one_block_2048_dim'
     elif config['distance_metric'] == 'string':
         return 'cnn'
     raise Exception("not support the distance metric or dataset")
