@@ -9,7 +9,7 @@ from util import dir_io
 import math
 
 
-def run(long_term_config_dir, short_term_config_dir):
+def run(long_term_config_dir, short_term_config_dir, topk):
     np.random.seed(123)
     with open(long_term_config_dir, 'r') as f:
         long_term_config = json.load(f)
@@ -21,8 +21,8 @@ def run(long_term_config_dir, short_term_config_dir):
     save_train_para = False
     total_start_time = time.time()
 
-    data_dir = '%s/data/dataset/%s_%d' % (
-        long_term_config['project_dir'], long_term_config['data_fname'], long_term_config['k'])
+    data_dir = '%s/data/dataset/%s_50' % (
+        long_term_config['project_dir'], long_term_config['data_fname'])
     load_data_config = {
         'data_dir': data_dir
     }
@@ -31,9 +31,10 @@ def run(long_term_config_dir, short_term_config_dir):
     base = data[0]
     query = data[1]
     gnd = data[2]
+    gnd = gnd[:, :topk]
 
-    program_fname = '%s_%d_count_%d_%s_%s' % (
-        long_term_config['data_fname'], short_term_config['n_cluster'], short_term_config['n_instance'],
+    program_fname = '%s_%d_%d_count_%d_%s_%s' % (
+        long_term_config['data_fname'], topk, short_term_config['n_cluster'], short_term_config['n_instance'],
         short_term_config['dataset_partition']['type'], short_term_config['specific_fname'])
     if short_term_config['dataset_partition']['type'] == 'e2lsh':
         program_fname = '%s_%d_count_%d_%s_%s' % (
@@ -90,7 +91,7 @@ def run(long_term_config_dir, short_term_config_dir):
                                                                                           save_train_para)
 
     result_integrate_config = {
-        'k': long_term_config['k'],
+        'k': topk,
         'program_result_dir': program_result_dir,
         'efSearch_l': [2 ** i for i in range(1 + int(math.log2(len(base))))],
     }

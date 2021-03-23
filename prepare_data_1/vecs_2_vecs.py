@@ -92,9 +92,9 @@ def prepare_data(config):
 
 if __name__ == '__main__':
     data_config = {
-        "k": 10,
+        "k": 50,
         "base_base_gnd_k": 150,
-        "data_fname": "siftsmall_normal",
+        "data_fname": "siftsmall",
         "source_data_dir": "/home/zhengbian/Dataset/sift",
         "source_data_type": {
             "base": "fvecs",
@@ -107,6 +107,6 @@ if __name__ == '__main__':
         "project_dir": "/home/zhengbian/NN_as_Classification",
         "query_len": 100,
         'base_len': 10000,
-        'minus_avg': True  # whether minus the average of data in different dimension
+        'minus_avg': False  # whether minus the average of data in different dimension
     }
     prepare_data(data_config)

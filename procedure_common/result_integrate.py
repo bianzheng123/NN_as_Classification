@@ -102,7 +102,7 @@ def evaluate(score_table, efSearch_l, gnd, k):
     for efSearch in efSearch_l:
         candidate_index = total_candidate_index[:efSearch]
         # count recall for every single query
-        gnd_set = set(gnd[:efSearch])
+        gnd_set = set(gnd)
         efsearch_recall = count_recall_single(candidate_index, gnd_set, k)
         recall_l.append(efsearch_recall)
     # print("end count recall")

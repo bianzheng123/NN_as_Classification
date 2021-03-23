@@ -84,11 +84,11 @@ def prepare_data(config):
 
 if __name__ == '__main__':
     data_config = {
-        "k": 10,
+        "k": 50,
         "base_base_gnd_k": 150,
-        "data_fname": "deep",
-        # "source_data_dir": "/home/zhengbian/Dataset/glove-200-angular.hdf5",
-        "source_data_dir": "/home/zhengbian/Dataset/deep-image-96-angular.hdf5",
+        "data_fname": "glove",
+        "source_data_dir": "/home/zhengbian/Dataset/glove-200-angular.hdf5",
+        # "source_data_dir": "/home/zhengbian/Dataset/deep-image-96-angular.hdf5",
         "file": {
             'base': {
                 "name": "train",

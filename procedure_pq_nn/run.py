@@ -26,7 +26,7 @@ def segment_data(n_codebook, dimension, data):
     return seg_l, dim_l
 
 
-def run(long_term_config_dir, short_term_config_dir):
+def run(long_term_config_dir, short_term_config_dir, topk):
     np.random.seed(123)
     with open(long_term_config_dir, 'r') as f:
         long_term_config = json.load(f)
@@ -39,20 +39,21 @@ def run(long_term_config_dir, short_term_config_dir):
     total_start_time = time.time()
 
     # load data
-    data_dir = '%s/data/dataset/%s_%d' % (
-        long_term_config['project_dir'], long_term_config['data_fname'], long_term_config['k'])
+    data_dir = '%s/data/dataset/%s_50' % (
+        long_term_config['project_dir'], long_term_config['data_fname'])
     load_data_config = {
         'data_dir': data_dir
     }
 
     base, query, gnd, base_base_gnd = vecs_io.read_data_l2(load_data_config)
+    gnd = gnd[:, :topk]
     base_l, base_dim_l = segment_data(short_term_config['n_instance'], long_term_config['dimension'], base)
     n_item = len(base)
     query_l, query_dim_l = segment_data(short_term_config['n_instance'], long_term_config['dimension'], query)
     del base, query, load_data_config, base_base_gnd, query_dim_l
 
-    program_fname = '%s_%d_pq_nn_%d_%s_%s' % (
-        long_term_config['data_fname'], short_term_config['n_cluster'], short_term_config['n_instance'],
+    program_fname = '%s_%d_%d_pq_nn_%d_%s_%s' % (
+        long_term_config['data_fname'], topk, short_term_config['n_cluster'], short_term_config['n_instance'],
         short_term_config['dataset_partition']['type'], short_term_config['specific_fname'])
 
     program_train_para_dir = '%s/data/train_para/%s' % (
@@ -132,7 +133,7 @@ def run(long_term_config_dir, short_term_config_dir):
     del label_l, cluster_score_l
 
     result_integrate_config = {
-        'k': long_term_config['k'],
+        'k': topk,
         'program_result_dir': program_result_dir,
         'efSearch_l': [2 ** i for i in range(1 + int(math.log2(n_item)))],
     }
