@@ -24,7 +24,7 @@ def run(long_term_config_dir, short_term_config_dir, topk):
     total_start_time = time.time()
 
     # load data
-    data_dir = '%s/data/dataset/%s_50' % (
+    data_dir = '%s/data/dataset/%s' % (
         long_term_config['project_dir'], long_term_config['data_fname'])
     load_data_config = {
         'data_dir': data_dir

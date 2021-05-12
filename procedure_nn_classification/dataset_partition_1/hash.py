@@ -50,32 +50,6 @@ class LocalitySensitiveHash(base_partition.BasePartition):
         # self.type, self.save_dir, self.classifier_number, self.label_map, self.n_cluster, self.labels, self.distance_metric
 
 
-# use one vector in base as the projection vector
-class LocalitySensitiveHashBase(base_partition.BasePartition):
-    def __init__(self, config):
-        super(LocalitySensitiveHashBase, self).__init__(config)
-        self.r = 1
-        # self.type, self.save_dir, self.classifier_number, self.label_map, self.n_cluster, self.labels
-
-    def _partition(self, base, base_base_gnd, ins_intermediate):
-        start_time = time.time()
-        norm = np.linalg.norm(base, axis=1)
-        # print(norm)
-        self.norm_div = np.max(norm)
-        # print(norm_div)
-        base_normlize = base / self.norm_div
-        self.a = base_normlize[np.random.randint(0, len(base_normlize), dtype=np.int)]
-        proj_result = np.dot(base_normlize, self.a)
-        self.b = np.random.random() * self.r
-        arr = np.floor((proj_result + self.b) / self.r) % self.n_cluster
-        self.labels = arr.astype(np.int)
-        partition_dir = '%s/partition.txt' % self.save_dir
-        dir_io.save_array_txt(partition_dir, self.labels, '%d')
-        end_time = time.time()
-        self.intermediate['hashing_time'] = end_time - start_time
-        # self.type, self.save_dir, self.classifier_number, self.label_map, self.n_cluster, self.labels, self.distance_metric
-
-
 class RandomProjection(base_partition.BasePartition):
     def __init__(self, config):
         super(RandomProjection, self).__init__(config)

@@ -32,8 +32,8 @@ def normalization(vectors):
 
 
 def prepare_data(config):
-    data_dir = '%s/data/dataset/%s_%d' % (
-        config['project_dir'], config['data_fname'], config['k'])
+    data_dir = '%s/data/dataset/%s' % (
+        config['project_dir'], config['data_fname'])
     print("data_dir", data_dir)
     config['data_dir'] = data_dir
 
@@ -50,6 +50,7 @@ def prepare_data(config):
     if config['normalization']:
         base = normalization(base)
         print("normalize base")
+    base = base.astype(np.float32)
     save_base_dir = '%s/base.fvecs' % data_dir
     vecs_io.fvecs_write(save_base_dir, base)
     print("save base")
@@ -61,16 +62,17 @@ def prepare_data(config):
     if config['normalization']:
         query = normalization(query)
         print("normalize query")
+    query = query.astype(np.float32)
     save_query_dir = '%s/query.fvecs' % data_dir
     vecs_io.fvecs_write(save_query_dir, query)
     print("save query")
 
-    save_gnd_dir = '%s/gnd.ivecs' % data_dir
+    save_gnd_dir = '%s/gnd-%d.ivecs' % (data_dir, config['k'])
     gnd = groundtruth.get_gnd(base, query, config['k'])
     vecs_io.ivecs_write(save_gnd_dir, gnd)
     print("save gnd")
 
-    base_base_gnd_npy_dir = '%s/base_base_gnd.ivecs' % config['data_dir']
+    base_base_gnd_npy_dir = '%s/base_base_gnd-%d.ivecs' % (config['data_dir'], config['base_base_gnd_k'])
     base_base_gnd = groundtruth.get_gnd(base, base, max(config['base_base_gnd_k'], config['k']))
     vecs_io.ivecs_write(base_base_gnd_npy_dir, base_base_gnd)
     print("save base_base_gnd for the training set preparation")
@@ -86,13 +88,13 @@ if __name__ == '__main__':
     data_config = {
         "k": 50,
         "base_base_gnd_k": 150,
-        "data_fname": "glove",
-        "source_data_dir": "/home/zhengbian/Dataset/glove-200-angular.hdf5",
-        # "source_data_dir": "/home/zhengbian/Dataset/deep-image-96-angular.hdf5",
+        "data_fname": "deep_big",
+        "source_data_dir": "/home/zhengbian/Dataset/deep-image-96-angular.hdf5",
+        # "source_data_dir": "/home/zhengbian/Dataset/lastfm-64-dot.hdf5",
         "file": {
             'base': {
                 "name": "train",
-                "length": 1000000,
+                "length": 1000000000,
             },
             'query': {
                 "name": "test",

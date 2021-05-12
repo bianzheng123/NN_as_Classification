@@ -1,5 +1,5 @@
 from procedure_nn_classification.dataset_partition_1 import base_partition
-from procedure_nn_classification.dataset_partition_1.build_graph import hnsw, knn, partition_knn
+from procedure_nn_classification.dataset_partition_1.build_graph import hnsw, knn, partition_knn, small_knn
 import numpy as np
 from util import read_data, dir_io
 import time
@@ -104,6 +104,10 @@ class LearnOnGraph(base_partition.BasePartition):
             if config['distance_metric'] != 'l2':
                 raise Exception("not support distance metrics")
             return hnsw.HNSW(config)
+        elif _type == 'small_knn':
+            if config['distance_metric'] != 'l2':
+                raise Exception("not support distance metrics")
+            return small_knn.SmallKNN(config)
         raise Exception('do not support the type of buildin a graph')
 
 

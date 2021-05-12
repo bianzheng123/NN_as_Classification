@@ -15,14 +15,9 @@ torch.set_num_threads(multiprocessing.cpu_count())
 
 network_config_m = {
     'two_block_512_dim': networks.TwoBlock512Dim,
-    'two_block_1024_dim': networks.TwoBlock1024Dim,
-    'two_block_2048_dim': networks.TwoBlock2048Dim,
     'one_block_2048_dim': networks.OneBlock2048Dim,
-    'one_block_8192_dim': networks.OneBlock8192Dim,
-    'one_block_512_dim': networks.OneBlock512Dim,
-    'two_block_512_dim_no_bn_dropout': networks.TwoBlock512DimNoBnDropout,
-    'two_block_8192_dim_no_bn_dropout': networks.TwoBlock8192DimNoBnDropout,
     'res_net': networks.ResNet,
+    'two_block_8192_dim_no_bn_dropout': networks.TwoBlock8192DimNoBnDropout,
     'cnn': networks.CNN
 }
 
@@ -49,22 +44,9 @@ def parameter_factory(dataset_partition_method, distance_metric, data_fname, mod
         lr = 0.00002
     if model_name == 'two_block_512_dim':
         pass
-    elif model_name == 'two_block_1024_dim':
-        pass
-    elif model_name == 'two_block_2048_dim':
-        lr = 0.004
-        pass
     elif model_name == 'one_block_2048_dim':
         if data_fname == 'sift' and dataset_partition_method == 'knn_kmeans_multiple':
             lr = 0.005
-        pass
-    elif model_name == 'one_block_8192_dim':
-        lr = 0.001
-        pass
-    elif model_name == 'one_block_512_dim':
-        pass
-    elif model_name == 'two_block_512_dim_no_bn_dropout':
-        lr = 0.0001
         pass
     elif model_name == 'res_net':
         pass

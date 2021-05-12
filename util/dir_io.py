@@ -6,68 +6,51 @@ import torch
 
 def delete_dir_if_exist(dire):
     if os.path.isdir(dire):
-        # command = 'sudo rm -rf %s' % dire
-        command = 'sudo rm -rf %s' % dire
+        command = 'rm -rf %s' % dire
         print(command)
         os.system(command)
 
 
 def mkdir(dire):
-    os.system("sudo mkdir %s" % dire)
-    # os.system("mkdir %s" % dire)
-
-
-def _save_file(dire):
-    # pass
-    os.system('sudo touch %s' % dire)
-    os.system('sudo chmod 766 %s' % dire)
+    os.system("mkdir %s" % dire)
 
 
 def move_file(old_dir, new_dir):
-    # os.system("sudo mv %s %s" % (old_dir, new_dir))
-    os.system("sudo mv %s %s" % (old_dir, new_dir))
+    os.system("mv %s %s" % (old_dir, new_dir))
 
 
 def save_pytorch(pth_ins, save_dir):
-    _save_file(save_dir)
     torch.save(pth_ins, save_dir)
 
 
 def write_ptr(dire):
-    _save_file(dire)
     f_ptr = open(dire, "w")
     return f_ptr
 
 
 def save_torch(obj, dire):
-    _save_file(dire)
     torch.save(obj, dire)
 
 
 def save_array_txt(save_dir, arr, fmt):
-    _save_file(save_dir)
     np.savetxt(save_dir, arr, fmt=fmt)
 
 
 def save_numpy(save_dir, data):
-    _save_file(save_dir)
     np.save(save_dir, data)
 
 
 def save_json(save_dir, result_fname, json_file):
     file_dire = '%s/%s' % (save_dir, result_fname)
-    _save_file(file_dire)
     with open(file_dire, 'w') as f:
         json.dump(json_file, f)
 
 
 def kahip(save_dir, command):
-    _save_file(save_dir)
     os.system(command)
 
 
 def save_graph(save_dir, graph, vertices, edges):
-    _save_file(save_dir)
     with open(save_dir, 'w') as f:
         f.write("%d %d\n" % (vertices, edges))
         for nearest_index in graph:
@@ -79,7 +62,6 @@ def save_graph(save_dir, graph, vertices, edges):
 
 
 def save_graph_edge_weight(save_dir, graph, vertices, edges):
-    _save_file(save_dir)
     with open(save_dir, 'w') as f:
         f.write("%d %d 1\n" % (vertices, edges))
         for nearest_index in graph:

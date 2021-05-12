@@ -310,8 +310,6 @@ class MultipleHash(MultipleBasePartition):
             return hash.RandomHash(config)
         elif self.type == 'lsh':
             return hash.LocalitySensitiveHash(config)
-        elif self.type == 'lsh_base':
-            return hash.LocalitySensitiveHashBase(config)
         elif self.type == 'random_projection':
             return hash.RandomProjection(config)
         raise Exception('not support hash type')
