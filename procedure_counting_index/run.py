@@ -36,11 +36,11 @@ def run(long_term_config_dir, short_term_config_dir, topk):
     program_fname = '%s_%d_%d_count_%d_%s_%s' % (
         long_term_config['data_fname'], topk, short_term_config['n_cluster'], short_term_config['n_instance'],
         short_term_config['dataset_partition']['type'], short_term_config['specific_fname'])
-    if short_term_config['dataset_partition']['type'] == 'e2lsh':
-        program_fname = '%s_%d_count_%d_%s_%s' % (
-            long_term_config['data_fname'], short_term_config['n_cluster'] * short_term_config['n_cluster'],
-            short_term_config['n_instance'] // 2,
-            short_term_config['dataset_partition']['type'], short_term_config['specific_fname'])
+    # if short_term_config['dataset_partition']['type'] == 'e2lsh':
+    #     program_fname = '%s_%d_count_%d_%s_%s' % (
+    #         long_term_config['data_fname'], short_term_config['n_cluster'] * short_term_config['n_cluster'],
+    #         short_term_config['n_instance'] // 2,
+    #         short_term_config['dataset_partition']['type'], short_term_config['specific_fname'])
 
     # classification
     program_train_para_dir = '%s/data/train_para/%s' % (
@@ -85,10 +85,10 @@ def run(long_term_config_dir, short_term_config_dir, topk):
         'n_item': base.shape[0]
     }
     # integrate the cluster_score_l and label_map_l to get the score_table and store the score_table in /train_para
-    score_table, integrate_intermediate = partition_data.integrate_save_score_table_total(predict_cluster_l,
-                                                                                          label_map_l,
-                                                                                          save_classifier_config,
-                                                                                          save_train_para)
+    score_table, integrate_intermediate = partition_data.integrate_save_score_table_total_parallel(predict_cluster_l,
+                                                                                                   label_map_l,
+                                                                                                   save_classifier_config,
+                                                                                                   save_train_para)
 
     result_integrate_config = {
         'k': topk,

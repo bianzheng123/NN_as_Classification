@@ -12,7 +12,7 @@ if __name__ == '__main__':
     for tmp_config in save_fname_content_m:
         config['dataset_partition'] = tmp_config
         config['n_cluster'] = 256
-        config['n_instance'] = 4
+        config['n_instance'] = 8
         with open('%s/%d_%s_%d.json' % (save_base_dir, config['n_instance'], tmp_config['type'], config['n_cluster']),
                   'w') as f:
             json.dump(config, f)

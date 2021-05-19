@@ -8,7 +8,7 @@ if __name__ == '__main__':
     save_base_dir = '/home/zhengbian/NN_as_Classification/config/counting_index/small_ds'
     save_fname_content_m = [
         {
-            "type": "kmeans_independent",
+            "type": "kmeans_multiple",
             "max_iter": 40
         }
     ]

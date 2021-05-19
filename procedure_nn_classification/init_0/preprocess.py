@@ -24,6 +24,8 @@ def factory(config):
         return multiple_model.IndependentKMeans(config)
     elif _type == 'knn' or _type == 'hnsw' or _type == 'knn_random_projection' or _type == 'knn_lsh' or _type == 'knn_kmeans' or _type == 'small_knn':
         return multiple_model.MultipleLearnOnGraph(config)
+    elif _type == 'permutation_knn':
+        return multiple_model.MultipleLearnOnGraphPermutation(config)
     elif _type == 'knn_kmeans_multiple':
         return multiple_model.MultipleLearnOnGraphKMeans(config)
     elif _type == 'random_hash' or _type == 'lsh' or _type == 'lsh_base' or _type == 'random_projection':

@@ -27,6 +27,8 @@ class KNN:
             for i, cls in enumerate(label, 0):
                 for neighbor in graph[i]:
                     if label[neighbor - 1] != cls:  # means the neighbor have different cluster
+                        # graph[i][neighbor] = 0
+                        # graph[neighbor - 1][i + 1] = 0
                         graph[i][neighbor] = graph[i][neighbor] + self.increase_weight
                         graph[neighbor - 1][i + 1] = graph[neighbor - 1][i + 1] + self.increase_weight
 

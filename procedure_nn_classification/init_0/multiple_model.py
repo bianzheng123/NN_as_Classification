@@ -298,6 +298,51 @@ class MultipleLearnOnGraph(MultipleBasePartition):
         return {}
 
 
+class MultipleLearnOnGraphPermutation(MultipleBasePartition):
+
+    def __init__(self, config):
+        super(MultipleLearnOnGraphPermutation, self).__init__(config)
+        total_k = 150
+        least_k = 25
+        if least_k * self.n_instance > total_k:
+            raise Exception("the least k is large than total_k")
+        permute = np.random.permutation(total_k)
+        trunc_arr = self.permute_truncation(total_k, self.n_instance, least_k)
+        self.k_idx_l = []
+        self.k_idx_l.append(permute[:trunc_arr[0]])
+        for i in range(len(trunc_arr) - 1):
+            self.k_idx_l.append(permute[trunc_arr[i]:trunc_arr[i + 1]])
+        # print([len(_) for _ in self.k_idx_l])
+
+    def get_model(self, config):
+        return learn_on_graph.LearnOnGraphPermutationKNN(config)
+
+    def _preprocess(self, base):
+        for i in range(self.n_instance):
+            self.model_l[i].get_k_idx_l(self.k_idx_l[i])
+        return {}
+
+    @staticmethod
+    def permute_truncation(total_k, n_instance, least_k):
+        if n_instance == 1:
+            return [50]
+        tmp_res = []
+        tmp_total_k = total_k - n_instance * least_k
+        tmp_sum = 0
+        for i in range(n_instance - 1):
+            if tmp_sum == tmp_total_k:
+                tmp_res.append(tmp_total_k)
+                continue
+            num = np.random.randint(tmp_sum, tmp_total_k)
+            tmp_res.append(num)
+            tmp_sum = num
+        tmp_res.append(tmp_total_k)
+        res = []
+        for i in range(n_instance):
+            res.append(tmp_res[i] + (i + 1) * least_k)
+        return res
+
+
 class MultipleHash(MultipleBasePartition):
 
     def __init__(self, config):

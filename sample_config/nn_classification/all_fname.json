@@ -33,6 +33,22 @@
     }
   },
   {
+    "type": "small_knn",
+    "build_graph": {
+    },
+    "graph_partition": {
+      "type": "parhip"
+    }
+  },
+  {
+    "type": "permutation_knn",
+    "build_graph": {
+    },
+    "graph_partition": {
+      "type": "parhip"
+    }
+  },
+  {
     "type": "knn_random_projection",
     "build_graph": {
     },

@@ -2,6 +2,7 @@ import numpy as np
 import time
 from util import dir_io
 import sklearn.cluster as cls
+from multiprocessing import cpu_count, Pool
 
 
 class BasePartition:
@@ -98,6 +99,8 @@ class KMeansMultiple(BasePartition):
     def __init__(self, config):
         super(KMeansMultiple, self).__init__(config)
         self.centroid_l = None
+        self.n_process = cpu_count() // 10 * 9
+        self.n_pool_process = cpu_count() // 10 * 9
         # self.type, self.save_dir, self.classifier_number, self.label_map, self.n_cluster, self.labels
 
     def get_centroid(self, centroid_l):
@@ -106,18 +109,39 @@ class KMeansMultiple(BasePartition):
 
     def _partition(self, base):
         # count the distance for each item and centroid to get the distance_table
-        distance_table = None
-        for i, vecs in enumerate(base, 0):
-            if i == 0:
-                distance_table = [np.linalg.norm(base[0] - centroid) for centroid in self.centroid_l]
-                distance_table = np.array([distance_table])
-                continue
-            tmp_dis = [np.linalg.norm(vecs - centroid) for centroid in self.centroid_l]
-            tmp_dis = np.array([tmp_dis])
-            distance_table = np.append(distance_table, tmp_dis, axis=0)
-        # print(distance_table.shape)
-        # get the nearest centroid and use it as the label
-        self.labels = np.argmin(distance_table, axis=1)
+        labels = self.parallel(base)
+        self.labels = labels
+
+    def parallel(self, data):
+        start_time = time.time()
+        p = Pool(self.n_pool_process)
+        res_l = []
+        for i in range(self.n_process):
+            res = p.apply_async(KMeansMultiple.count_centroid, args=(data, self.centroid_l, i, self.n_process))
+            res_l.append(res)
+
+        p.close()
+        p.join()
+        res_labels = np.zeros(data.shape[0]).astype(np.int64)
+        for i, res in enumerate(res_l, 0):
+            tmp_labels = res.get()
+            for j in range(len(tmp_labels)):
+                res_labels[i + j * self.n_process] = tmp_labels[j]
+        # np.savetxt('label_parallel.txt', res_labels, fmt='%d')
+        end_time = time.time()
+        return res_labels
+
+    @staticmethod
+    def count_centroid(base, centroid_l, idx, pool_size):
+        # count the distance for each item and centroid to get the distance_table
+        labels = []
+        len_base = len(base)
+        for i in range(idx, len_base, pool_size):
+            vecs = base[i]
+            tmp_dis = [np.linalg.norm(vecs - centroid) for centroid in centroid_l]
+            tmp_label = np.argmin(tmp_dis, axis=0)
+            labels.append(tmp_label)
+        return np.array(labels, dtype=np.int64)
 
     def _predict(self, query):
         pred = np.array([])

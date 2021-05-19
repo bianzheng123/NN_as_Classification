@@ -27,19 +27,20 @@ short_config_fname_arr = ['1_kmeans_independent_16', '1_kmeans_multiple_16', '1_
 
 if __name__ == '__main__':
     # deep gist glove imagenet sift
-    # ds_fname_l = ['deep', 'sift', 'glove', 'gist']
-    ds_fname_l = ['sift']
-    k_l = [10]
-    _type = 'nn_classification'  # pq_nn nn_classification counting_index
-    base_config_dir = '/home/zhengbian/NN_as_Classification/config/%s/big_ds/' % _type
+    ds_fname_l = ['siftsmall']
+    k_l = [5]
+    _type = 'counting_index'  # pq_nn nn_classification counting_index
+    base_config_dir = '/home/zhengbian/NN_as_Classification/config/%s/small_ds/' % _type
     for ds_fname in ds_fname_l:
         for k in k_l:
             long_config_dir = base_config_dir + ds_fname + '.json'
 
-            short_config_fname_arr = ['1_kmeans_multiple_256', '2_kmeans_multiple_256', '4_kmeans_multiple_256',
-                                      '8_kmeans_multiple_256']
+            short_config_fname_arr = ['4_kmeans_multiple_16']
 
             for tmp_fname in short_config_fname_arr:
                 short_config_dir = base_config_dir + tmp_fname + '.json'
-                run_nohup(long_config_dir, short_config_dir, ds_fname, tmp_fname, _type, k)
-                # run_frontend(long_config_dir, short_config_dir, _type, k)
+                # run_nohup(long_config_dir, short_config_dir, ds_fname, tmp_fname, _type, k)
+                run_frontend(long_config_dir, short_config_dir, _type, k)
+
+    # send_str = "complete the work in " + " ".join(ds_fname_l) + " " + send_email.get_host_name()
+    # send_email.send(send_str)
